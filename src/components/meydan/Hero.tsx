@@ -31,14 +31,26 @@ export function Hero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         className="w-full"
       >
-        <motion.img
-          src={heroImg}
-          alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
+        <motion.picture
           initial={{ opacity: 0, filter: "blur(10px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-auto w-full object-contain object-center"
-        />
+          className="block w-full"
+        >
+          <source type="image/avif" srcSet={heroAvifSet} sizes="100vw" />
+          <source type="image/webp" srcSet={heroWebpSet} sizes="100vw" />
+          <img
+            src={heroFallback}
+            alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
+            // LCP image: eager + high priority (no lazy)
+            loading="eager"
+            decoding="async"
+            // @ts-expect-error - valid HTML attribute, React types lag
+            fetchpriority="high"
+            sizes="100vw"
+            className="block h-auto w-full object-contain object-center"
+          />
+        </motion.picture>
       </motion.figure>
 
       {/* Text block — clearly below the image */}
