@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 import gemini_service
 
-load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"), override=True)
 
 supabase = create_client(
     os.getenv("SUPABASE_URL"),
