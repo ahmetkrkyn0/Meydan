@@ -37,7 +37,7 @@ export function Hero() {
           className="block h-auto w-full max-w-full object-contain object-center"
           style={{
             maxHeight: "calc(100svh - 8rem)",
-            aspectRatio: "16 / 9",
+            aspectRatio: "1672 / 941",
           }}
         />
       </motion.figure>
