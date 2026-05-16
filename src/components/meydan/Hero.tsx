@@ -156,13 +156,13 @@ export function Hero() {
             {/* Bottom stat strip */}
             <div className="absolute inset-x-4 bottom-4 hidden sm:block">
               <div className="glass-strong flex flex-wrap items-center justify-between gap-6 rounded-2xl px-6 py-4">
-                <Stat label="Futbol dışı sporlar" value="7+" />
+                <Stat label="Futbol dışı sporlar" value="7+" index={0} />
                 <Divider />
-                <Stat label="Dijital tribün" value="12K" />
+                <Stat label="Dijital tribün" value="12K" index={1} />
                 <Divider />
-                <Stat label="Doğrudan destek" value="₺840K" />
+                <Stat label="Doğrudan destek" value="₺840K" index={2} />
                 <Divider />
-                <Stat label="Aktif sporcu" value="240+" />
+                <Stat label="Aktif sporcu" value="240+" index={3} />
               </div>
             </div>
           </div>
@@ -190,12 +190,17 @@ export function Hero() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, index = 0 }: { label: string; value: string; index?: number }) {
   return (
-    <div className="min-w-0">
+    <motion.div
+      initial={{ opacity: 0, y: 12, filter: "blur(8px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.8, delay: 1.4 + index * 0.18, ease: [0.22, 1, 0.36, 1] }}
+      className="min-w-0"
+    >
       <p className="font-display text-xl text-foreground sm:text-2xl">{value}</p>
       <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
-    </div>
+    </motion.div>
   );
 }
 
