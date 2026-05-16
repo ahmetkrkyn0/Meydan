@@ -116,12 +116,7 @@ export function Hero() {
           transition={{ duration: 1.1, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute top-[14%] left-[3%] max-w-[42%] hidden md:block"
         >
-          <motion.div
-            className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-8 backdrop-blur-md lg:p-10"
-            initial={{ boxShadow: "0 0 0px rgba(139,92,246,0)" }}
-            animate={{ boxShadow: "0 0 60px -10px rgba(139,92,246,0.18), 0 0 120px -30px rgba(139,92,246,0.08)" }}
-            transition={{ duration: 1.3, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div className="pointer-events-auto p-8 lg:p-10">
             <h2 className="font-display text-[2.2rem] font-medium leading-[1.08] tracking-[-0.02em] text-white lg:text-[2.9rem] xl:text-[3.5rem]">
               Her sporun bir{" "}
               <span className="text-gradient-violet italic">meydanı</span> var.
@@ -129,23 +124,14 @@ export function Hero() {
             <p className="mt-3 text-sm leading-relaxed text-white/70 lg:text-base">
               Futbol dışı sporcuları taraftarla buluşturan dijital sahne.
             </p>
-          </motion.div>
-        </motion.div>
-
-        {/* Bottom-right value props */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.85 }}
-          className="pointer-events-none absolute bottom-[4%] right-[3%] max-w-[28%] hidden lg:block"
-        >
-          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-6 backdrop-blur-md">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-violet">Amacımız</p>
-            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-white/85">
-              <li>• Görünmeyen sporcuyu sahneye çıkarmak</li>
-              <li>• Taraftarı doğrudan destekçiye dönüştürmek</li>
-              <li>• Her branşa kendi meydanını kurmak</li>
-            </ul>
+            <div className="mt-6">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-violet">Amacımız</p>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-white/85">
+                <li>• Görünmeyen sporcuyu sahneye çıkarmak</li>
+                <li>• Taraftarı doğrudan destekçiye dönüştürmek</li>
+                <li>• Her branşa kendi meydanını kurmak</li>
+              </ul>
+            </div>
           </div>
         </motion.div>
 
