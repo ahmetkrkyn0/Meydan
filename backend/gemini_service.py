@@ -10,26 +10,45 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def check_toxicity(message: str) -> bool:
-    """Mesajın toksik olup olmadığını kontrol eder. True = toksik."""
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    """
+    Mesaj toksik mi? True/False döner.
+    Sadece küfür, hakaret, taciz, aşağılama toksiktir.
+    Yapıcı eleştiri, motivasyon, duygusal destek toksik DEĞİLDİR.
+    """
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    
+    prompt = f"""Aşağıdaki Türkçe mesaj bir sporcuya taraftarı tarafından gönderildi.
+Görevin: Mesajın TOKSİK olup olmadığına karar vermek.
 
-    prompt = f"""Aşağıdaki mesajın bir sporcuya yönelik küfür, hakaret veya taciz içerip içermediğini değerlendir.
+TOKSİK SAYILANLAR (sadece bunlar):
+- Küfür ve argo (s*k, a*ına, p**evenk, vb.)
+- Doğrudan hakaret (salak, aptal, pislik, gerizekalı, vb.)
+- Aşağılama ve değersizleştirme ("hiçbir işe yaramazsın")
+- Tehdit veya taciz
+- Cinsiyetçi, ırkçı, ayrımcı dil
 
-Önemli: Yapıcı eleştiri, hayal kırıklığı ifadesi veya nazik uyarılar TOKSİK DEĞİLDİR.
-Sadece yıkıcı, aşağılayıcı veya küfür içeren dil TOKSİKTİR.
+TOKSİK SAYILMAYANLAR:
+- "Vazgeçme", "pes etme", "devam et" gibi motivasyon mesajları → TEMİZ
+- "Seninleyim", "arkandayım", "güveniyorum" → TEMİZ
+- Yapıcı eleştiri: "Bugün daha sakin oynayabilirsin" → TEMİZ
+- "Bugün kötü oynadın" gibi sade gözlemler → TEMİZ
+- Strateji önerileri, tavsiyeler → TEMİZ
+- Duygusal destek mesajları → TEMİZ
+
+ÖNEMLİ: Şüpheye düşersen TEMİZ de. Sadece açıkça küfür/hakaret içerenler TOKSİK'tir.
 
 Mesaj: "{message}"
 
-Sadece tek kelime yanıt ver: TOKSIK veya TEMIZ"""
-
+Sadece tek kelime cevap ver: TOKSIK veya TEMIZ
+"""
+    
     try:
         response = model.generate_content(prompt)
-        sonuc = response.text.strip().upper()
-        return "TOKSIK" in sonuc
+        result = response.text.strip().upper().replace("İ", "I")
+        return "TOKSIK" in result
     except Exception as e:
         print(f"Toksisite kontrolü hatası: {e}")
-        # Hata durumunda güvenli tarafta kal
-        return True
+        return False  # Hata olursa güvenli tarafta kal, mesaj geçsin
 
 
 def generate_embedding(text: str) -> list[float]:
@@ -49,7 +68,7 @@ def generate_embedding(text: str) -> list[float]:
 
 def summarize_cheers(messages: list[str]) -> str:
     """Taraftar mesajlarını özet haline getirir."""
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     n = len(messages)
     mesaj_listesi = "\n".join(f"- {m}" for m in messages)
 
