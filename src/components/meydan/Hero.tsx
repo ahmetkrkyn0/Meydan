@@ -34,7 +34,7 @@ export function Hero() {
           initial={{ scale: 1.02, filter: "blur(10px)" }}
           animate={{ scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-auto w-full"
+          className="block h-auto w-full object-contain object-center"
         />
       </motion.figure>
 
