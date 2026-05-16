@@ -1,749 +1,954 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { createFileRoute } from "@tanstack/react-router";
+import { motion, useScroll, useTransform, useSpring, animate, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
-  Bell, Search, Home, Compass, MapPin, Radio,
-  Users, Heart, User, ChevronDown, ArrowRight,
-  ArrowUpRight, Zap, Trophy, TrendingUp, Calendar,
-  Star, Shield, Flame, Activity, Clock, Eye,
+  Bell, Search, Home, Compass, MapPin, Radio, Users, Heart, User, ChevronDown,
+  ArrowRight, ArrowUpRight, Zap, Trophy, TrendingUp, Calendar, Star, Shield,
+  Flame, Activity, Clock, Eye, Sparkles, Play, BarChart3, Target, Award,
+  ChevronRight, Plus, MoreHorizontal,
 } from "lucide-react";
-import adaImg   from "@/assets/athlete-ada.jpg";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg  from "@/assets/athlete-lina.jpg";
+import adaImg        from "@/assets/athlete-ada.jpg";
+import keremImg      from "@/assets/athlete-kerem.jpg";
+import linaImg       from "@/assets/athlete-lina.jpg";
+import mertImg       from "@/assets/athlete-mert.jpg";
+import archeryPng    from "@/assets/sport-archery-nobg.png";
+import basketballPng from "@/assets/sport-basketball-nobg.png";
+import billiardsPng  from "@/assets/sport-billiards-nobg.png";
+import tennisPng     from "@/assets/sport-tennis-nobg.png";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "Ana Sayfa — Meydan" }] }),
+  head: () => ({ meta: [{ title: "Ana Sahne — Meydan" }] }),
 });
 
-/* ─── animated counter hook ─── */
+/* ── animated counter ── */
 function useCounter(to: number, duration = 1.4, delay = 0.3) {
   const [val, setVal] = useState(0);
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const controls = animate(0, to, {
-        duration,
-        ease: [0.22, 1, 0.36, 1],
+    const t = setTimeout(() => {
+      const c = animate(0, to, {
+        duration, ease: [0.22, 1, 0.36, 1],
         onUpdate: (v) => setVal(Math.round(v)),
       });
-      return () => controls.stop();
+      return () => c.stop();
     }, delay * 1000);
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(t);
   }, [to, duration, delay]);
   return val;
 }
 
-/* ─── data ─── */
+/* ── data ── */
 const navItems = [
-  { icon: Home,    label: "Ana Sayfa",        active: true  },
-  { icon: Compass, label: "Keşfet",           active: false },
-  { icon: MapPin,  label: "Şehrimde Ne Var?", active: false },
-  { icon: Radio,   label: "Canlı Maçlar",     active: false },
-  { icon: Users,   label: "Sporcular",        active: false },
-  { icon: Heart,   label: "Desteklerim",      active: false },
-  { icon: User,    label: "Profilim",         active: false },
+  { icon: Home,    label: "Ana Sahne",         active: true,  badge: null },
+  { icon: Compass, label: "Keşfet",            active: false, badge: null },
+  { icon: Radio,   label: "Canlı Maçlar",      active: false, badge: "3"  },
+  { icon: Users,   label: "Sporcularım",       active: false, badge: "12" },
+  { icon: MapPin,  label: "Şehrimde",          active: false, badge: null },
+  { icon: Heart,   label: "Desteklerim",       active: false, badge: null },
+  { icon: BarChart3, label: "İstatistikler",   active: false, badge: null },
 ];
 
-const featuredAthletes = [
-  { name: "Eray Şamdan",  branch: "Atletizm", rank: "#4 TR", img: adaImg,   supporters: 847  },
-  { name: "Zeynep Güneş", branch: "Voleybol", rank: "#1 TR", img: keremImg, supporters: 1240 },
-  { name: "Mete Gazoz",   branch: "Okçuluk",  rank: "#3 EU", img: linaImg,  supporters: 2103 },
+const liveAthletes = [
+  { name: "Mete Gazoz",   sport: "Okçuluk",    img: archeryPng,    accent: "violet", rank: "#3 EU",   eta: "14:30", supporters: 2103, growth: "+12%" },
+  { name: "Yusuf Dikeç",  sport: "Basketbol",  img: basketballPng, accent: "sky",    rank: "#1 TR",   eta: "19:00", supporters: 1840, growth: "+8%"  },
+  { name: "Süreyya Demir",sport: "Bilardo",    img: billiardsPng,  accent: "coral",  rank: "#7 World",eta: "21:15", supporters: 932,  growth: "+24%" },
+  { name: "Zeynep Sönmez",sport: "Tenis",      img: tennisPng,     accent: "violet", rank: "#5 EU",   eta: "Yarın", supporters: 1567, growth: "+15%" },
 ];
 
 const todayMatches = [
-  { time: "17:00", home: "Fenerbahçe",  away: "Beşiktaş Dynavit",  sport: "🏐", status: "Canlı",  live: true,  score: "2 - 1" },
-  { time: "19:30", home: "Galatasaray", away: "Beşiktaş",           sport: "⚽", status: "Yakında", live: false, score: null    },
-  { time: "20:00", home: "Anadolu Efes",away: "Pınar Karşıyaka",    sport: "🏀", status: "Yakında", live: false, score: null    },
+  { time: "17:00", home: "Fenerbahçe Opet",   away: "VakıfBank",         sport: "🏐", status: "Canlı",  live: true,  score: "2 - 1", momentum: 72 },
+  { time: "19:30", home: "Galatasaray Daikin",away: "Eczacıbaşı Dynavit",sport: "🏐", status: "Yakında", live: false, score: null,    momentum: 0  },
+  { time: "20:00", home: "Anadolu Efes",      away: "Pınar Karşıyaka",   sport: "🏀", status: "Yakında", live: false, score: null,    momentum: 0  },
+  { time: "21:30", home: "Beşiktaş",          away: "Türk Telekom",      sport: "🏀", status: "Yakında", live: false, score: null,    momentum: 0  },
 ];
 
 const events = [
-  { day: "25", month: "MAY", title: "İstanbul Yarı Maratonu",       sport: "🏃", tags: "Koşu • İstanbul",    hot: true  },
-  { day: "28", month: "MAY", title: "Okçuluk Başlangıç Atölyesi",   sport: "🏹", tags: "Okçuluk • İstanbul", hot: false },
-  { day: "01", month: "HAZ", title: "Ankara Basketbol Turnuvası",    sport: "🏀", tags: "Basketbol • Ankara", hot: false },
+  { day: "25", month: "MAY", title: "İstanbul Yarı Maratonu",     loc: "İstanbul",  sport: "🏃", hot: true,  cap: "%87 dolu" },
+  { day: "28", month: "MAY", title: "Okçuluk Başlangıç Atölyesi", loc: "İstanbul",  sport: "🏹", hot: false, cap: "%34 dolu" },
+  { day: "01", month: "HAZ", title: "Ankara Basketbol Turnuvası",  loc: "Ankara",    sport: "🏀", hot: false, cap: "%52 dolu" },
+  { day: "07", month: "HAZ", title: "Sahil Yelken Kupası",          loc: "Bodrum",    sport: "⛵", hot: true,  cap: "%91 dolu" },
 ];
 
 const supported = [
-  { name: "Eray Şamdan",  branch: "Atletizm", pct: 74, img: adaImg,   trend: "+5%"  },
-  { name: "Zeynep Güneş", branch: "Voleybol", pct: 58, img: keremImg, trend: "+2%"  },
-  { name: "Mete Gazoz",   branch: "Okçuluk",  pct: 81, img: linaImg,  trend: "+12%" },
+  { name: "Mete Gazoz",    sport: "Okçuluk",   pct: 81, img: adaImg,   amount: "₺ 4.200", trend: "+12%" },
+  { name: "Zeynep Sönmez", sport: "Tenis",     pct: 64, img: keremImg, amount: "₺ 2.800", trend: "+8%"  },
+  { name: "Süreyya Demir", sport: "Bilardo",   pct: 47, img: linaImg,  amount: "₺ 1.500", trend: "+24%" },
+  { name: "Yusuf Dikeç",   sport: "Basketbol", pct: 35, img: mertImg,  amount: "₺   900", trend: "+5%"  },
 ];
 
-const quickActions = [
-  { icon: Trophy,    label: "Sporcu Keşfet",     color: "bg-blue-50 text-blue-600"   },
-  { icon: Zap,       label: "Destek Ver",         color: "bg-amber-50 text-amber-600" },
-  { icon: MapPin,    label: "Yakındaki Maçlar",   color: "bg-green-50 text-green-600" },
-  { icon: Flame,     label: "Canlı Takip",        color: "bg-red-50 text-red-600"     },
+const activityFeed = [
+  { time: "şimdi",     msg: "Mete Gazoz finallere kaldı 🎯",          type: "milestone" },
+  { time: "12 dk",     msg: "Zeynep Sönmez 1. seti kazandı 🎾",        type: "live"      },
+  { time: "1 sa",      msg: "İstanbul Maratonu kayıtları açıldı",       type: "event"     },
+  { time: "3 sa",      msg: "Yusuf Dikeç'e ₺200 destek gönderildi",     type: "support"   },
+  { time: "5 sa",      msg: "Yeni rozet kazandın: İlk Destekçi 🏅",     type: "badge"     },
 ];
 
-/* ─── colour tokens ─── */
-const C = {
-  bg:       "oklch(0.972 0.014 230)",
-  white:    "#ffffff",
-  border:   "oklch(0.22 0.055 240 / 0.09)",
-  navy:     "oklch(0.22 0.055 240)",
-  muted:    "oklch(0.52 0.04 240)",
-  blue:     "oklch(0.52 0.22 252)",
-  blueSoft: "oklch(0.52 0.22 252 / 0.10)",
-  sky:      "oklch(0.68 0.17 220)",
-  red:      "oklch(0.55 0.22 20)",
+const trendingSports = ["Okçuluk", "Voleybol", "Tenis", "Atletizm", "Eskrim", "Bilardo", "Yelken", "Tekvando"];
+
+const accentMap = {
+  violet: { bg: "bg-violet/15", text: "text-violet", border: "border-violet/30", glow: "oklch(0.60 0.22 252 / 0.35)" },
+  sky:    { bg: "bg-sky/15",    text: "text-sky",    border: "border-sky/30",    glow: "oklch(0.72 0.16 222 / 0.35)" },
+  coral:  { bg: "bg-coral/15",  text: "text-coral",  border: "border-coral/30",  glow: "oklch(0.65 0.20 18 / 0.35)"  },
 };
 
-/* ─── animation presets ─── */
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
-const up = {
-  hidden: { opacity: 0, y: 22 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-};
-const right = {
-  hidden: { opacity: 0, x: -16 },
-  show:   { opacity: 1, x: 0,   transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+/* ── motion variants ── */
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+const fadeUp  = {
+  hidden: { opacity: 0, y: 24 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/* ════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
 function DashboardPage() {
-  const followCount  = useCounter(12,    1.2, 0.5);
-  const eventCount   = useCounter(5,     0.8, 0.6);
-  const supportMoney = useCounter(21300, 1.6, 0.4);
+  const followCount   = useCounter(12, 1.2, 0.4);
+  const liveCount     = useCounter(3,  0.8, 0.5);
+  const supportTotal  = useCounter(9400, 1.6, 0.4);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Parallax: featured athlete drifts as you scroll the page
+  const { scrollY } = useScroll();
+  const athleteY = useTransform(scrollY, [0, 400], [0, -60]);
+  const athleteScale = useTransform(scrollY, [0, 400], [1, 0.92]);
+  const heroOpacity = useTransform(scrollY, [0, 300, 500], [1, 0.6, 0]);
 
   return (
-    <div
-      className="flex h-screen overflow-hidden font-sans"
-      style={{ background: C.bg }}
-    >
-      {/* ══════ SIDEBAR ══════ */}
-      <motion.aside
-        initial={{ x: -48, opacity: 0 }}
-        animate={{ x: 0,   opacity: 1 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="relative flex w-60 shrink-0 flex-col overflow-hidden"
-        style={{ background: C.white, borderRight: `1px solid ${C.border}` }}
-      >
-        {/* subtle top gradient accent */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-blue-50/60 to-transparent" />
+    <div className="relative flex h-screen overflow-hidden bg-background font-sans text-foreground">
+      {/* Global ambient layers behind everything */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 grid-dots opacity-50" />
+        <div className="absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-violet/8 blur-[160px]" />
+        <div className="absolute right-1/4 top-1/3 h-[400px] w-[400px] rounded-full bg-sky/6 blur-[150px]" />
+        <div className="absolute -bottom-32 left-1/3 h-[400px] w-[400px] rounded-full bg-indigo/8 blur-[140px]" />
+      </div>
 
-        {/* Logo */}
-        <div className="relative flex items-center gap-3 px-6 py-5">
+      {/* ═══ SIDEBAR ═══ */}
+      <motion.aside
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-20 flex w-64 shrink-0 flex-col border-r border-foreground/8 bg-ink/80 backdrop-blur-xl"
+      >
+        {/* Logo block */}
+        <div className="flex items-center gap-3 px-6 py-5">
           <motion.div
-            whileHover={{ scale: 1.08, rotate: 3 }}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.sky})`, boxShadow: `0 8px 24px ${C.blue}40` }}
+            whileHover={{ scale: 1.08, rotate: -4 }}
+            className="relative flex h-11 w-11 items-center justify-center rounded-2xl overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, oklch(0.60 0.22 252), oklch(0.72 0.16 222))",
+              boxShadow: "0 10px 28px oklch(0.60 0.22 252 / 0.40)",
+            }}
           >
-            <span className="font-display text-lg font-bold text-white">M</span>
+            <span className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
+            <span className="relative font-display text-xl font-bold text-white">M</span>
           </motion.div>
           <div>
-            <span className="font-display text-xl font-bold" style={{ color: C.navy }}>Meydan</span>
-            <div className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-              <span className="text-[10px] text-emerald-500 font-medium">3 canlı maç</span>
+            <p className="font-display text-xl font-bold leading-none">Meydan</p>
+            <div className="mt-1 flex items-center gap-1.5">
+              <motion.span
+                animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="h-1.5 w-1.5 rounded-full bg-emerald-400"
+              />
+              <span className="text-[10px] font-medium text-emerald-400">{liveCount} canlı maç</span>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="relative flex-1 space-y-0.5 px-3 pt-2">
+        <nav className="flex-1 space-y-1 px-3 pt-2">
           {navItems.map((item, i) => (
             <motion.button
               key={item.label}
-              variants={right}
-              initial="hidden"
-              animate="show"
-              transition={{ delay: 0.06 + i * 0.045 }}
-              whileHover={{ x: 3 }}
-              className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200 ${
-                item.active ? "shadow-sm" : ""
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.08 + i * 0.04 }}
+              whileHover={{ x: 4 }}
+              className={`group flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                item.active
+                  ? "bg-violet/12 text-foreground"
+                  : "text-foreground/55 hover:bg-foreground/5 hover:text-foreground"
               }`}
-              style={item.active
-                ? { background: `linear-gradient(135deg, ${C.blueSoft}, oklch(0.52 0.22 252 / 0.05))`, color: C.blue, border: `1px solid oklch(0.52 0.22 252 / 0.18)` }
-                : { color: C.muted }
-              }
+              style={item.active ? { boxShadow: "inset 0 0 0 1px oklch(0.60 0.22 252 / 0.25)" } : {}}
             >
-              <item.icon
-                className="h-4 w-4 shrink-0"
-                strokeWidth={item.active ? 2.4 : 1.8}
-                style={{ color: item.active ? C.blue : C.muted }}
-              />
-              {item.label}
-              {item.label === "Canlı Maçlar" && (
-                <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">3</span>
+              {item.active && (
+                <motion.span
+                  layoutId="activeIndicator"
+                  className="absolute left-0 h-6 w-0.5 rounded-r-full bg-violet"
+                />
+              )}
+              <item.icon className={`h-4 w-4 shrink-0 ${item.active ? "text-violet" : ""}`} strokeWidth={item.active ? 2.4 : 1.7} />
+              <span className="flex-1 text-left">{item.label}</span>
+              {item.badge && (
+                <span className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
+                  item.badge === "3" ? "bg-red-500/90 text-white" : "bg-foreground/10 text-foreground/70"
+                }`}>
+                  {item.badge}
+                </span>
               )}
             </motion.button>
           ))}
         </nav>
 
-        {/* Sidebar bottom — user mini card */}
+        {/* Pro upgrade card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="relative m-3 rounded-2xl p-3"
-          style={{ background: C.bg, border: `1px solid ${C.border}` }}
+          transition={{ delay: 0.55 }}
+          className="relative m-3 overflow-hidden rounded-2xl p-4"
+          style={{
+            background: "linear-gradient(135deg, oklch(0.60 0.22 252 / 0.18), oklch(0.72 0.16 222 / 0.12))",
+            border: "1px solid oklch(0.60 0.22 252 / 0.25)",
+          }}
         >
-          <div className="flex items-center gap-2.5">
-            <div className="relative">
-              <img src={adaImg} className="h-8 w-8 rounded-xl object-cover object-top" alt="avatar" />
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" />
+          <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-violet/30 blur-2xl" />
+          <div className="relative">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-violet" />
+              <p className="font-display text-sm font-bold">Meydan Pro</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate" style={{ color: C.navy }}>Mehmet Kaya</p>
-              <p className="text-[10px]" style={{ color: C.muted }}>Pro üye</p>
-            </div>
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" style={{ color: C.muted }} />
+            <p className="mt-1.5 text-[11px] leading-relaxed text-foreground/70">
+              Sınırsız canlı yayın, gelişmiş istatistikler.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="mt-3 w-full rounded-lg bg-violet py-2 text-xs font-bold text-white shadow-lg shadow-violet/30"
+            >
+              Yükselt — ₺49/ay
+            </motion.button>
           </div>
         </motion.div>
+
+        {/* User card */}
+        <div className="m-3 mt-0 flex items-center gap-3 rounded-xl border border-foreground/8 bg-foreground/5 p-2.5">
+          <div className="relative">
+            <img src={adaImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-ink bg-emerald-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold truncate">Mehmet Kaya</p>
+            <p className="text-[10px] text-foreground/55">Pro üye · İstanbul</p>
+          </div>
+          <ChevronDown className="h-3.5 w-3.5 text-foreground/40" />
+        </div>
       </motion.aside>
 
-      {/* ══════ MAIN ══════ */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      {/* ═══ MAIN COLUMN ═══ */}
+      <div className="relative flex flex-1 flex-col overflow-hidden">
 
-        {/* ── TOP BAR ── */}
+        {/* ── Top bar ── */}
         <motion.header
-          initial={{ y: -24, opacity: 0 }}
+          initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="flex h-16 shrink-0 items-center gap-4 px-6"
-          style={{ background: C.white, borderBottom: `1px solid ${C.border}` }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative z-10 flex h-16 shrink-0 items-center gap-4 border-b border-foreground/8 bg-background/60 px-6 backdrop-blur-xl"
         >
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: C.muted }} strokeWidth={1.8} />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" strokeWidth={1.8} />
             <input
               type="text"
-              placeholder="Sporcu, branş veya etkinlik ara…"
-              className="w-full rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none transition-all"
-              style={{
-                background: C.bg,
-                border: `1.5px solid oklch(0.22 0.055 240 / 0.10)`,
-                color: C.navy,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = `oklch(0.52 0.22 252 / 0.45)`)}
-              onBlur={(e)  => (e.currentTarget.style.borderColor = `oklch(0.22 0.055 240 / 0.10)`)}
+              placeholder="Sporcu, branş, etkinlik veya şehir ara…"
+              className="w-full rounded-xl border border-foreground/10 bg-foreground/5 py-2.5 pl-10 pr-16 text-sm text-foreground placeholder:text-foreground/40 transition-all focus:border-violet/40 focus:bg-foreground/8 focus:outline-none focus:ring-2 focus:ring-violet/20"
             />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md border px-1.5 py-0.5 text-[10px]" style={{ color: C.muted, borderColor: C.border }}>⌘K</kbd>
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-foreground/15 bg-foreground/5 px-1.5 py-0.5 text-[10px] text-foreground/50">⌘K</kbd>
           </div>
 
+          {/* Actions */}
           <div className="ml-auto flex items-center gap-2.5">
-            {/* Bell */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl transition-colors"
-              style={{ background: C.bg, border: `1.5px solid ${C.border}`, color: C.muted }}
-            >
-              <Bell className="h-4 w-4" strokeWidth={1.8} />
-              <motion.span
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full"
-                style={{ background: C.blue }}
-              />
-            </motion.button>
-
-            {/* Activity */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="flex h-9 w-9 items-center justify-center rounded-xl transition-colors"
-              style={{ background: C.bg, border: `1.5px solid ${C.border}`, color: C.muted }}
-            >
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex h-9 w-9 items-center justify-center rounded-xl border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:text-foreground">
               <Activity className="h-4 w-4" strokeWidth={1.8} />
             </motion.button>
-
-            {/* Divider */}
-            <div className="h-6 w-px" style={{ background: C.border }} />
-
-            {/* User */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-1.5 transition-all"
-              style={{ background: C.bg, border: `1.5px solid ${C.border}` }}
-            >
-              <div className="relative">
-                <img src={adaImg} alt="Mehmet" className="h-7 w-7 rounded-lg object-cover object-top" />
-                <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white bg-emerald-400" />
-              </div>
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:text-foreground">
+              <Bell className="h-4 w-4" strokeWidth={1.8} />
+              <motion.span animate={{ scale: [1,1.3,1] }} transition={{ duration: 2, repeat: Infinity }} className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-violet" />
+            </motion.button>
+            <div className="h-6 w-px bg-foreground/10" />
+            <motion.button whileHover={{ scale: 1.02 }} className="flex items-center gap-2.5 rounded-xl border border-foreground/10 bg-foreground/5 px-3 py-1.5">
+              <img src={adaImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
               <div className="text-left">
-                <p className="text-xs font-semibold leading-none" style={{ color: C.navy }}>Mehmet Kaya</p>
-                <p className="mt-0.5 text-[10px] leading-none" style={{ color: C.muted }}>İstanbul</p>
+                <p className="text-xs font-semibold leading-none">Mehmet Kaya</p>
+                <p className="mt-0.5 text-[10px] leading-none text-foreground/55">İstanbul</p>
               </div>
-              <ChevronDown className="h-3.5 w-3.5" style={{ color: C.muted }} />
+              <ChevronDown className="h-3.5 w-3.5 text-foreground/50" />
             </motion.button>
           </div>
         </motion.header>
 
-        {/* ── SCROLLABLE CONTENT ── */}
-        <main className="flex-1 overflow-y-auto px-6 py-5">
+        {/* ── Scroll body ── */}
+        <main className="relative flex-1 overflow-y-auto">
 
-          {/* Welcome row */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.15 }}
-            className="mb-5 flex items-end justify-between"
+          {/* ════ HERO BANNER — Featured live athlete with parallax ════ */}
+          <motion.section
+            ref={heroRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="relative isolate overflow-hidden border-b border-foreground/8"
+            style={{ minHeight: 440 }}
           >
-            <div>
-              <h1 className="font-display text-2xl font-bold" style={{ color: C.navy }}>
-                Hoş geldin, Mehmet! <span className="text-2xl">👋</span>
-              </h1>
-              <p className="mt-0.5 text-sm" style={{ color: C.muted }}>Bugün sporda neler oluyor, hemen göz at.</p>
-            </div>
-            <div className="flex items-center gap-2 rounded-xl px-3.5 py-2" style={{ background: C.white, border: `1px solid ${C.border}` }}>
-              <Clock className="h-3.5 w-3.5" style={{ color: C.muted }} />
-              <span className="text-xs font-medium" style={{ color: C.muted }}>Cumartesi, 17 Mayıs 2026</span>
-            </div>
-          </motion.div>
+            {/* Aurora background */}
+            <div className="absolute inset-0 -z-20 bg-aurora opacity-90" />
+            <div className="absolute inset-0 -z-10 light-rays opacity-40" />
 
-          {/* ── HERO BANNER ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-5 relative overflow-hidden rounded-3xl p-6"
-            style={{
-              background: `linear-gradient(135deg, ${C.blue} 0%, ${C.sky} 100%)`,
-              boxShadow: `0 12px 48px ${C.blue}35`,
-            }}
-          >
-            {/* decorative circles */}
-            <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10" />
-            <div className="pointer-events-none absolute -right-4  top-8   h-28 w-28 rounded-full bg-white/8"  />
-            <div className="pointer-events-none absolute right-24 -bottom-8 h-36 w-36 rounded-full bg-white/6"  />
+            {/* Parallax athlete cutout — RIGHT side */}
+            <motion.div
+              style={{ y: athleteY, scale: athleteScale, opacity: heroOpacity }}
+              className="pointer-events-none absolute bottom-0 right-0 z-0 h-full w-[40%] hidden md:block"
+            >
+              <div className="absolute -right-12 -bottom-8 h-[110%] w-full">
+                <img
+                  src={archeryPng}
+                  alt=""
+                  className="h-full w-full object-contain object-bottom-right"
+                  style={{ filter: "drop-shadow(0 30px 60px oklch(0.60 0.22 252 / 0.30))" }}
+                />
+              </div>
+              {/* Soft glow under athlete */}
+              <div className="absolute right-12 bottom-0 h-32 w-[70%] rounded-full bg-violet/30 blur-3xl" />
+            </motion.div>
 
-            <div className="relative flex items-center justify-between">
-              <div className="max-w-lg">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" />
-                    3 maç canlı şu an
+            {/* Content */}
+            <div className="relative z-10 mx-auto max-w-7xl px-8 pt-14 pb-12">
+
+              {/* Top welcome strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/25 bg-violet/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-violet backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet" />
+                    Şu an meydanda
                   </span>
-                  <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white/90">
-                    Haftanın özeti hazır
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/50">
+                    Cumartesi · 17 Mayıs
                   </span>
                 </div>
-                <h2 className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                  Mete Gazoz bugün final atışında. <br/>
-                  <span className="text-white/80">Sahneyi kaçırma.</span>
-                </h2>
-                <p className="mt-2 text-sm text-white/75 max-w-sm">
-                  Avrupa Okçuluk Şampiyonası — Budapeşte, 14:30 yerel saat.
-                </p>
-              </div>
-
-              <div className="hidden shrink-0 items-center gap-3 sm:flex">
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-2.5 text-sm font-bold shadow-lg transition-all"
-                  style={{ color: C.blue }}
+                  whileHover={{ x: 3 }}
+                  className="hidden items-center gap-1.5 text-xs font-semibold text-foreground/60 hover:text-foreground sm:inline-flex"
                 >
-                  <Radio className="h-4 w-4" />
+                  Haftalık özet <ArrowUpRight className="h-3.5 w-3.5" />
+                </motion.button>
+              </motion.div>
+
+              {/* Headline */}
+              <motion.h1
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                className="font-display mt-6 max-w-3xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl"
+              >
+                Hoş geldin Mehmet,
+                <br />
+                <span className="text-gradient-violet italic">Mete</span> birazdan sahnede.
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+                className="mt-5 max-w-md text-base leading-relaxed text-foreground/65"
+              >
+                Avrupa Okçuluk Şampiyonası finali Budapeşte'de 14:30'da başlıyor. Sessiz tezahüratını şimdiden gönder.
+              </motion.p>
+
+              {/* CTAs */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="mt-8 flex flex-wrap items-center gap-3"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="group inline-flex items-center gap-3 rounded-full bg-foreground py-2 pl-2 pr-6 text-sm font-bold text-primary-foreground transition-shadow hover:shadow-2xl"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet to-indigo">
+                    <Play className="h-4 w-4 fill-white text-white" />
+                  </span>
                   Canlı İzle
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/15 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all"
+                  whileHover={{ scale: 1.02 }}
+                  className="inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-foreground/8 px-5 py-3 text-sm font-medium text-foreground/85 backdrop-blur-md transition-all hover:border-foreground/35 hover:text-foreground"
                 >
                   <Eye className="h-4 w-4" />
-                  Profil
+                  Mete'nin profili
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  className="inline-flex items-center gap-2 rounded-full border border-foreground/15 px-5 py-3 text-sm font-medium text-foreground/65 backdrop-blur-md transition-all hover:border-foreground/25 hover:text-foreground"
+                >
+                  <Zap className="h-4 w-4" />
+                  Destek ver
+                </motion.button>
+              </motion.div>
+
+              {/* Stat strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.75 }}
+                className="mt-10 grid max-w-2xl grid-cols-3 gap-4 border-t border-foreground/10 pt-6"
+              >
+                {[
+                  { label: "Takip ettiğin",   value: followCount,  suffix: "",   icon: Users },
+                  { label: "Bugün canlı",     value: liveCount,    suffix: "",   icon: Radio, accent: "text-emerald-400" },
+                  { label: "Bu ay destek",     value: supportTotal, suffix: " ₺", icon: TrendingUp },
+                ].map((s) => (
+                  <div key={s.label} className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-foreground/10 bg-foreground/5">
+                      <s.icon className={`h-4 w-4 ${s.accent || "text-foreground/70"}`} strokeWidth={1.8} />
+                    </span>
+                    <div>
+                      <p className="font-display text-2xl font-bold leading-none">
+                        {s.value.toLocaleString("tr-TR")}{s.suffix}
+                      </p>
+                      <p className="mt-1 text-[10px] uppercase tracking-wider text-foreground/55">{s.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </motion.section>
+
+          {/* ════ LIVE ATHLETES — Horizontal scroll showcase ════ */}
+          <motion.section
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={stagger}
+            className="px-8 pt-14 pb-2"
+          >
+            <motion.div variants={fadeUp} className="mx-auto max-w-7xl">
+              <div className="mb-6 flex items-end justify-between">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-violet">— Senin meydanın</p>
+                  <h2 className="font-display mt-2 text-3xl font-bold sm:text-4xl">Sahnedeki sporcuların</h2>
+                </div>
+                <motion.button whileHover={{ x: 3 }} className="hidden items-center gap-1.5 text-sm font-semibold text-foreground/60 hover:text-foreground sm:inline-flex">
+                  Tümü <ArrowUpRight className="h-3.5 w-3.5" />
                 </motion.button>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* ── KPI STRIP ── */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-            className="mb-5 grid grid-cols-3 gap-4"
-          >
-            {[
-              { icon: Users,       label: "Takip ettiğin sporcu", val: followCount,  suffix: "",   color: C.blue, bgColor: "from-blue-50 to-indigo-50/60"   },
-              { icon: Calendar,    label: "Bu hafta etkinlik",     val: eventCount,   suffix: "",   color: "#059669", bgColor: "from-emerald-50 to-teal-50/60" },
-              { icon: TrendingUp,  label: "Toplam destek",         val: supportMoney, suffix: " ₺", color: "#d97706", bgColor: "from-amber-50 to-orange-50/60" },
-            ].map((s) => (
-              <motion.div
-                key={s.label}
-                variants={up}
-                whileHover={{ y: -3, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
-                className="relative overflow-hidden rounded-2xl p-4 transition-all"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${s.bgColor} opacity-60`} />
-                <div className="relative">
-                  <div className="mb-3 flex items-center justify-between">
-                    <s.icon className="h-5 w-5" style={{ color: s.color }} strokeWidth={1.8} />
-                    <ArrowUpRight className="h-3.5 w-3.5 opacity-30" style={{ color: s.color }} />
-                  </div>
-                  <p className="font-display text-2xl font-bold leading-none" style={{ color: C.navy }}>
-                    {s.val.toLocaleString("tr-TR")}{s.suffix}
-                  </p>
-                  <p className="mt-1.5 text-[11px] font-medium" style={{ color: C.muted }}>{s.label}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* ── MAIN GRID ── */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-            className="grid gap-4 lg:grid-cols-[1fr_1fr_300px]"
-          >
-
-            {/* ── COL 1 ── */}
-            <div className="space-y-4">
-
-              {/* Featured Athletes */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-sm font-bold" style={{ color: C.navy }}>Öne Çıkan Sporcular</h2>
-                    <p className="text-[11px]" style={{ color: C.muted }}>Bu hafta sahneye çıkanlar</p>
-                  </div>
-                  <motion.button whileHover={{ x: 2 }} className="flex items-center gap-1 text-xs font-semibold" style={{ color: C.blue }}>
-                    Tümü <ArrowRight className="h-3.5 w-3.5" />
-                  </motion.button>
-                </div>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {featuredAthletes.map((a, i) => (
+            <div className="mx-auto max-w-7xl overflow-x-auto pb-4">
+              <div className="flex gap-5 min-w-max">
+                {liveAthletes.map((a, i) => {
+                  const acc = accentMap[a.accent as keyof typeof accentMap];
+                  return (
                     <motion.div
                       key={a.name}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.35 + i * 0.1 }}
-                      whileHover={{ y: -4 }}
-                      className="group cursor-pointer"
+                      variants={fadeUp}
+                      whileHover={{ y: -6 }}
+                      className="group relative w-[280px] shrink-0 cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-foreground/[0.04] backdrop-blur-sm transition-all duration-500 hover:border-foreground/15"
+                      style={{ boxShadow: `0 0 0 1px ${acc.glow.replace("0.35", "0.0")}` }}
+                      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = `0 20px 50px -12px ${acc.glow}`)}
+                      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = `0 0 0 1px transparent`)}
                     >
-                      <div className="relative overflow-hidden rounded-xl" style={{ aspectRatio: "3/4" }}>
-                        <img src={a.img} alt={a.name} className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-108" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-                        <div className="absolute bottom-2 left-2">
-                          <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-bold text-white backdrop-blur-sm">{a.rank}</span>
+                      {/* Photo zone with cutout */}
+                      <div className="relative h-64 overflow-hidden bg-gradient-to-b from-foreground/[0.03] to-transparent">
+                        {/* Background glow */}
+                        <div className={`absolute inset-0 ${acc.bg} opacity-30 blur-2xl`} />
+                        {/* Athlete cutout */}
+                        <motion.img
+                          src={a.img}
+                          alt={a.name}
+                          className="absolute inset-0 h-full w-full object-contain object-bottom transition-transform duration-700 ease-out group-hover:scale-110"
+                          style={{ filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.3))" }}
+                        />
+                        {/* Rank pill */}
+                        <div className={`absolute left-4 top-4 inline-flex items-center gap-1 rounded-full border ${acc.border} bg-background/50 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${acc.text} backdrop-blur-md`}>
+                          <Trophy className="h-3 w-3" />
+                          {a.rank}
                         </div>
-                        <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/90 shadow">
-                            <ArrowUpRight className="h-3 w-3" style={{ color: C.blue }} />
-                          </div>
+                        {/* Growth pill */}
+                        <div className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2 py-1 text-[10px] font-bold text-emerald-400 backdrop-blur-md">
+                          <TrendingUp className="h-3 w-3" />
+                          {a.growth}
                         </div>
                       </div>
-                      <p className="mt-2 text-[11px] font-bold leading-tight" style={{ color: C.navy }}>{a.name}</p>
-                      <p className="text-[10px]" style={{ color: C.muted }}>{a.branch}</p>
-                      <p className="text-[10px] font-medium" style={{ color: C.blue }}>{a.supporters.toLocaleString("tr-TR")} destekçi</p>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="mt-2 w-full rounded-lg py-1.5 text-[11px] font-semibold transition-all"
-                        style={{ border: `1.5px solid oklch(0.52 0.22 252 / 0.22)`, color: C.blue, background: C.blueSoft }}
-                      >
-                        Profili Gör
-                      </motion.button>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
 
-              {/* Supported Athletes */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-sm font-bold" style={{ color: C.navy }}>Desteklediğin Sporcular</h2>
-                  <motion.button whileHover={{ x: 2 }} className="text-xs font-semibold" style={{ color: C.blue }}>
-                    Tümü →
-                  </motion.button>
-                </div>
-                <div className="space-y-4">
-                  {supported.map((s, i) => (
-                    <motion.div
-                      key={s.name}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + i * 0.08 }}
-                      whileHover={{ x: 3 }}
-                      className="flex items-center gap-3 cursor-pointer"
-                    >
-                      <div className="relative shrink-0">
-                        <img src={s.img} alt={s.name} className="h-10 w-10 rounded-xl object-cover object-top" style={{ boxShadow: `0 0 0 2px ${C.white}, 0 0 0 3px ${C.border}` }} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-bold truncate" style={{ color: C.navy }}>{s.name}</p>
-                          <div className="flex items-center gap-2 ml-2 shrink-0">
-                            <span className="text-[10px] font-semibold text-emerald-500">{s.trend}</span>
-                            <span className="text-xs font-bold" style={{ color: C.blue }}>%{s.pct}</span>
+                      {/* Info */}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="font-display text-lg font-bold leading-tight">{a.name}</p>
+                            <p className="text-xs text-foreground/55">{a.sport}</p>
                           </div>
+                          <motion.div whileHover={{ scale: 1.15, rotate: -10 }} className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 group-hover:bg-violet group-hover:text-white transition-colors">
+                            <ArrowUpRight className="h-4 w-4" />
+                          </motion.div>
                         </div>
-                        <p className="text-[10px] mb-1.5" style={{ color: C.muted }}>{s.branch}</p>
-                        <div className="h-1.5 overflow-hidden rounded-full" style={{ background: `oklch(0.22 0.055 240 / 0.08)` }}>
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${s.pct}%` }}
-                            transition={{ duration: 1.1, delay: 0.5 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                            className="h-full rounded-full"
-                            style={{ background: `linear-gradient(90deg, ${C.blue}, ${C.sky})` }}
-                          />
+
+                        <div className="mt-4 flex items-center justify-between border-t border-foreground/8 pt-3">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider text-foreground/50">Maç</p>
+                            <p className="font-display text-sm font-bold">{a.eta}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[10px] uppercase tracking-wider text-foreground/50">Destekçi</p>
+                            <p className="font-display text-sm font-bold">{a.supporters.toLocaleString("tr-TR")}</p>
+                          </div>
                         </div>
                       </div>
                     </motion.div>
-                  ))}
-                </div>
-              </motion.div>
+                  );
+                })}
+              </div>
             </div>
+          </motion.section>
 
-            {/* ── COL 2 ── */}
-            <div className="space-y-4">
+          {/* ════ MAIN GRID ════ */}
+          <section className="px-8 py-10">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1.5fr_1fr]"
+            >
 
-              {/* Today's Matches */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-sm font-bold" style={{ color: C.navy }}>Bugünün Maçları</h2>
-                    <p className="text-[11px]" style={{ color: C.muted }}>17 Mayıs 2026</p>
+              {/* ── LEFT column: Live matches + Supported athletes ── */}
+              <div className="space-y-6">
+
+                {/* Live Matches */}
+                <motion.div variants={fadeUp} className="rounded-3xl border border-foreground/8 bg-foreground/[0.03] p-6 backdrop-blur-sm">
+                  <div className="mb-5 flex items-end justify-between">
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-violet">Maçlar</p>
+                      <h3 className="font-display mt-2 text-2xl font-bold">Bugün sahada</h3>
+                    </div>
+                    <motion.button whileHover={{ x: 3 }} className="text-xs font-semibold text-foreground/60 hover:text-foreground">
+                      Tümü →
+                    </motion.button>
                   </div>
-                  <motion.button whileHover={{ x: 2 }} className="text-xs font-semibold" style={{ color: C.blue }}>
-                    Tümü →
-                  </motion.button>
-                </div>
-                <div className="space-y-2.5">
-                  {todayMatches.map((m, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + i * 0.09 }}
-                      whileHover={{ scale: 1.01, x: 2 }}
-                      className="flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer transition-all"
-                      style={{ background: m.live ? `oklch(0.52 0.22 252 / 0.04)` : C.bg, border: `1.5px solid ${m.live ? `oklch(0.52 0.22 252 / 0.18)` : C.border}` }}
-                    >
-                      <span className="w-10 shrink-0 text-xs font-bold tabular-nums" style={{ color: m.live ? C.blue : C.muted }}>{m.time}</span>
-                      <span className="text-xl shrink-0">{m.sport}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold truncate" style={{ color: C.navy }}>{m.home}</p>
-                        <p className="text-[10px] truncate" style={{ color: C.muted }}>{m.away}</p>
-                      </div>
-                      {m.live ? (
-                        <div className="shrink-0 flex items-center gap-1.5">
-                          <span className="font-bold text-xs" style={{ color: C.navy }}>{m.score}</span>
-                          <span className="flex items-center gap-1 rounded-full bg-red-500 px-2.5 py-0.5 text-[10px] font-bold text-white">
-                            <span className="h-1.5 w-1.5 animate-ping rounded-full bg-white/70" />
-                            Canlı
-                          </span>
+
+                  <div className="space-y-3">
+                    {todayMatches.map((m, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -16 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.08 }}
+                        whileHover={{ x: 4, backgroundColor: "oklch(0.95 0.008 240 / 0.05)" }}
+                        className={`relative flex items-center gap-4 overflow-hidden rounded-2xl px-4 py-3.5 transition-all cursor-pointer ${
+                          m.live
+                            ? "border border-violet/25 bg-violet/8"
+                            : "border border-foreground/8 bg-foreground/[0.03]"
+                        }`}
+                      >
+                        {/* Time block */}
+                        <div className="w-14 shrink-0">
+                          <p className={`font-display text-sm font-bold tabular-nums ${m.live ? "text-violet" : "text-foreground/55"}`}>
+                            {m.time}
+                          </p>
+                          <p className="text-[10px] text-foreground/45">{m.live ? "CANLI" : ""}</p>
                         </div>
-                      ) : (
-                        <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold" style={{ background: C.bg, color: C.muted, border: `1px solid ${C.border}` }}>
-                          {m.status}
-                        </span>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
 
-              {/* Discover Mode */}
-              <motion.div
-                variants={up}
-                whileHover={{ scale: 1.01 }}
-                className="relative overflow-hidden rounded-2xl p-5 cursor-pointer"
-                style={{ background: `linear-gradient(135deg, oklch(0.94 0.025 232), oklch(0.97 0.016 225))`, border: `1.5px solid oklch(0.52 0.22 252 / 0.15)` }}
-              >
-                <div className="pointer-events-none absolute -right-6 -bottom-6 text-[90px] select-none opacity-80 drop-shadow-xl">🎯</div>
-                <div className="relative">
-                  <div className="mb-2 flex items-center gap-2">
-                    <Compass className="h-4 w-4" style={{ color: C.blue }} />
-                    <h2 className="text-sm font-bold" style={{ color: C.navy }}>Keşfet Modu</h2>
-                    <span className="rounded-full bg-white/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide" style={{ color: C.blue }}>YENİ</span>
+                        {/* Sport icon */}
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-background/40 text-xl">
+                          {m.sport}
+                        </span>
+
+                        {/* Teams */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold truncate">{m.home}</p>
+                          <p className="text-xs text-foreground/55 truncate">vs. {m.away}</p>
+                        </div>
+
+                        {/* Momentum bar for live */}
+                        {m.live && (
+                          <div className="hidden w-32 sm:block">
+                            <div className="mb-1 flex items-center justify-between text-[10px] text-foreground/55">
+                              <span>Momentum</span>
+                              <span className="font-semibold text-violet">%{m.momentum}</span>
+                            </div>
+                            <div className="h-1.5 overflow-hidden rounded-full bg-foreground/10">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                whileInView={{ width: `${m.momentum}%` }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                className="h-full rounded-full bg-gradient-to-r from-violet via-sky to-emerald-400"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Status / score */}
+                        <div className="shrink-0 text-right">
+                          {m.live ? (
+                            <>
+                              <p className="font-display text-base font-bold">{m.score}</p>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[9px] font-bold text-white">
+                                <span className="h-1 w-1 animate-ping rounded-full bg-white" />
+                                LIVE
+                              </span>
+                            </>
+                          ) : (
+                            <span className="rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 text-[10px] font-semibold text-foreground/65">
+                              {m.status}
+                            </span>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                  <p className="max-w-[200px] text-xs leading-relaxed" style={{ color: C.muted }}>
-                    Yeni sporları keşfet, etkinliklere katıl ve kendini geliştir.
+                </motion.div>
+
+                {/* Supported athletes — large detailed list */}
+                <motion.div variants={fadeUp} className="rounded-3xl border border-foreground/8 bg-foreground/[0.03] p-6 backdrop-blur-sm">
+                  <div className="mb-5 flex items-end justify-between">
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sky">Desteklerim</p>
+                      <h3 className="font-display mt-2 text-2xl font-bold">Yolculukları beraberce.</h3>
+                    </div>
+                    <motion.button whileHover={{ scale: 1.05 }} className="flex h-9 w-9 items-center justify-center rounded-xl border border-foreground/12 bg-foreground/5 transition-colors hover:bg-foreground/10">
+                      <Plus className="h-4 w-4" />
+                    </motion.button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {supported.map((s, i) => (
+                      <motion.div
+                        key={s.name}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.08 }}
+                        whileHover={{ x: 3 }}
+                        className="group flex items-center gap-4 rounded-2xl border border-foreground/8 bg-foreground/[0.03] p-3.5 transition-all hover:border-foreground/15 cursor-pointer"
+                      >
+                        {/* Avatar */}
+                        <div className="relative shrink-0">
+                          <img src={s.img} alt="" className="h-12 w-12 rounded-xl object-cover object-top" />
+                          <div className="absolute -bottom-1 -right-1 flex h-5 items-center gap-0.5 rounded-full border border-background bg-emerald-500 px-1.5 text-[9px] font-bold text-white">
+                            {s.trend}
+                          </div>
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-sm font-bold truncate">{s.name}</p>
+                              <p className="text-[11px] text-foreground/55">{s.sport}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="font-display text-sm font-bold text-violet">{s.amount}</p>
+                              <p className="text-[10px] text-foreground/50">bu ay</p>
+                            </div>
+                          </div>
+
+                          <div className="mt-2 flex items-center gap-2">
+                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-foreground/8">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                whileInView={{ width: `${s.pct}%` }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 1.1, delay: 0.3 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                                className="h-full rounded-full bg-gradient-to-r from-violet to-sky"
+                              />
+                            </div>
+                            <span className="font-mono text-[10px] font-bold text-foreground/70 w-9 text-right">%{s.pct}</span>
+                          </div>
+                        </div>
+
+                        <ChevronRight className="h-4 w-4 text-foreground/30 transition-all group-hover:translate-x-1 group-hover:text-foreground" />
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* ── RIGHT column: Events + Activity + Trending ── */}
+              <div className="space-y-6">
+
+                {/* Achievement / Pro stats card */}
+                <motion.div variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-violet/25 p-6"
+                  style={{
+                    background: "linear-gradient(135deg, oklch(0.60 0.22 252 / 0.15), oklch(0.50 0.22 262 / 0.10), transparent)",
+                  }}
+                >
+                  <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-violet/30 blur-3xl" />
+
+                  <div className="relative flex items-start justify-between">
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-violet">Rozetin</p>
+                      <h3 className="font-display mt-2 text-xl font-bold">Tribün Lideri</h3>
+                      <p className="mt-1 text-xs text-foreground/65">5 görevden 3'ü tamam</p>
+                    </div>
+
+                    <motion.div
+                      animate={{ rotate: [0, 6, -6, 0], y: [0, -4, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      className="relative shrink-0"
+                    >
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-2xl"
+                        style={{
+                          background: "linear-gradient(135deg, oklch(0.60 0.22 252), oklch(0.50 0.22 262))",
+                          boxShadow: "0 12px 32px oklch(0.60 0.22 252 / 0.50)",
+                        }}
+                      >
+                        <Shield className="h-8 w-8 text-white" />
+                      </div>
+                      <motion.div
+                        animate={{ scale: [1, 1.4, 1], opacity: [1, 0, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-amber-400"
+                      >
+                        <Star className="h-3.5 w-3.5 text-white fill-white" />
+                      </motion.div>
+                    </motion.div>
+                  </div>
+
+                  <div className="mt-5 h-2 overflow-hidden rounded-full bg-foreground/10">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "60%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.4, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="h-full rounded-full bg-gradient-to-r from-violet via-indigo-soft to-sky"
+                    />
+                  </div>
+
+                  <div className="mt-4 space-y-2">
+                    {[
+                      { label: "İlk sporcunu takip et",       done: true  },
+                      { label: "Canlı maç izle",              done: true  },
+                      { label: "İlk desteğini ver",            done: true  },
+                      { label: "5 farklı branş keşfet",         done: false },
+                      { label: "Bir etkinliğe katıl",           done: false },
+                    ].map((t, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.5 + i * 0.06 }}
+                        className="flex items-center gap-2.5"
+                      >
+                        <div className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
+                          t.done ? "bg-emerald-500 text-white" : "border border-foreground/25"
+                        }`}>
+                          {t.done && "✓"}
+                        </div>
+                        <p className={`text-xs ${t.done ? "text-foreground/45 line-through" : "text-foreground/85"}`}>{t.label}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Activity feed */}
+                <motion.div variants={fadeUp} className="rounded-3xl border border-foreground/8 bg-foreground/[0.03] p-6 backdrop-blur-sm">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-sky" />
+                      <h3 className="font-display text-lg font-bold">Akış</h3>
+                    </div>
+                    <button className="text-[10px] uppercase tracking-wider text-foreground/50 hover:text-foreground">
+                      Hepsi
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {activityFeed.map((a, i) => {
+                      const typeStyle = {
+                        milestone: { color: "text-violet",  dot: "bg-violet"  },
+                        live:      { color: "text-red-400", dot: "bg-red-500" },
+                        event:     { color: "text-sky",     dot: "bg-sky"     },
+                        support:   { color: "text-emerald-400", dot: "bg-emerald-500" },
+                        badge:     { color: "text-amber-400", dot: "bg-amber-500" },
+                      }[a.type as keyof typeof typeStyle];
+                      return (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: 12 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.06 }}
+                          className="flex gap-3"
+                        >
+                          <div className="relative flex flex-col items-center">
+                            <div className={`h-2 w-2 shrink-0 rounded-full ${typeStyle.dot}`}>
+                              {a.type === "live" && (
+                                <motion.div
+                                  animate={{ scale: [1, 2.5, 1], opacity: [1, 0, 1] }}
+                                  transition={{ duration: 1.5, repeat: Infinity }}
+                                  className={`h-2 w-2 rounded-full ${typeStyle.dot}`}
+                                />
+                              )}
+                            </div>
+                            {i < activityFeed.length - 1 && (
+                              <div className="w-px flex-1 bg-foreground/10 my-1" />
+                            )}
+                          </div>
+                          <div className="flex-1 pb-3">
+                            <p className="text-xs leading-snug text-foreground/85">{a.msg}</p>
+                            <p className="mt-0.5 text-[10px] text-foreground/45">{a.time}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+
+                {/* Upcoming events */}
+                <motion.div variants={fadeUp} className="rounded-3xl border border-foreground/8 bg-foreground/[0.03] p-6 backdrop-blur-sm">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-coral">Yaklaşan</p>
+                      <h3 className="font-display mt-1.5 text-lg font-bold">Etkinlikler</h3>
+                    </div>
+                    <motion.button whileHover={{ x: 3 }} className="text-xs font-semibold text-foreground/60 hover:text-foreground">
+                      Tümü →
+                    </motion.button>
+                  </div>
+                  <div className="space-y-2.5">
+                    {events.map((e, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.07 }}
+                        whileHover={{ x: 3 }}
+                        className="group flex items-center gap-3 rounded-2xl border border-foreground/8 bg-foreground/[0.02] p-3 cursor-pointer transition-all hover:border-foreground/14"
+                      >
+                        <div className="flex w-12 shrink-0 flex-col items-center justify-center rounded-xl border border-violet/20 bg-violet/10 py-2">
+                          <span className="font-display text-base font-bold leading-none text-violet">{e.day}</span>
+                          <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider text-violet/65">{e.month}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-xs font-bold leading-tight">{e.title}</p>
+                            {e.hot && <span className="shrink-0 rounded-full bg-red-500/20 px-1.5 py-0.5 text-[9px] font-bold text-red-400">HOT</span>}
+                          </div>
+                          <div className="mt-1 flex items-center gap-1 text-[10px] text-foreground/55">
+                            <span>{e.sport}</span>
+                            <span>·</span>
+                            <span>{e.loc}</span>
+                            <span>·</span>
+                            <span className="text-violet">{e.cap}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Trending sports cloud */}
+                <motion.div variants={fadeUp} className="rounded-3xl border border-foreground/8 bg-foreground/[0.03] p-6 backdrop-blur-sm">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Flame className="h-4 w-4 text-coral" />
+                    <h3 className="font-display text-lg font-bold">Trend branşlar</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {trendingSports.map((tag, i) => (
+                      <motion.button
+                        key={tag}
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.04 }}
+                        whileHover={{ scale: 1.07, y: -1 }}
+                        whileTap={{ scale: 0.96 }}
+                        className="rounded-xl border border-foreground/10 bg-foreground/5 px-3 py-1.5 text-xs font-semibold text-foreground/70 transition-all hover:border-violet/35 hover:bg-violet/10 hover:text-violet"
+                      >
+                        {tag}
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </section>
+
+          {/* ════ DISCOVER MODE BANNER ════ */}
+          <section className="px-8 pb-14">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-foreground/10"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.18 0.05 260) 0%, oklch(0.14 0.04 258) 50%, oklch(0.16 0.05 262) 100%)",
+              }}
+            >
+              {/* Aurora overlays */}
+              <div className="absolute inset-0 -z-10">
+                <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-violet/25 blur-3xl" />
+                <div className="absolute -right-10 -bottom-20 h-72 w-72 rounded-full bg-sky/20 blur-3xl" />
+              </div>
+
+              {/* Tennis cutout — right side decoration */}
+              <div className="pointer-events-none absolute bottom-0 right-0 h-full w-[35%] hidden md:block">
+                <img
+                  src={tennisPng}
+                  alt=""
+                  className="h-full w-full object-contain object-bottom-right opacity-90"
+                  style={{ filter: "drop-shadow(0 20px 40px oklch(0.60 0.22 252 / 0.30))" }}
+                />
+              </div>
+
+              <div className="relative z-10 grid gap-8 p-10 lg:grid-cols-2 lg:p-14">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-violet/30 bg-violet/15 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-violet backdrop-blur-sm">
+                    <Compass className="h-3 w-3" />
+                    Keşfet Modu
+                  </div>
+                  <h3 className="font-display mt-5 text-3xl font-bold leading-tight sm:text-4xl">
+                    Daha izlemediğin <em className="text-gradient-violet not-italic">35 branş</em> seni bekliyor.
+                  </h3>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-foreground/65">
+                    Akrobatik kayak'tan oryantiringe — yapay zekâ destekli keşfet algoritması sana yeni sahneler açıyor.
                   </p>
                   <motion.button
-                    whileHover={{ scale: 1.04, y: -1 }}
+                    whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
-                    className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all"
-                    style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.sky})`, boxShadow: `0 6px 20px ${C.blue}35` }}
+                    className="mt-7 inline-flex items-center gap-3 rounded-full bg-violet py-2.5 pl-2.5 pr-6 text-sm font-bold text-white shadow-2xl shadow-violet/40"
                   >
-                    Keşfetmeye Başla <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                    Keşfetmeye Başla
                   </motion.button>
                 </div>
-              </motion.div>
 
-              {/* Quick Actions */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <h2 className="mb-3.5 text-sm font-bold" style={{ color: C.navy }}>Hızlı Eylemler</h2>
-                <div className="grid grid-cols-2 gap-2">
-                  {quickActions.map((a, i) => (
-                    <motion.button
-                      key={a.label}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.5 + i * 0.07 }}
-                      whileHover={{ scale: 1.04, y: -2 }}
-                      whileTap={{ scale: 0.97 }}
-                      className={`flex flex-col items-center gap-2 rounded-xl p-3.5 text-xs font-semibold transition-all ${a.color}`}
-                      style={{ border: `1px solid currentColor`, borderColor: "transparent" }}
-                    >
-                      <a.icon className="h-5 w-5" strokeWidth={1.8} />
-                      {a.label}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-
-            {/* ── COL 3 ── */}
-            <div className="space-y-4">
-
-              {/* Upcoming Events */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-sm font-bold" style={{ color: C.navy }}>Yakındaki Etkinlikler</h2>
-                  <motion.button whileHover={{ x: 2 }} className="text-xs font-semibold" style={{ color: C.blue }}>
-                    Tümü →
-                  </motion.button>
-                </div>
-                <div className="space-y-3">
-                  {events.map((e, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: 12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + i * 0.09 }}
-                      whileHover={{ x: 3 }}
-                      className="flex gap-3 cursor-pointer group"
-                    >
-                      <div className="flex w-11 shrink-0 flex-col items-center justify-center rounded-xl py-2 text-center"
-                        style={{ background: C.blueSoft, border: `1px solid oklch(0.52 0.22 252 / 0.18)` }}
-                      >
-                        <span className="font-display text-base font-bold leading-none" style={{ color: C.blue }}>{e.day}</span>
-                        <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider" style={{ color: `oklch(0.52 0.22 252 / 0.65)` }}>{e.month}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-1">
-                          <p className="text-[11px] font-bold leading-tight group-hover:text-blue-600 transition-colors" style={{ color: C.navy }}>{e.title}</p>
-                          {e.hot && <span className="shrink-0 rounded-full bg-red-50 px-1.5 py-0.5 text-[9px] font-bold text-red-500">HOT</span>}
-                        </div>
-                        <p className="mt-0.5 flex items-center gap-1 text-[10px]" style={{ color: C.muted }}>
-                          <span>{e.sport}</span>
-                          {e.tags}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Achievement Badge */}
-              <motion.div
-                variants={up}
-                className="relative overflow-hidden rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                      <h2 className="text-sm font-bold" style={{ color: C.navy }}>İlk Adım Rozeti</h2>
-                    </div>
-                    <p className="text-[11px] font-medium" style={{ color: C.muted }}>3 / 5 görev tamamlandı</p>
-
-                    <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ background: `oklch(0.22 0.055 240 / 0.08)` }}>
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "60%" }}
-                        transition={{ duration: 1.2, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                        className="h-full rounded-full"
-                        style={{ background: `linear-gradient(90deg, ${C.blue}, ${C.sky})` }}
-                      />
-                    </div>
-                    <p className="mt-2.5 text-[10px] leading-relaxed" style={{ color: C.muted }}>
-                      Devam et, spor yolculuğunu bir adım daha ileri taşı!
-                    </p>
-                  </div>
-
-                  <motion.div
-                    animate={{
-                      rotate: [0, 8, -8, 0],
-                      y: [0, -4, 0],
-                    }}
-                    transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
-                    className="relative shrink-0 flex h-14 w-14 items-center justify-center rounded-2xl shadow-xl"
-                    style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.sky})`, boxShadow: `0 8px 24px ${C.blue}40` }}
-                  >
-                    <Shield className="h-7 w-7 text-white" />
-                    <motion.div
-                      animate={{ scale: [1, 1.4, 1], opacity: [1, 0, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 shadow-md"
-                    >
-                      <Star className="h-3 w-3 text-white fill-white" />
-                    </motion.div>
-                  </motion.div>
-                </div>
-
-                {/* task checklist */}
-                <div className="mt-4 space-y-2">
+                <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "İlk sporcunu takip et",    done: true  },
-                    { label: "Canlı maç izle",            done: true  },
-                    { label: "Destek ver",                done: true  },
-                    { label: "Etkinliğe katıl",           done: false },
-                    { label: "5 sporcu keşfet",           done: false },
-                  ].map((t, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div className={`h-4 w-4 shrink-0 rounded-full flex items-center justify-center text-white text-[9px] font-bold ${t.done ? "bg-emerald-400" : "border"}`}
-                        style={t.done ? {} : { borderColor: C.border }}>
-                        {t.done && "✓"}
-                      </div>
-                      <p className={`text-[11px] ${t.done ? "line-through" : ""}`} style={{ color: t.done ? C.muted : C.navy }}>{t.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Trending */}
-              <motion.div
-                variants={up}
-                className="rounded-2xl p-5"
-                style={{ background: C.white, border: `1px solid ${C.border}` }}
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <Flame className="h-4 w-4 text-orange-500" />
-                  <h2 className="text-sm font-bold" style={{ color: C.navy }}>Trend Branşlar</h2>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {["Okçuluk 🏹", "Voleybol 🏐", "Atletizm 🏃", "Eskrim ⚔️", "Yelken ⛵", "Tekvando 🥋"].map((tag) => (
-                    <motion.button
-                      key={tag}
-                      whileHover={{ scale: 1.06, y: -1 }}
-                      whileTap={{ scale: 0.97 }}
-                      className="rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all"
-                      style={{ background: C.bg, border: `1px solid ${C.border}`, color: C.muted }}
+                    { v: "240+", l: "Sporcu" },
+                    { v: "7+",   l: "Branş" },
+                    { v: "12K",  l: "Tribün" },
+                    { v: "₺840K",l: "Destek" },
+                    { v: "94%",  l: "Memnuniyet" },
+                    { v: "24/7", l: "Canlı" },
+                  ].map((s, i) => (
+                    <motion.div
+                      key={s.l}
+                      initial={{ opacity: 0, y: 14 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + i * 0.06 }}
+                      className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-3.5 backdrop-blur-sm"
                     >
-                      {tag}
-                    </motion.button>
+                      <p className="font-display text-2xl font-bold">{s.v}</p>
+                      <p className="mt-1 text-[10px] uppercase tracking-wider text-foreground/55">{s.l}</p>
+                    </motion.div>
                   ))}
                 </div>
-              </motion.div>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </section>
+
         </main>
       </div>
     </div>
