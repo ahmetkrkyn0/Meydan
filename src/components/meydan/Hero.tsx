@@ -55,17 +55,22 @@ export function Hero() {
 
         {/* Top-left mission card — premium typographic hierarchy */}
         <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 1.0 }}
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.1, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute top-[14%] left-[3%] max-w-[38%] hidden md:block"
         >
-          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-7 backdrop-blur-md lg:p-8">
+          <motion.div
+            className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-7 backdrop-blur-md lg:p-8"
+            initial={{ boxShadow: "0 0 0px rgba(139,92,246,0)" }}
+            animate={{ boxShadow: "0 0 60px -10px rgba(139,92,246,0.18), 0 0 120px -30px rgba(139,92,246,0.08)" }}
+            transition={{ duration: 1.3, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h2 className="font-display text-[1.95rem] font-medium leading-[1.08] tracking-[-0.02em] text-white lg:text-[2.5rem] xl:text-[3rem]">
               Her sporun bir{" "}
               <span className="text-gradient-violet italic">meydanı</span> var.
             </h2>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Bottom-right value props */}
