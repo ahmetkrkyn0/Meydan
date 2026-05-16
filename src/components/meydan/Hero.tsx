@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import heroImg from "@/assets/meydan-hero.png";
+// Responsive AVIF/WebP variants generated at build time by vite-imagetools
+import heroAvifSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&format=avif&as=srcset";
+import heroWebpSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&format=webp&as=srcset";
+import heroFallback from "@/assets/meydan-hero.png?w=1280&format=webp";
 
 const stats = [
   { value: "7+", label: "Olimpik branş" },
