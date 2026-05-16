@@ -19,7 +19,7 @@ export function FinalCta() {
       />
 
       {/* Vignette edges */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/50 via-transparent to-background/70" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/55 via-transparent to-background/75" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
 
       <div className="mx-auto max-w-5xl px-5 sm:px-8">

@@ -68,7 +68,7 @@ export function Problem() {
         </div>
 
         {/* Animated rule */}
-        <motion.div style={{ width: lineWidth }} className="h-px bg-gradient-to-r from-violet via-sky to-transparent" />
+        <motion.div style={{ width: lineWidth }} className="h-px bg-gradient-to-r from-violet via-accent to-transparent" />
 
         {/* Problem cards — editorial numbered list */}
         <div className="mt-16 space-y-0 divide-y divide-foreground/8">

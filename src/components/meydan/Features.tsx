@@ -47,9 +47,9 @@ const accentMap: Record<string, string> = {
 };
 
 const glowMap: Record<string, string> = {
-  sky: "oklch(0.78 0.13 235)",
-  violet: "oklch(0.65 0.24 300)",
-  coral: "oklch(0.7 0.21 25)",
+  sky: "oklch(0.72 0.13 200)",   /* teal-cyan */
+  violet: "oklch(0.78 0.16 68)", /* amber gold */
+  coral: "oklch(0.72 0.18 38)",  /* warm orange */
 };
 
 export function Features() {

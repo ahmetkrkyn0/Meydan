@@ -5,9 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Meydan — Teal Stadium + Gold Trophy design system.
- * Deep emerald-teal base, warm amber/gold accent, cream white text.
- * Stadium floodlight meets championship podium.
+ * Meydan — Light Theme: Warm White + Navy + Electric Blue + Crimson
+ * Clean editorial sports platform. Bold type on bright canvas.
  */
 
 @theme inline {
@@ -52,42 +51,42 @@
 :root {
   --radius: 1rem;
 
-  /* ── Base: deep teal-emerald, stadium night ── */
-  --background: oklch(0.32 0.06 195);
-  --ink:        oklch(0.26 0.06 195);
-  --foreground: oklch(0.97 0.01 85);   /* warm cream white */
+  /* ── Base: warm off-white canvas ── */
+  --background: oklch(0.98 0.005 80);   /* warm white, hint of sand */
+  --ink:        oklch(0.93 0.008 80);   /* slightly deeper for footer */
+  --foreground: oklch(0.18 0.04 265);   /* deep navy, near-black */
 
-  --card:             oklch(0.97 0.01 85 / 0.07);
-  --card-foreground:  oklch(0.97 0.01 85);
-  --popover:          oklch(0.40 0.07 195);
-  --popover-foreground: oklch(0.97 0.01 85);
+  --card:             oklch(0.18 0.04 265 / 0.05);
+  --card-foreground:  oklch(0.18 0.04 265);
+  --popover:          oklch(0.99 0.002 80);
+  --popover-foreground: oklch(0.18 0.04 265);
 
-  --primary:            oklch(0.97 0.01 85);
-  --primary-foreground: oklch(0.26 0.06 195);
+  --primary:            oklch(0.18 0.04 265);   /* navy */
+  --primary-foreground: oklch(0.98 0.005 80);   /* white */
 
-  --secondary:            oklch(0.42 0.07 195);
-  --secondary-foreground: oklch(0.97 0.01 85);
+  --secondary:            oklch(0.94 0.008 80);
+  --secondary-foreground: oklch(0.18 0.04 265);
 
-  --muted:            oklch(0.97 0.01 85 / 0.09);
-  --muted-foreground: oklch(0.76 0.04 185);
+  --muted:            oklch(0.18 0.04 265 / 0.07);
+  --muted-foreground: oklch(0.48 0.04 260);     /* medium slate */
 
-  /* ── Accent: warm amber / championship gold ── */
-  --accent:            oklch(0.78 0.16 68);   /* golden amber */
-  --accent-foreground: oklch(0.22 0.05 195);
+  /* ── Accent: electric blue ── */
+  --accent:            oklch(0.58 0.22 255);    /* vivid electric blue */
+  --accent-foreground: oklch(0.99 0.002 80);
 
   /* ── Brand palette ── */
-  --indigo:      oklch(0.60 0.18 220);   /* steel blue — secondary accent */
-  --indigo-soft: oklch(0.72 0.14 215);
-  --violet:      oklch(0.78 0.16 68);    /* repurposed: "violet" slot → amber gold */
-  --sky:         oklch(0.72 0.13 200);   /* teal-cyan highlight */
-  --coral:       oklch(0.72 0.18 38);    /* warm orange — tertiary */
+  --indigo:      oklch(0.45 0.20 265);   /* rich navy-indigo */
+  --indigo-soft: oklch(0.62 0.18 258);   /* medium blue */
+  --violet:      oklch(0.58 0.22 255);   /* electric blue (reused as primary brand) */
+  --sky:         oklch(0.70 0.16 240);   /* sky blue */
+  --coral:       oklch(0.58 0.22 25);    /* crimson-red — strong sport accent */
 
-  --destructive:            oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.97 0.01 85);
+  --destructive:            oklch(0.58 0.22 25);
+  --destructive-foreground: oklch(0.99 0.002 80);
 
-  --border: oklch(0.97 0.01 85 / 0.12);
-  --input:  oklch(0.97 0.01 85 / 0.16);
-  --ring:   oklch(0.78 0.16 68 / 0.6);
+  --border: oklch(0.18 0.04 265 / 0.10);
+  --input:  oklch(0.18 0.04 265 / 0.08);
+  --ring:   oklch(0.58 0.22 255 / 0.5);
 }
 
 @layer base {
@@ -105,7 +104,7 @@
     font-feature-settings: "ss01", "cv11";
   }
   ::selection {
-    background: color-mix(in oklab, var(--accent) 45%, transparent);
+    background: color-mix(in oklab, var(--accent) 20%, transparent);
     color: var(--foreground);
   }
 }
@@ -117,95 +116,95 @@
     font-weight: 600;
   }
 
-  /* ── Glass surfaces: teal-tinted frost ── */
+  /* ── Glass: white frosted for light theme ── */
   .glass {
     background: linear-gradient(
       135deg,
-      color-mix(in oklab, var(--foreground) 8%, transparent),
-      color-mix(in oklab, var(--foreground) 2%, transparent)
+      oklch(0.99 0.002 80 / 0.7),
+      oklch(0.97 0.005 80 / 0.4)
     );
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 11%, transparent);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid oklch(0.18 0.04 265 / 0.08);
   }
   .glass-strong {
     background: linear-gradient(
       135deg,
-      color-mix(in oklab, var(--foreground) 13%, transparent),
-      color-mix(in oklab, var(--foreground) 4%, transparent)
+      oklch(0.99 0.002 80 / 0.85),
+      oklch(0.96 0.006 80 / 0.55)
     );
-    backdrop-filter: blur(28px) saturate(170%);
-    -webkit-backdrop-filter: blur(28px) saturate(170%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border: 1px solid oklch(0.18 0.04 265 / 0.10);
   }
 
-  /* ── Gradients ── */
+  /* ── Text gradients ── */
   .text-gradient {
     background: linear-gradient(135deg,
-      oklch(0.97 0.01 85) 0%,
-      oklch(0.85 0.15 68) 60%,
-      oklch(0.72 0.13 200) 100%);
+      oklch(0.18 0.04 265) 0%,
+      oklch(0.58 0.22 255) 60%,
+      oklch(0.70 0.16 240) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Main accent gradient: gold → warm orange */
+  /* Primary accent: electric blue → sky */
   .text-gradient-violet {
     background: linear-gradient(135deg,
-      oklch(0.90 0.14 78) 0%,
-      oklch(0.75 0.18 55) 100%);
+      oklch(0.52 0.24 258) 0%,
+      oklch(0.65 0.20 248) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Aurora: teal lake + gold sunrise glow */
+  /* Aurora: very subtle for light theme — barely-there tinted zones */
   .bg-aurora {
     background:
-      radial-gradient(ellipse 55% 45% at 10% 15%,
-        color-mix(in oklab, oklch(0.72 0.13 200) 40%, transparent), transparent 65%),
-      radial-gradient(ellipse 50% 40% at 88% 8%,
-        color-mix(in oklab, oklch(0.78 0.16 68) 30%, transparent), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 15% 20%,
+        oklch(0.58 0.22 255 / 0.08), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 88% 10%,
+        oklch(0.58 0.22 25 / 0.06), transparent 60%),
       radial-gradient(ellipse 70% 55% at 50% 95%,
-        color-mix(in oklab, oklch(0.60 0.18 220) 35%, transparent), transparent 70%),
+        oklch(0.70 0.16 240 / 0.08), transparent 70%),
       linear-gradient(160deg,
-        oklch(0.38 0.08 200) 0%,
-        oklch(0.32 0.06 195) 55%,
-        oklch(0.27 0.06 192) 100%);
+        oklch(0.97 0.008 240) 0%,
+        oklch(0.98 0.005 80) 50%,
+        oklch(0.96 0.008 50) 100%);
   }
 
-  /* Dot grid */
+  /* Dot grid — dark on light */
   .grid-dots {
     background-image: radial-gradient(
-      color-mix(in oklab, var(--foreground) 10%, transparent) 1px,
+      oklch(0.18 0.04 265 / 0.08) 1px,
       transparent 1px
     );
     background-size: 28px 28px;
   }
 
-  /* Light rays: teal + gold sweep */
+  /* Light rays — electric blue + crimson sweep */
   .light-rays {
     background:
       conic-gradient(from 200deg at 50% 100%,
         transparent 0deg,
-        color-mix(in oklab, oklch(0.72 0.13 200) 20%, transparent) 22deg,
+        oklch(0.58 0.22 255 / 0.12) 22deg,
         transparent 48deg,
-        color-mix(in oklab, oklch(0.78 0.16 68) 22%, transparent) 78deg,
+        oklch(0.58 0.22 25 / 0.10) 78deg,
         transparent 108deg,
-        color-mix(in oklab, oklch(0.72 0.13 200) 18%, transparent) 138deg,
+        oklch(0.70 0.16 240 / 0.10) 138deg,
         transparent 168deg);
   }
 
   /* Glow helpers */
   .glow-violet {
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent),
-      0 24px 80px -20px color-mix(in oklab, var(--accent) 55%, transparent);
+      0 0 0 1px oklch(0.58 0.22 255 / 0.20),
+      0 24px 80px -20px oklch(0.58 0.22 255 / 0.25);
   }
   .ring-glow {
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent),
-      0 20px 60px -20px color-mix(in oklab, var(--indigo) 45%, transparent);
+      0 0 0 1px oklch(0.18 0.04 265 / 0.08),
+      0 20px 60px -20px oklch(0.45 0.20 265 / 0.20);
   }
 }
