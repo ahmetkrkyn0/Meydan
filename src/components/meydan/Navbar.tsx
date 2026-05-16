@@ -1,8 +1,14 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Logo } from "./Logo";
+import { useState } from "react";
 
 export function Navbar() {
+  const { scrollY } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -10,29 +16,46 @@ export function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50"
     >
-      <div className="mx-auto mt-4 max-w-7xl px-4 sm:px-6">
-        <div className="flex items-center justify-between rounded-full border border-white/10 bg-black/30 px-4 py-2.5 backdrop-blur-md sm:px-5">
+      <div className="mx-auto mt-3 max-w-7xl px-4 sm:px-6">
+        <motion.div
+          animate={scrolled
+            ? { background: "oklch(0.14 0.04 258 / 0.92)", borderColor: "oklch(0.95 0.008 240 / 0.12)", boxShadow: "0 4px 24px oklch(0 0 0 / 0.30)" }
+            : { background: "oklch(0 0 0 / 0.15)", borderColor: "oklch(1 0 0 / 0.18)", boxShadow: "none" }
+          }
+          transition={{ duration: 0.3 }}
+          className="flex items-center justify-between rounded-full border px-4 py-2.5 backdrop-blur-md sm:px-5"
+        >
           <Logo />
           <nav className="hidden items-center gap-8 md:flex">
-            <a href="#sunar" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Keşfet</a>
-            <a href="#ozellikler" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Sporcular</a>
-            <a href="#cta" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Destekle</a>
+            {[
+              { href: "#sunar",      label: "Keşfet" },
+              { href: "#ozellikler", label: "Sporcular" },
+              { href: "#cta",        label: "Destekle" },
+            ].map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
           <div className="flex items-center gap-2">
             <a
               href="#cta"
-              className="hidden rounded-full border border-foreground/20 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground/10 sm:inline-flex"
+              className="hidden rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/85 transition-all hover:bg-white/10 sm:inline-flex"
             >
               Giriş Yap
             </a>
             <button
               aria-label="Menü"
-              className="glass flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/10"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition-colors hover:bg-white/15"
             >
               <Menu className="h-4 w-4" />
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </motion.header>
   );

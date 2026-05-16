@@ -1,5 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { FloatingAthlete } from "./FloatingAthlete";
+import archeryImg from "@/assets/sport-archery-nobg.png";
 
 const problems = [
   {
@@ -8,6 +10,7 @@ const problems = [
     desc: "Olimpik branşların yıldızları kendi şehrinde bile tanınmıyor. Hikâye yok, sahne yok, tribün yok.",
     stat: "94%",
     statLabel: "medyada futbol",
+    color: "oklch(0.52 0.22 252)",
   },
   {
     num: "02",
@@ -15,6 +18,7 @@ const problems = [
     desc: "Tribün boş değil — sadece bağlanacağı bir yer arıyor. Topluluk parçalı, enerji çevresiz.",
     stat: "12M",
     statLabel: "potansiyel taraftar",
+    color: "oklch(0.68 0.17 220)",
   },
   {
     num: "03",
@@ -22,6 +26,7 @@ const problems = [
     desc: "İyi niyet var, kanal yok. Küçük katkıların sporcuya direkt ulaşacağı bir köprü eksik.",
     stat: "₺0",
     statLabel: "ortalama sporcu geliri",
+    color: "oklch(0.60 0.20 16)",
   },
 ];
 
@@ -31,25 +36,28 @@ export function Problem() {
   const lineWidth = useTransform(scrollYProgress, [0.1, 0.5], ["0%", "100%"]);
 
   return (
-    <section id="problem" ref={ref} className="relative overflow-hidden py-28 sm:py-36">
-      {/* Background texture */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 grid-dots opacity-[0.035]" />
-        <div className="absolute left-0 top-0 h-[500px] w-[500px] -translate-x-1/3 -translate-y-1/4 rounded-full bg-violet/10 blur-[120px]" />
-        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/4 translate-y-1/4 rounded-full bg-sky/8 blur-[100px]" />
-      </div>
+    <section id="problem" ref={ref} className="relative isolate overflow-hidden py-28 sm:py-36">
+      <FloatingAthlete src={archeryImg} alt="Okçuluk sporcusu" side="right" />
+      {/* Dot grid */}
+      <div className="pointer-events-none absolute inset-0 -z-10 grid-dots" />
+      {/* Subtle color blooms */}
+      <div className="pointer-events-none absolute -left-48 -top-48 -z-10 h-[500px] w-[500px] rounded-full bg-violet/8 blur-[140px]" />
+      <div className="pointer-events-none absolute -bottom-48 -right-48 -z-10 h-[400px] w-[400px] rounded-full bg-sky/10 blur-[120px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        {/* Header row */}
-        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-foreground/10 pb-10">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+        {/* Header */}
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-foreground/8 pb-10">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-violet">— Problem</p>
-            <h2 className="font-display mt-4 text-5xl leading-[0.95] text-foreground sm:text-7xl lg:text-[5.5rem]">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet" />
+              Problem
+            </span>
+            <h2 className="font-display mt-5 text-5xl leading-[0.95] text-foreground sm:text-7xl lg:text-[5.5rem]">
               Tribün boş değil.
               <br />
               Sadece{" "}
@@ -57,54 +65,60 @@ export function Problem() {
             </h2>
           </motion.div>
           <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-xs text-sm leading-relaxed text-muted-foreground"
           >
             Türkiye'de futbol dışı her branş aynı üç duvara çarpıyor. Önce problemi net koyalım; sonra meydanı kuralım.
           </motion.p>
         </div>
 
-        {/* Animated rule */}
-        <motion.div style={{ width: lineWidth }} className="h-px bg-gradient-to-r from-violet via-sky to-transparent" />
+        {/* Animated sweep line */}
+        <motion.div
+          style={{ width: lineWidth }}
+          className="h-[2px] rounded-full bg-gradient-to-r from-violet via-sky to-transparent"
+        />
 
-        {/* Problem cards — editorial numbered list */}
-        <div className="mt-16 space-y-0 divide-y divide-foreground/8">
+        {/* Rows */}
+        <div className="mt-2 divide-y divide-foreground/6">
           {problems.map((p, i) => (
             <motion.div
               key={p.num}
-              initial={{ opacity: 0, y: 32 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.7, delay: i * 0.12 }}
-              className="group grid cursor-default grid-cols-12 items-center gap-4 py-10 transition-colors hover:bg-foreground/[0.02] sm:gap-8"
+              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="group grid cursor-default grid-cols-12 items-center gap-4 rounded-2xl px-4 py-10 transition-colors hover:bg-foreground/[0.03] sm:gap-8"
             >
-              {/* Number */}
               <div className="col-span-2 sm:col-span-1">
-                <span className="font-display text-[2rem] font-medium leading-none text-foreground/15 transition-colors duration-500 group-hover:text-violet/60 sm:text-[2.5rem]">
+                <span className="font-display text-3xl font-bold leading-none text-foreground/12 transition-colors duration-400 group-hover:text-foreground/25">
                   {p.num}
                 </span>
               </div>
 
-              {/* Title */}
               <div className="col-span-10 sm:col-span-4 lg:col-span-3">
-                <h3 className="font-display text-2xl text-foreground transition-colors group-hover:text-white sm:text-3xl">
+                <h3 className="font-display text-2xl text-foreground sm:text-3xl">
                   {p.title}
                 </h3>
               </div>
 
-              {/* Desc */}
               <div className="col-span-12 sm:col-span-4 lg:col-span-5">
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">{p.desc}</p>
               </div>
 
-              {/* Stat — right rail */}
-              <div className="col-span-12 flex items-baseline gap-3 sm:col-span-3 lg:col-span-3 lg:justify-end">
-                <span className="font-display text-4xl font-medium text-foreground/90 transition-all duration-500 group-hover:text-violet sm:text-5xl">
+              <div className="col-span-12 flex items-baseline gap-2 sm:col-span-3 lg:col-span-3 lg:justify-end">
+                <motion.span
+                  className="font-display text-4xl font-bold sm:text-5xl"
+                  style={{ color: p.color }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                >
                   {p.stat}
-                </span>
+                </motion.span>
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">{p.statLabel}</span>
               </div>
             </motion.div>

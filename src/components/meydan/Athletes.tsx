@@ -1,61 +1,38 @@
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import adaImg from "@/assets/athlete-ada.jpg";
+import { ArrowRight, Star } from "lucide-react";
+import adaImg   from "@/assets/athlete-ada.jpg";
 import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg from "@/assets/athlete-lina.jpg";
-import mertImg from "@/assets/athlete-mert.jpg";
+import linaImg  from "@/assets/athlete-lina.jpg";
+import mertImg  from "@/assets/athlete-mert.jpg";
 
 const athletes = [
-  {
-    img: adaImg,
-    name: "Ada Yılmaz",
-    sport: "Okçuluk",
-    rank: "#3 Ulusal",
-    supporters: "1.2K",
-  },
-  {
-    img: keremImg,
-    name: "Kerem Taş",
-    sport: "Güreş",
-    rank: "#1 Ulusal",
-    supporters: "2.4K",
-  },
-  {
-    img: linaImg,
-    name: "Lina Demir",
-    sport: "Yüzme",
-    rank: "Olimpik Aday",
-    supporters: "980",
-  },
-  {
-    img: mertImg,
-    name: "Mert Kaya",
-    sport: "Satranç",
-    rank: "#7 Avrupa",
-    supporters: "760",
-  },
+  { img: adaImg,   name: "Ada Yılmaz",  sport: "Okçuluk", rank: "#3 Ulusal",    supporters: "1.2K", featured: false },
+  { img: keremImg, name: "Kerem Taş",   sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
+  { img: linaImg,  name: "Lina Demir",  sport: "Yüzme",   rank: "Olimpik Aday", supporters: "980",  featured: false },
+  { img: mertImg,  name: "Mert Kaya",   sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
 ];
 
 export function Athletes() {
   return (
     <section id="sporcular" className="relative overflow-hidden py-28 sm:py-36">
       {/* Ambient */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute right-0 top-1/2 h-[500px] w-[500px] -translate-y-1/2 translate-x-1/3 rounded-full bg-violet/10 blur-[140px]" />
-        <div className="absolute left-0 top-1/2 h-[400px] w-[400px] -translate-x-1/3 -translate-y-1/2 rounded-full bg-sky/8 blur-[120px]" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 -z-10 grid-dots opacity-60" />
+      <div className="pointer-events-none absolute right-0 top-1/2 -z-10 h-[500px] w-[500px] -translate-y-1/2 translate-x-1/3 rounded-full bg-sky/10 blur-[130px]" />
+      <div className="pointer-events-none absolute left-0 top-1/2 -z-10 h-[400px] w-[400px] -translate-x-1/3 -translate-y-1/2 rounded-full bg-violet/8 blur-[110px]" />
 
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-violet">— Sporcular</p>
-            <h2 className="font-display mt-4 text-5xl leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet" />
+              Sporcular
+            </span>
+            <h2 className="font-display mt-5 text-5xl leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
               Sahnedekiler.
             </h2>
           </motion.div>
@@ -66,70 +43,70 @@ export function Athletes() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="group inline-flex items-center gap-2 rounded-full border border-foreground/12 bg-white/70 px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm backdrop-blur-sm transition-all hover:border-violet/25 hover:text-violet hover:shadow"
           >
             Tümünü keşfet
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </motion.a>
         </div>
 
-        {/* Athlete cards */}
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {athletes.map((a, i) => (
             <motion.div
               key={a.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.7, delay: i * 0.1 }}
-              className="group relative cursor-pointer overflow-hidden rounded-3xl"
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4 }}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-foreground/[0.04] transition-all duration-500 hover:border-foreground/15 hover:bg-foreground/[0.07]"
             >
-              {/* Photo */}
+              {a.featured && (
+                <div className="absolute left-4 top-4 z-10 flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-50 px-2.5 py-1">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-amber-600">Öne Çıkan</span>
+                </div>
+              )}
+
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img
                   src={a.img}
                   alt={a.name}
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 />
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.24_0.07_272)] via-[oklch(0.28_0.07_272/0.4)] to-transparent" />
+                {/* Gradient — fades into white card bottom */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.14_0.04_258)] via-[oklch(0.14_0.04_258/0.35)] to-transparent" />
 
-                {/* Sport tag */}
-                <div className="absolute left-4 top-4">
-                  <span className="inline-flex items-center rounded-full border border-white/20 bg-black/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 backdrop-blur-md">
-                    {a.sport}
-                  </span>
-                </div>
-
-                {/* Info overlay */}
-                <div className="absolute inset-x-4 bottom-4">
-                  <div className="rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-md">
-                    <p className="font-display text-lg leading-tight text-white">{a.name}</p>
-                    <p className="mt-0.5 text-xs text-white/60">{a.rank}</p>
-
-                    <div className="mt-3 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <div className="flex -space-x-1">
-                          {[...Array(3)].map((_, j) => (
-                            <div
-                              key={j}
-                              className="h-5 w-5 rounded-full border border-black/40 bg-gradient-to-br from-violet/60 to-indigo/40"
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[11px] text-white/60">{a.supporters} destekçi</span>
-                      </div>
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 + i * 0.1 }}
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-violet/20 transition-all duration-300 group-hover:bg-violet group-hover:scale-110"
-                      >
-                        <ArrowRight className="h-3.5 w-3.5 text-white" />
-                      </motion.div>
-                    </div>
+                {/* Sport tag — top right if not featured */}
+                {!a.featured && (
+                  <div className="absolute right-4 top-4">
+                    <span className="inline-flex items-center rounded-full border border-foreground/10 bg-white/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-foreground/60 backdrop-blur-sm">
+                      {a.sport}
+                    </span>
                   </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="px-5 pb-5 pt-0 -mt-6 relative z-10">
+                <p className="font-display text-xl text-foreground">{a.name}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{a.sport} · {a.rank}</p>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex -space-x-1.5">
+                      {[...Array(3)].map((_, j) => (
+                        <div key={j} className="h-6 w-6 rounded-full border-2 border-foreground/10 bg-gradient-to-br from-violet/60 to-sky/40 shadow-sm" />
+                      ))}
+                    </div>
+                    <span className="text-xs text-muted-foreground">{a.supporters}</span>
+                  </div>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-violet/10 text-violet transition-colors duration-300 group-hover:bg-violet group-hover:text-white"
+                  >
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
