@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate w-full overflow-hidden pt-24 sm:pt-28"
+      className="relative isolate w-full pt-24 sm:pt-28"
     >
       {/* Ambient backdrop */}
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-80">
