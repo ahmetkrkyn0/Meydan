@@ -21,26 +21,22 @@ export function Hero() {
         <div className="absolute left-1/2 top-0 h-[260px] w-[900px] -translate-x-1/2 rounded-full bg-sky/10 blur-[120px]" />
       </div>
 
-      {/* Hero photo — never covered by text */}
-      <motion.div
+      {/* Hero photo — full artwork, never cropped, centered, breathing room */}
+      <motion.figure
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto w-full max-w-[1600px] px-4 sm:px-6"
+        className="mx-auto flex w-full justify-center px-4 sm:px-8 lg:px-12"
       >
-        <div className="relative overflow-hidden rounded-[28px] ring-1 ring-foreground/10">
-          <motion.img
-            src={heroImg}
-            alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
-            initial={{ scale: 1.04, filter: "blur(12px)" }}
-            animate={{ scale: 1, filter: "blur(0px)" }}
-            transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-            className="block h-auto w-full object-contain"
-          />
-          {/* Soft vignette to blend with page */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
-        </div>
-      </motion.div>
+        <motion.img
+          src={heroImg}
+          alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
+          initial={{ scale: 1.02, filter: "blur(10px)" }}
+          animate={{ scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+          className="block h-auto w-full max-w-[1800px] object-contain object-center"
+        />
+      </motion.figure>
 
       {/* Text block — clearly below the image */}
       <div className="relative z-10 px-4 pb-20 pt-12 sm:px-6 sm:pb-24 sm:pt-16 lg:pb-28">
