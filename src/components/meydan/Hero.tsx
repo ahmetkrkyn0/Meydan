@@ -118,6 +118,40 @@ export function Hero() {
         </motion.div>
       </motion.figure>
 
+      {/* Premium stat chips — directly below hero image */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="relative z-10 -mt-6 px-4 sm:-mt-8 sm:px-6 lg:-mt-10"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {[
+              { icon: Trophy, label: "Futbol dışı sporlar", value: "7+ branş" },
+              { icon: Users, label: "Dijital tribün", value: "12K destekçi" },
+              { icon: HeartHandshake, label: "Doğrudan destek", value: "₺840K+" },
+            ].map((chip, i) => (
+              <motion.div
+                key={chip.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 + i * 0.12 }}
+                className="glass-strong flex items-center gap-4 rounded-2xl px-5 py-4"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet/30 to-indigo/20">
+                  <chip.icon className="h-5 w-5 text-violet" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{chip.label}</p>
+                  <p className="text-xs text-muted-foreground">{chip.value}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
       {/* Text block — clearly below the image */}
       <div className="relative z-10 px-4 pb-20 pt-12 sm:px-6 sm:pb-24 sm:pt-16 lg:pb-28">
         <div className="mx-auto max-w-7xl">
