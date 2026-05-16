@@ -156,13 +156,13 @@ export function Hero() {
             {/* Bottom stat strip */}
             <div className="absolute inset-x-4 bottom-4 hidden sm:block">
               <div className="glass-strong flex flex-wrap items-center justify-between gap-6 rounded-2xl px-6 py-4">
-                <Stat label="Futbol dışı sporlar" value="7+" />
+                <Stat label="Futbol dışı sporlar" value="7+" index={0} />
                 <Divider />
-                <Stat label="Dijital tribün" value="12K" />
+                <Stat label="Dijital tribün" value="12K" index={1} />
                 <Divider />
-                <Stat label="Doğrudan destek" value="₺840K" />
+                <Stat label="Doğrudan destek" value="₺840K" index={2} />
                 <Divider />
-                <Stat label="Aktif sporcu" value="240+" />
+                <Stat label="Aktif sporcu" value="240+" index={3} />
               </div>
             </div>
           </div>
