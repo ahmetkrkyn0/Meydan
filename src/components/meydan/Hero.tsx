@@ -11,19 +11,23 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 -z-20 h-[70%] light-rays opacity-50" />
       <div className="absolute inset-0 -z-10 grid-dots opacity-[0.15]" />
 
-      {/* Atatürk line-art — "Ordular, ilk hedefiniz Akdeniz'dir, İleri!" — noble, subtle, pointing toward the headline */}
-      <div
+      {/* Atatürk line-art — front-facing, pointing at the viewer. Dramatic, prominent, immediately eye-catching. */}
+      <motion.div
         aria-hidden
-        className="pointer-events-none absolute -left-6 top-16 -z-10 h-[340px] w-[220px] opacity-[0.09] mix-blend-screen sm:-left-4 sm:top-20 sm:h-[440px] sm:w-[280px] sm:opacity-[0.11] md:left-2 md:h-[520px] md:w-[340px] md:opacity-[0.13] lg:left-6 lg:top-24 lg:h-[600px] lg:w-[400px] lg:opacity-[0.16] xl:left-10 xl:h-[680px] xl:w-[460px] xl:opacity-[0.2]"
+        initial={{ opacity: 0, scale: 1.05, x: 20 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
+        className="pointer-events-none absolute -z-10 right-[-8%] top-20 h-[420px] w-[280px] opacity-50 mix-blend-screen sm:right-[-4%] sm:top-24 sm:h-[560px] sm:w-[360px] sm:opacity-60 md:right-[2%] md:h-[640px] md:w-[420px] md:opacity-70 lg:right-[4%] lg:top-20 lg:h-[760px] lg:w-[500px] lg:opacity-80 xl:right-[6%] xl:h-[840px] xl:w-[560px]"
         style={{
           backgroundImage: `url(${ataturkLine})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
-          backgroundPosition: "top left",
+          backgroundPosition: "top right",
+          filter: "drop-shadow(0 0 40px color-mix(in oklab, var(--violet) 60%, transparent))",
           maskImage:
-            "radial-gradient(ellipse at 40% 45%, black 35%, transparent 72%)",
+            "linear-gradient(180deg, black 0%, black 78%, transparent 100%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse at 40% 45%, black 35%, transparent 72%)",
+            "linear-gradient(180deg, black 0%, black 78%, transparent 100%)",
         }}
       />
 
