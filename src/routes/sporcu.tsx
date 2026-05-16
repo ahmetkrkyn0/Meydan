@@ -9,9 +9,9 @@ import {
   MessageCircle,
   UserPlus,
   Calendar,
-  Instagram,
-  Youtube,
-  Twitter,
+  Camera,
+  Video,
+  AtSign,
   Sparkles,
   Quote,
   ArrowUpRight,
@@ -517,9 +517,9 @@ function Diary() {
 /* ============ SOCIAL ============ */
 function Social() {
   const socials = [
-    { icon: Instagram, label: "Instagram", handle: "@ada.yildiz" },
-    { icon: Youtube, label: "YouTube", handle: "Ada Yıldız" },
-    { icon: Twitter, label: "X", handle: "@adayildiz" },
+    { icon: Camera, label: "Instagram", handle: "@ada.yildiz" },
+    { icon: Video, label: "YouTube", handle: "Ada Yıldız" },
+    { icon: AtSign, label: "X", handle: "@adayildiz" },
   ];
   return (
     <section className="relative pb-28 pt-12 sm:pb-36">
