@@ -53,24 +53,30 @@ export function Hero() {
 
         {/* Informational overlays — kept on the sides/bottom so Atatürk (top-center) stays fully visible */}
 
-        {/* Top-left mission card */}
+        {/* Top-left mission card — premium typographic hierarchy */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.6 }}
-          className="pointer-events-none absolute top-[16%] left-[3%] max-w-[34%] hidden md:block"
+          className="pointer-events-none absolute top-[14%] left-[3%] max-w-[38%] hidden md:block"
         >
-          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-5 backdrop-blur-md">
-            <p className="font-display text-2xl leading-tight text-white lg:text-3xl">
-              Her sporun bir <span className="text-gradient-violet italic">meydanı</span> var.
+          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-7 backdrop-blur-md lg:p-8">
+            <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-violet">
+              <span className="mr-2 inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-violet align-middle" />
+              Manifesto
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-white/80">
+            <h2 className="font-display mt-5 text-[2.25rem] font-medium leading-[0.95] tracking-[-0.02em] text-white lg:text-[3rem] xl:text-[3.5rem]">
+              Her sporun bir{" "}
+              <span className="text-gradient-violet italic">meydanı</span> var.
+            </h2>
+            <div className="mt-6 h-px w-10 bg-gradient-to-r from-white/60 to-transparent" />
+            <p className="mt-6 max-w-md text-[15px] leading-[1.65] text-white/75 lg:text-base">
               Meydan; futbol dışı sporcuları taraftarla buluşturan dijital sahnedir.
               Hikâyeleri görünür kıl, doğrudan destekle, sahaya enerji ver.
             </p>
             <a
               href="#sunar"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-black transition-transform hover:scale-[1.03]"
+              className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold tracking-tight text-black transition-transform hover:scale-[1.03]"
             >
               <Play className="h-3.5 w-3.5 fill-current" /> Meydanı Keşfet
             </a>
