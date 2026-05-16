@@ -29,7 +29,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full"
+        className="relative w-full"
       >
         <motion.picture
           initial={{ opacity: 0, filter: "blur(10px)" }}
@@ -42,7 +42,6 @@ export function Hero() {
           <img
             src={heroFallback}
             alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
-            // LCP image: eager + high priority (no lazy)
             loading="eager"
             decoding="async"
             // @ts-expect-error - valid HTML attribute, React types lag
@@ -51,6 +50,79 @@ export function Hero() {
             className="block h-auto w-full object-contain object-center"
           />
         </motion.picture>
+
+        {/* Informational overlays — kept on the sides/bottom so Atatürk (top-center) stays fully visible */}
+
+        {/* Top-left badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="pointer-events-none absolute left-[3%] top-[18%] hidden sm:block"
+        >
+          <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white backdrop-blur-md">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet" />
+            Türkiye'nin yeni sporcu hareketi
+          </div>
+        </motion.div>
+
+        {/* Bottom-left mission card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.7 }}
+          className="pointer-events-none absolute bottom-[4%] left-[3%] max-w-[34%] hidden md:block"
+        >
+          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-5 backdrop-blur-md">
+            <p className="font-display text-2xl leading-tight text-white lg:text-3xl">
+              Her sporun bir <span className="text-gradient-violet italic">meydanı</span> var.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-white/80">
+              Meydan; futbol dışı sporcuları taraftarla buluşturan dijital sahnedir.
+              Hikâyeleri görünür kıl, doğrudan destekle, sahaya enerji ver.
+            </p>
+            <a
+              href="#sunar"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-black transition-transform hover:scale-[1.03]"
+            >
+              <Play className="h-3.5 w-3.5 fill-current" /> Meydanı Keşfet
+            </a>
+          </div>
+        </motion.div>
+
+        {/* Bottom-right value props */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.85 }}
+          className="pointer-events-none absolute bottom-[4%] right-[3%] max-w-[28%] hidden lg:block"
+        >
+          <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-4 backdrop-blur-md">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-violet">Amacımız</p>
+            <ul className="mt-3 space-y-2 text-xs leading-relaxed text-white/85">
+              <li>• Görünmeyen sporcuyu sahneye çıkarmak</li>
+              <li>• Taraftarı doğrudan destekçiye dönüştürmek</li>
+              <li>• Her branşa kendi meydanını kurmak</li>
+            </ul>
+          </div>
+        </motion.div>
+
+        {/* Mobile-only compact info bar (under image edges, still over image bottom — avoids Atatürk) */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="pointer-events-none absolute inset-x-3 bottom-3 md:hidden"
+        >
+          <div className="pointer-events-auto rounded-xl border border-white/15 bg-black/55 p-3 backdrop-blur-md">
+            <p className="font-display text-sm leading-tight text-white">
+              Her sporun bir <span className="text-gradient-violet italic">meydanı</span> var.
+            </p>
+            <p className="mt-1 text-[11px] leading-snug text-white/80">
+              Futbol dışı sporcuları taraftarla buluşturan dijital sahne.
+            </p>
+          </div>
+        </motion.div>
       </motion.figure>
 
       {/* Text block — clearly below the image */}
