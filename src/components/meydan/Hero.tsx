@@ -15,7 +15,7 @@ export function Hero() {
         initial={{ opacity: 0, scale: 1.05, filter: "blur(14px)" }}
         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+        className="absolute inset-x-0 bottom-0 top-24 -z-10 w-full object-cover object-top sm:top-28"
       />
 
       {/* Bottom gradient — so headline at bottom-left is readable, Atatürk (upper area) stays clean */}
