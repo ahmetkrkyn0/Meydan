@@ -65,12 +65,12 @@ export function Hero() {
               <span className="mr-2 inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-violet align-middle" />
               Manifesto
             </p>
-            <h2 className="font-display mt-5 text-[2.25rem] font-medium leading-[0.95] tracking-[-0.02em] text-white lg:text-[3rem] xl:text-[3.5rem]">
+            <h2 className="font-display mt-5 text-[1.95rem] font-medium leading-[1.08] tracking-[-0.02em] text-white lg:text-[2.5rem] xl:text-[3rem]">
               Her sporun bir{" "}
               <span className="text-gradient-violet italic">meydanı</span> var.
             </h2>
             <div className="mt-6 h-px w-10 bg-gradient-to-r from-white/60 to-transparent" />
-            <p className="mt-6 max-w-md text-[15px] leading-[1.65] text-white/75 lg:text-base">
+            <p className="mt-6 max-w-md text-[14px] leading-[1.72] text-white/75 lg:text-[15px]">
               Meydan; futbol dışı sporcuları taraftarla buluşturan dijital sahnedir.
               Hikâyeleri görünür kıl, doğrudan destekle, sahaya enerji ver.
             </p>
