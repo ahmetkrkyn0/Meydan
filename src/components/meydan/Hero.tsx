@@ -21,12 +21,12 @@ export function Hero() {
         <div className="absolute left-1/2 top-0 h-[260px] w-[900px] -translate-x-1/2 rounded-full bg-sky/10 blur-[120px]" />
       </div>
 
-      {/* Hero photo — full artwork visible, no crop or zoom */}
+      {/* Hero photo */}
       <motion.figure
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="flex h-[100svh] w-full items-center justify-center"
+        className="h-[100svh] w-full overflow-hidden"
       >
         <motion.img
           src={heroImg}
@@ -34,7 +34,7 @@ export function Hero() {
           initial={{ opacity: 0, filter: "blur(10px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-full max-h-[100svh] w-full object-contain object-center"
+          className="block h-full w-full object-cover object-center"
         />
       </motion.figure>
 
