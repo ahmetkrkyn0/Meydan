@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
-import heroImg from "@/assets/meydan-hero.jpg";
-import ataturkLine from "@/assets/ataturk-line.png";
+import heroImg from "@/assets/meydan-hero.png";
 
 export function Hero() {
   return (
