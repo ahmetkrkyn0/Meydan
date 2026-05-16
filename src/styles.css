@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Meydan — premium cinematic Turkish sports-tech design system.
- * Dark navy / near black, warm white type, Turkish red accents, gold prestige.
+ * Meydan — bright cinematic sports-tech design system.
+ * Luminous blue / indigo / soft purple, premium and energetic.
  */
 
 @theme inline {
@@ -37,57 +37,54 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
-  --color-crimson: var(--crimson);
-  --color-crimson-soft: var(--crimson-soft);
+  --color-indigo: var(--indigo);
+  --color-indigo-soft: var(--indigo-soft);
+  --color-violet: var(--violet);
+  --color-sky: var(--sky);
+  --color-coral: var(--coral);
   --color-ink: var(--ink);
-  --color-ink-deep: var(--ink-deep);
 
-  --font-display: "Fraunces", "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-display: "General Sans", "Satoshi", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
   --radius: 1rem;
 
-  /* Cinematic dark navy palette */
-  --background: oklch(0.16 0.03 260);
-  --ink-deep: oklch(0.12 0.025 260);
-  --ink: oklch(0.19 0.03 260);
-  --foreground: oklch(0.96 0.012 80);
+  /* Bright luminous indigo palette */
+  --background: oklch(0.22 0.06 270);
+  --ink: oklch(0.18 0.06 270);
+  --foreground: oklch(0.985 0.005 250);
 
-  --card: oklch(0.21 0.03 260 / 0.55);
-  --card-foreground: oklch(0.96 0.012 80);
-  --popover: oklch(0.19 0.03 260);
-  --popover-foreground: oklch(0.96 0.012 80);
+  --card: oklch(0.985 0.005 250 / 0.06);
+  --card-foreground: oklch(0.985 0.005 250);
+  --popover: oklch(0.3 0.07 270);
+  --popover-foreground: oklch(0.985 0.005 250);
 
-  --primary: oklch(0.96 0.012 80);
-  --primary-foreground: oklch(0.14 0.03 260);
+  --primary: oklch(0.985 0.005 250);
+  --primary-foreground: oklch(0.22 0.08 270);
 
-  --secondary: oklch(0.24 0.03 260);
-  --secondary-foreground: oklch(0.96 0.012 80);
+  --secondary: oklch(0.32 0.08 270);
+  --secondary-foreground: oklch(0.985 0.005 250);
 
-  --muted: oklch(0.24 0.025 260);
-  --muted-foreground: oklch(0.72 0.02 80);
+  --muted: oklch(0.985 0.005 250 / 0.1);
+  --muted-foreground: oklch(0.82 0.03 260);
 
-  --accent: oklch(0.78 0.14 65);
-  --accent-foreground: oklch(0.14 0.03 260);
+  --accent: oklch(0.72 0.2 290);
+  --accent-foreground: oklch(0.22 0.08 270);
 
-  /* Turkish red */
-  --crimson: oklch(0.58 0.21 25);
-  --crimson-soft: oklch(0.48 0.18 25);
+  --indigo: oklch(0.55 0.22 275);
+  --indigo-soft: oklch(0.7 0.18 270);
+  --violet: oklch(0.65 0.24 300);
+  --sky: oklch(0.78 0.13 235);
+  --coral: oklch(0.7 0.21 25);
 
-  /* Gold / bronze prestige */
-  --gold: oklch(0.82 0.13 78);
-  --gold-soft: oklch(0.68 0.11 70);
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.985 0.005 250);
 
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.98 0.005 80);
-
-  --border: oklch(0.96 0.012 80 / 0.1);
-  --input: oklch(0.96 0.012 80 / 0.14);
-  --ring: oklch(0.78 0.14 65 / 0.6);
+  --border: oklch(0.985 0.005 250 / 0.12);
+  --input: oklch(0.985 0.005 250 / 0.16);
+  --ring: oklch(0.72 0.2 290 / 0.6);
 }
 
 @layer base {
@@ -105,7 +102,7 @@
     font-feature-settings: "ss01", "cv11";
   }
   ::selection {
-    background: color-mix(in oklab, var(--gold) 40%, transparent);
+    background: color-mix(in oklab, var(--violet) 50%, transparent);
     color: var(--foreground);
   }
 }
@@ -113,74 +110,70 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    font-weight: 600;
   }
   .glass {
     background: linear-gradient(
       135deg,
-      color-mix(in oklab, var(--foreground) 6%, transparent),
+      color-mix(in oklab, var(--foreground) 8%, transparent),
       color-mix(in oklab, var(--foreground) 2%, transparent)
     );
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
   }
   .glass-strong {
     background: linear-gradient(
       135deg,
-      color-mix(in oklab, var(--foreground) 10%, transparent),
-      color-mix(in oklab, var(--foreground) 3%, transparent)
+      color-mix(in oklab, var(--foreground) 14%, transparent),
+      color-mix(in oklab, var(--foreground) 4%, transparent)
     );
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
   }
-  .text-gradient-gold {
-    background: linear-gradient(135deg, var(--gold) 0%, oklch(0.92 0.08 80) 50%, var(--gold-soft) 100%);
+  .text-gradient {
+    background: linear-gradient(135deg, oklch(0.98 0.02 250) 0%, oklch(0.82 0.17 280) 60%, oklch(0.78 0.13 235) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .text-gradient-warm {
-    background: linear-gradient(180deg, oklch(0.98 0.01 80) 0%, oklch(0.82 0.05 60) 100%);
+  .text-gradient-violet {
+    background: linear-gradient(135deg, oklch(0.85 0.14 300) 0%, oklch(0.7 0.22 290) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .bg-cinematic {
+  .bg-aurora {
     background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in oklab, var(--crimson) 18%, transparent), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 100%, color-mix(in oklab, var(--gold) 10%, transparent), transparent 60%),
-      linear-gradient(180deg, var(--ink-deep) 0%, var(--background) 100%);
+      radial-gradient(ellipse 60% 50% at 15% 20%, color-mix(in oklab, var(--violet) 35%, transparent), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, color-mix(in oklab, var(--sky) 30%, transparent), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, color-mix(in oklab, var(--indigo) 40%, transparent), transparent 70%),
+      linear-gradient(180deg, oklch(0.28 0.08 275) 0%, oklch(0.22 0.06 270) 60%, oklch(0.18 0.05 270) 100%);
   }
-  .grid-lines {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px);
-    background-size: 64px 64px;
+  .grid-dots {
+    background-image: radial-gradient(color-mix(in oklab, var(--foreground) 12%, transparent) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
-  .glow-crimson {
-    box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--crimson) 40%, transparent),
-      0 20px 60px -20px color-mix(in oklab, var(--crimson) 50%, transparent);
-  }
-  .glow-gold {
-    box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--gold) 35%, transparent),
-      0 20px 60px -20px color-mix(in oklab, var(--gold) 45%, transparent);
-  }
-  .stadium-beams {
+  .light-rays {
     background:
-      conic-gradient(from 270deg at 50% 120%,
+      conic-gradient(from 200deg at 50% 100%,
         transparent 0deg,
-        color-mix(in oklab, var(--gold) 12%, transparent) 30deg,
-        transparent 60deg,
-        color-mix(in oklab, var(--crimson) 14%, transparent) 90deg,
-        transparent 120deg,
-        color-mix(in oklab, var(--gold) 10%, transparent) 150deg,
-        transparent 180deg);
+        color-mix(in oklab, var(--sky) 18%, transparent) 25deg,
+        transparent 50deg,
+        color-mix(in oklab, var(--violet) 20%, transparent) 80deg,
+        transparent 110deg,
+        color-mix(in oklab, var(--sky) 16%, transparent) 140deg,
+        transparent 170deg);
   }
-  .noise {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  .glow-violet {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--violet) 40%, transparent),
+      0 24px 80px -20px color-mix(in oklab, var(--violet) 60%, transparent);
+  }
+  .ring-glow {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 12%, transparent),
+      0 20px 60px -20px color-mix(in oklab, var(--indigo) 50%, transparent);
   }
 }

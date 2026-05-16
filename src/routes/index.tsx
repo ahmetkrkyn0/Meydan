@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/meydan/Navbar";
 import { Hero } from "@/components/meydan/Hero";
-import { Problem } from "@/components/meydan/Problem";
-import { Solution } from "@/components/meydan/Solution";
+import { Sunar } from "@/components/meydan/Sunar";
 import { Features } from "@/components/meydan/Features";
-import { Story } from "@/components/meydan/Story";
-import { HowItWorks } from "@/components/meydan/HowItWorks";
 import { FinalCta } from "@/components/meydan/FinalCta";
 import { Footer } from "@/components/meydan/Footer";
 
@@ -13,16 +10,16 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Meydan — Görünmeyen sporcuların dijital tribünü" },
+      { title: "Meydan — Her sporun bir meydanı var" },
       {
         name: "description",
         content:
-          "Meydan, Türkiye'nin futbol dışı sporcularını taraftarla buluşturan dijital köprü. İzle. Destekle. Sen de Oyna.",
+          "Meydan, Türkiye'nin futbol dışı sporcularını taraftarla buluşturan dijital sahnedir. Keşfet, destekle, sahaya çık.",
       },
-      { property: "og:title", content: "Meydan — Görünmeyen sporcuların dijital tribünü" },
+      { property: "og:title", content: "Meydan — Her sporun bir meydanı var" },
       {
         property: "og:description",
-        content: "Türkiye'nin görünmeyen sporcularını keşfet, destekle ve yeni sporlarla tanış.",
+        content: "Keşfet, destekle, sahaya çık. Türkiye'nin yeni sporcu hareketi.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -35,11 +32,8 @@ function Index() {
       <Navbar />
       <main>
         <Hero />
-        <Problem />
-        <Solution />
+        <Sunar />
         <Features />
-        <Story />
-        <HowItWorks />
         <FinalCta />
       </main>
       <Footer />
