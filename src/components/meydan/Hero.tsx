@@ -53,6 +53,62 @@ export function Hero() {
 
         {/* Informational overlays — kept on the sides/bottom so Atatürk (top-center) stays fully visible */}
 
+        {/* Stadium stage lights — sync with card reveal */}
+        <motion.div
+          aria-hidden
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.4, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-none absolute top-[14%] left-[3%] hidden h-[55%] w-[38%] md:block"
+        >
+          {/* Light rays sweeping in */}
+          <motion.div
+            initial={{ opacity: 0, scaleY: 0.6, rotate: -8 }}
+            animate={{ opacity: 0.55, scaleY: 1, rotate: 0 }}
+            transition={{ duration: 1.6, delay: 1.05, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformOrigin: "20% 0%" }}
+            className="absolute inset-0 light-rays blur-2xl"
+          />
+          {/* Track lines drawing across */}
+          <svg
+            viewBox="0 0 400 220"
+            preserveAspectRatio="none"
+            className="absolute inset-x-0 bottom-0 h-[60%] w-full"
+          >
+            {[0, 1, 2, 3].map((i) => (
+              <motion.path
+                key={i}
+                d={`M -20 ${120 + i * 22} Q 200 ${100 + i * 22} 420 ${130 + i * 22}`}
+                fill="none"
+                stroke="url(#trackGradient)"
+                strokeWidth="1"
+                strokeDasharray="4 8"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.45 - i * 0.07 }}
+                transition={{
+                  duration: 1.6,
+                  delay: 1.15 + i * 0.12,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
+            ))}
+            <defs>
+              <linearGradient id="trackGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="rgba(139,92,246,0)" />
+                <stop offset="50%" stopColor="rgba(139,92,246,0.9)" />
+                <stop offset="100%" stopColor="rgba(125,211,252,0)" />
+              </linearGradient>
+            </defs>
+          </svg>
+          {/* Soft spotlight pulse behind the card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 0.5, scale: 1 }}
+            transition={{ duration: 1.8, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-1/4 top-1/3 h-[60%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/25 blur-[80px]"
+          />
+        </motion.div>
+
         {/* Top-left mission card — premium typographic hierarchy */}
         <motion.div
           initial={{ opacity: 0, y: -20, scale: 0.95 }}
