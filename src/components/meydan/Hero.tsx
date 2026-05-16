@@ -65,17 +65,6 @@ export function Hero() {
               Her sporun bir{" "}
               <span className="text-gradient-violet italic">meydanı</span> var.
             </h2>
-            <div className="mt-6 h-px w-10 bg-gradient-to-r from-white/60 to-transparent" />
-            <p className="mt-6 max-w-md text-[14px] leading-[1.72] text-white/75 lg:text-[15px]">
-              Meydan; futbol dışı sporcuları taraftarla buluşturan dijital sahnedir.
-              Hikâyeleri görünür kıl, doğrudan destekle, sahaya enerji ver.
-            </p>
-            <a
-              href="#sunar"
-              className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold tracking-tight text-black transition-transform hover:scale-[1.03]"
-            >
-              <Play className="h-3.5 w-3.5 fill-current" /> Meydanı Keşfet
-            </a>
           </div>
         </motion.div>
 
