@@ -70,7 +70,7 @@ export function Hero() {
               <span className="text-gradient-violet italic">meydanı</span> var.
             </h2>
             <div className="mt-6 h-px w-10 bg-gradient-to-r from-white/60 to-transparent" />
-            <p className="mt-6 max-w-md text-[15px] leading-[1.65] text-white/75 lg:text-base">
+            <p className="mt-6 max-w-md text-[14px] leading-[1.72] text-white/75 lg:text-[15px]">
               Meydan; futbol dışı sporcuları taraftarla buluşturan dijital sahnedir.
               Hikâyeleri görünür kıl, doğrudan destekle, sahaya enerji ver.
             </p>
