@@ -10,26 +10,6 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 -z-20 h-[70%] light-rays opacity-50" />
       <div className="absolute inset-0 -z-10 grid-dots opacity-[0.15]" />
 
-      {/* Atatürk line-art — front-facing, pointing at the viewer. Dramatic, prominent, immediately eye-catching. */}
-      <motion.div
-        aria-hidden
-        initial={{ opacity: 0, scale: 1.08, x: 60, filter: "blur(14px)" }}
-        animate={{ opacity: 1, scale: 1, x: 0, filter: "blur(0px)" }}
-        transition={{ duration: 1.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-        className="pointer-events-none absolute -z-10 right-[-8%] top-20 h-[420px] w-[280px] opacity-50 mix-blend-screen sm:right-[-4%] sm:top-24 sm:h-[560px] sm:w-[360px] sm:opacity-60 md:right-[2%] md:h-[640px] md:w-[420px] md:opacity-70 lg:right-[4%] lg:top-20 lg:h-[760px] lg:w-[500px] lg:opacity-80 xl:right-[6%] xl:h-[840px] xl:w-[560px]"
-        style={{
-          backgroundImage: `url(${ataturkLine})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "contain",
-          backgroundPosition: "top right",
-          filter: "drop-shadow(0 0 40px color-mix(in oklab, var(--violet) 60%, transparent))",
-          maskImage:
-            "linear-gradient(180deg, black 0%, black 78%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(180deg, black 0%, black 78%, transparent 100%)",
-        }}
-      />
-
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Top copy row */}
         <div className="relative grid gap-8 lg:grid-cols-12 lg:items-end">
