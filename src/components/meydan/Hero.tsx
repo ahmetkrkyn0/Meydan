@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate w-full pt-28 sm:pt-32 lg:pt-36"
+      className="relative isolate w-full"
     >
       {/* Ambient backdrop */}
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-80">
@@ -21,12 +21,12 @@ export function Hero() {
         <div className="absolute left-1/2 top-0 h-[260px] w-[900px] -translate-x-1/2 rounded-full bg-sky/10 blur-[120px]" />
       </div>
 
-      {/* Hero photo — full artwork, never cropped, centered, breathing room */}
+      {/* Hero photo — fills the first screen, navbar overlays it, no scroll effects */}
       <motion.figure
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full"
+        className="flex h-[100svh] w-full items-center justify-center"
       >
         <motion.img
           src={heroImg}
@@ -34,7 +34,7 @@ export function Hero() {
           initial={{ scale: 1.02, filter: "blur(10px)" }}
           animate={{ scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-auto w-full object-contain object-center"
+          className="block h-full max-h-[100svh] w-full object-contain object-center"
         />
       </motion.figure>
 
