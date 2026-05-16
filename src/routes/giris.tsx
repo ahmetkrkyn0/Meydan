@@ -45,7 +45,14 @@ function AuthPage() {
     // Mock UI — gerçek auth sonradan bağlanacak
     setTimeout(() => {
       setLoading(false);
-      navigate({ to: role === "athlete" ? "/sporcu" : "/" });
+      // Rol bazlı yönlendirme — marka paneli & sporcu dashboard sıraya gelecek
+      const dest =
+        mode === "signup" && role === "athlete"
+          ? "/sporcu"
+          : mode === "signup" && role === "brand"
+            ? "/dashboard"
+            : "/dashboard";
+      navigate({ to: dest });
     }, 900);
   };
 
