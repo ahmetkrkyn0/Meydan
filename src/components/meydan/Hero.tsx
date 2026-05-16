@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Play, MouseIcon } from "lucide-react";
+import { Play } from "lucide-react";
 import heroImg from "@/assets/meydan-hero.jpg";
+import ataturkLine from "@/assets/ataturk-line.png";
 
 export function Hero() {
   return (
