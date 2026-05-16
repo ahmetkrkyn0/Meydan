@@ -53,25 +53,12 @@ export function Hero() {
 
         {/* Informational overlays — kept on the sides/bottom so Atatürk (top-center) stays fully visible */}
 
-        {/* Top-left badge */}
+        {/* Top-left mission card */}
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="pointer-events-none absolute left-[3%] top-[18%] hidden sm:block"
-        >
-          <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white backdrop-blur-md">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet" />
-            Türkiye'nin yeni sporcu hareketi
-          </div>
-        </motion.div>
-
-        {/* Bottom-left mission card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.7 }}
-          className="pointer-events-none absolute bottom-[4%] left-[3%] max-w-[34%] hidden md:block"
+          transition={{ duration: 0.9, delay: 0.6 }}
+          className="pointer-events-none absolute top-[16%] left-[3%] max-w-[34%] hidden md:block"
         >
           <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-5 backdrop-blur-md">
             <p className="font-display text-2xl leading-tight text-white lg:text-3xl">
