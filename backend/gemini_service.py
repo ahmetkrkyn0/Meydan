@@ -36,9 +36,10 @@ def generate_embedding(text: str) -> list[float]:
     """Metni 768 boyutlu embedding vektörüne dönüştürür."""
     try:
         result = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-001",
             content=text,
             task_type="retrieval_document",
+            output_dimensionality=768,
         )
         return result["embedding"]
     except Exception as e:
