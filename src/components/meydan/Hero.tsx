@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, Trophy, Users, HeartHandshake } from "lucide-react";
 // Responsive AVIF/WebP variants generated at build time by vite-imagetools
 import heroAvifSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&format=avif&as=srcset";
 import heroWebpSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&format=webp&as=srcset";
