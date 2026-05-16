@@ -11,17 +11,19 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 -z-20 h-[70%] light-rays opacity-50" />
       <div className="absolute inset-0 -z-10 grid-dots opacity-[0.15]" />
 
-      {/* Atatürk line-art — subtle, noble, blended into the hero */}
+      {/* Atatürk line-art — "Ordular, ilk hedefiniz Akdeniz'dir, İleri!" — noble, subtle, pointing toward the headline */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-10 top-10 -z-10 hidden h-[680px] w-[460px] opacity-[0.18] mix-blend-screen lg:block xl:right-10 xl:opacity-25"
+        className="pointer-events-none absolute -left-6 top-16 -z-10 h-[340px] w-[220px] opacity-[0.09] mix-blend-screen sm:-left-4 sm:top-20 sm:h-[440px] sm:w-[280px] sm:opacity-[0.11] md:left-2 md:h-[520px] md:w-[340px] md:opacity-[0.13] lg:left-6 lg:top-24 lg:h-[600px] lg:w-[400px] lg:opacity-[0.16] xl:left-10 xl:h-[680px] xl:w-[460px] xl:opacity-[0.2]"
         style={{
           backgroundImage: `url(${ataturkLine})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
-          backgroundPosition: "top right",
-          maskImage: "radial-gradient(ellipse at 60% 40%, black 40%, transparent 75%)",
-          WebkitMaskImage: "radial-gradient(ellipse at 60% 40%, black 40%, transparent 75%)",
+          backgroundPosition: "top left",
+          maskImage:
+            "radial-gradient(ellipse at 40% 45%, black 35%, transparent 72%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at 40% 45%, black 35%, transparent 72%)",
         }}
       />
 
