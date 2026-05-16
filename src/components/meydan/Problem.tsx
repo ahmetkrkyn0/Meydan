@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import archeryImg from "@/assets/sport-archery.png";
+import archeryImg from "@/assets/sport-archery-nobg.png";
 
 const problems = [
   {
