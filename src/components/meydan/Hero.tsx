@@ -11,6 +11,20 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 -z-20 h-[70%] light-rays opacity-50" />
       <div className="absolute inset-0 -z-10 grid-dots opacity-[0.15]" />
 
+      {/* Atatürk line-art — subtle, noble, blended into the hero */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-10 top-10 -z-10 hidden h-[680px] w-[460px] opacity-[0.18] mix-blend-screen lg:block xl:right-10 xl:opacity-25"
+        style={{
+          backgroundImage: `url(${ataturkLine})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
+          backgroundPosition: "top right",
+          maskImage: "radial-gradient(ellipse at 60% 40%, black 40%, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse at 60% 40%, black 40%, transparent 75%)",
+        }}
+      />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Top copy row */}
         <div className="relative grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -176,5 +190,3 @@ function Divider() {
   return <span className="hidden h-8 w-px bg-foreground/15 md:inline-block" />;
 }
 
-// silence unused import warning
-void MouseIcon;
