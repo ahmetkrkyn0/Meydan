@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Compass, HandHeart, Flame } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import basketballImg from "@/assets/sport-basketball.png";
+import basketballImg from "@/assets/sport-basketball-nobg.png";
 
 const pillars = [
   {

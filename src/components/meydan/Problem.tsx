@@ -90,7 +90,7 @@ export function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group grid cursor-default grid-cols-12 items-center gap-4 rounded-2xl px-4 py-10 transition-colors hover:bg-white/60 sm:gap-8"
+              className="group grid cursor-default grid-cols-12 items-center gap-4 rounded-2xl px-4 py-10 transition-colors hover:bg-foreground/[0.03] sm:gap-8"
             >
               <div className="col-span-2 sm:col-span-1">
                 <span className="font-display text-3xl font-bold leading-none text-foreground/12 transition-colors duration-400 group-hover:text-foreground/25">

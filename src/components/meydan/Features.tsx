@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { IdCard, Radio, MapPin, Coins, Users, Compass } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import billiardsImg from "@/assets/sport-billiards.png";
+import billiardsImg from "@/assets/sport-billiards-nobg.png";
 
 const features = [
   { icon: IdCard,  title: "Sporcu Kartı",     desc: "Sıralama, son maç ve destekçiler tek bakışta. Her sporcunun kendi dijital kimliği.", hue: "violet" },
@@ -77,7 +77,7 @@ export function Features() {
                 viewport={{ once: true, margin: "-40px" }}
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                className="group relative overflow-hidden rounded-2xl border border-foreground/8 bg-white/70 p-7 shadow-sm backdrop-blur-sm transition-shadow duration-300 hover:shadow-md"
+                className="group relative overflow-hidden rounded-2xl border border-foreground/8 bg-foreground/[0.04] p-7 transition-all duration-300 hover:bg-foreground/[0.07] hover:border-foreground/14"
               >
                 {/* Corner glow */}
                 <div
@@ -107,7 +107,7 @@ export function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-14 grid grid-cols-3 divide-x divide-foreground/8 overflow-hidden rounded-2xl border border-foreground/10 bg-white/60 shadow-sm backdrop-blur-sm"
+          className="mt-14 grid grid-cols-3 divide-x divide-foreground/8 overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.04]"
         >
           {[
             { val: "240+",  label: "Sporcu profili" },

@@ -32,14 +32,11 @@ export function Hero() {
         />
       </motion.picture>
 
-      {/* Gradients — dark overlay so text stays legible over the image */}
+      {/* Gradients — fade seamlessly into --background (deep navy) */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        {/* bottom: strong dark fade for headline area */}
-        <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/75 via-black/40 to-transparent" />
-        {/* left: dark band behind the text column */}
-        <div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-black/55 to-transparent" />
-        {/* top: very subtle vignette */}
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-[oklch(0.14_0.04_258)] via-[oklch(0.14_0.04_258/0.75)] to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-[oklch(0.14_0.04_258/0.65)] to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[oklch(0.11_0.035_258/0.50)] to-transparent" />
       </div>
 
       <div className="relative flex min-h-screen flex-col">

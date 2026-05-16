@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Meydan — Light Blue Modern
- * Azure white canvas · steel-blue text · electric-blue accent · sky-teal pop
+ * Meydan — Deep Navy Dark Theme
+ * Midnight blue canvas · electric blue accent · sky pop · cream white text
  */
 
 @theme inline {
@@ -17,25 +17,25 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
 
-  --color-background:         var(--background);
-  --color-foreground:         var(--foreground);
-  --color-card:               var(--card);
-  --color-card-foreground:    var(--card-foreground);
-  --color-popover:            var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary:            var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary:          var(--secondary);
+  --color-background:           var(--background);
+  --color-foreground:           var(--foreground);
+  --color-card:                 var(--card);
+  --color-card-foreground:      var(--card-foreground);
+  --color-popover:              var(--popover);
+  --color-popover-foreground:   var(--popover-foreground);
+  --color-primary:              var(--primary);
+  --color-primary-foreground:   var(--primary-foreground);
+  --color-secondary:            var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted:              var(--muted);
-  --color-muted-foreground:   var(--muted-foreground);
-  --color-accent:             var(--accent);
-  --color-accent-foreground:  var(--accent-foreground);
-  --color-destructive:        var(--destructive);
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+  --color-accent:               var(--accent);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-destructive:          var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border:             var(--border);
-  --color-input:              var(--input);
-  --color-ring:               var(--ring);
+  --color-border:               var(--border);
+  --color-input:                var(--input);
+  --color-ring:                 var(--ring);
 
   --color-indigo:      var(--indigo);
   --color-indigo-soft: var(--indigo-soft);
@@ -51,43 +51,43 @@
 :root {
   --radius: 1rem;
 
-  /* ── Canvas: icy azure white ── */
-  --background: oklch(0.975 0.012 228);   /* barely-blue white */
-  --ink:        oklch(0.945 0.016 228);   /* footer / card surface */
+  /* ── Base: deep midnight navy ── */
+  --background: oklch(0.14 0.04 258);    /* near-black navy */
+  --ink:        oklch(0.11 0.035 258);   /* footer / deepest surface */
 
-  /* ── Text: deep steel blue, not black ── */
-  --foreground: oklch(0.22 0.055 240);
+  /* ── Text: warm cream white ── */
+  --foreground: oklch(0.95 0.008 240);
 
-  --card:              oklch(1 0 0 / 0.75);
-  --card-foreground:   oklch(0.22 0.055 240);
-  --popover:           oklch(0.99 0.006 225);
-  --popover-foreground: oklch(0.22 0.055 240);
+  --card:              oklch(0.95 0.008 240 / 0.06);
+  --card-foreground:   oklch(0.95 0.008 240);
+  --popover:           oklch(0.20 0.05 258);
+  --popover-foreground: oklch(0.95 0.008 240);
 
-  --primary:            oklch(0.52 0.22 252);   /* electric blue */
-  --primary-foreground: oklch(0.99 0.003 220);
+  --primary:            oklch(0.60 0.22 252);   /* electric blue */
+  --primary-foreground: oklch(0.10 0.03 258);
 
-  --secondary:            oklch(0.94 0.018 228);
-  --secondary-foreground: oklch(0.22 0.055 240);
+  --secondary:            oklch(0.22 0.055 258);
+  --secondary-foreground: oklch(0.95 0.008 240);
 
-  --muted:            oklch(0.22 0.055 240 / 0.07);
-  --muted-foreground: oklch(0.50 0.06 238);
+  --muted:            oklch(0.95 0.008 240 / 0.08);
+  --muted-foreground: oklch(0.65 0.05 248);
 
-  --accent:            oklch(0.52 0.22 252);
-  --accent-foreground: oklch(0.99 0.003 220);
+  --accent:            oklch(0.60 0.22 252);
+  --accent-foreground: oklch(0.10 0.03 258);
 
   /* ── Brand palette ── */
-  --indigo:      oklch(0.44 0.20 258);
-  --indigo-soft: oklch(0.60 0.18 250);
-  --violet:      oklch(0.52 0.22 252);   /* electric blue — primary brand */
-  --sky:         oklch(0.68 0.17 220);   /* sky teal */
-  --coral:       oklch(0.60 0.20 16);    /* warm red — tertiary */
+  --indigo:      oklch(0.50 0.22 262);
+  --indigo-soft: oklch(0.65 0.18 255);
+  --violet:      oklch(0.60 0.22 252);   /* electric blue — primary brand */
+  --sky:         oklch(0.72 0.16 222);   /* bright sky blue */
+  --coral:       oklch(0.65 0.20 18);    /* warm red */
 
   --destructive:            oklch(0.60 0.22 22);
-  --destructive-foreground: oklch(0.99 0.003 220);
+  --destructive-foreground: oklch(0.95 0.008 240);
 
-  --border: oklch(0.22 0.055 240 / 0.10);
-  --input:  oklch(0.22 0.055 240 / 0.08);
-  --ring:   oklch(0.52 0.22 252 / 0.40);
+  --border: oklch(0.95 0.008 240 / 0.10);
+  --input:  oklch(0.95 0.008 240 / 0.08);
+  --ring:   oklch(0.60 0.22 252 / 0.50);
 }
 
 @layer base {
@@ -101,7 +101,7 @@
     font-feature-settings: "ss01", "cv11";
   }
   ::selection {
-    background: oklch(0.52 0.22 252 / 0.18);
+    background: oklch(0.60 0.22 252 / 0.30);
     color: var(--foreground);
   }
 }
@@ -113,99 +113,96 @@
     font-weight: 700;
   }
 
-  /* ── Glass: white frosted card ── */
+  /* ── Glass: dark frosted card ── */
   .glass {
     background: linear-gradient(135deg,
-      oklch(1 0 0 / 0.70),
-      oklch(0.97 0.010 228 / 0.45));
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid oklch(0.22 0.055 240 / 0.09);
-    box-shadow: 0 1px 3px oklch(0.22 0.055 240 / 0.06);
+      oklch(0.95 0.008 240 / 0.09),
+      oklch(0.95 0.008 240 / 0.04));
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid oklch(0.95 0.008 240 / 0.10);
   }
   .glass-strong {
     background: linear-gradient(135deg,
-      oklch(1 0 0 / 0.88),
-      oklch(0.97 0.012 228 / 0.62));
-    backdrop-filter: blur(28px) saturate(200%);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
-    border: 1px solid oklch(0.22 0.055 240 / 0.11);
-    box-shadow: 0 2px 8px oklch(0.22 0.055 240 / 0.08);
+      oklch(0.95 0.008 240 / 0.14),
+      oklch(0.95 0.008 240 / 0.06));
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid oklch(0.95 0.008 240 / 0.14);
   }
 
-  /* ── Gradients ── */
+  /* ── Text gradients ── */
   .text-gradient {
     background: linear-gradient(135deg,
-      oklch(0.22 0.055 240) 0%,
-      oklch(0.52 0.22 252) 60%,
-      oklch(0.68 0.17 220) 100%);
+      oklch(0.95 0.008 240) 0%,
+      oklch(0.72 0.16 222) 60%,
+      oklch(0.60 0.22 252) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Electric blue → sky teal */
+  /* Electric blue → sky */
   .text-gradient-violet {
     background: linear-gradient(135deg,
-      oklch(0.48 0.24 255) 0%,
-      oklch(0.62 0.20 238) 100%);
+      oklch(0.75 0.18 248) 0%,
+      oklch(0.60 0.22 252) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Subtle light-blue aurora for CTA section */
+  /* Aurora: deep navy with electric blue & sky nebulae */
   .bg-aurora {
     background:
-      radial-gradient(ellipse 65% 55% at 10% 15%,
-        oklch(0.52 0.22 252 / 0.12), transparent 65%),
-      radial-gradient(ellipse 55% 45% at 90% 10%,
-        oklch(0.68 0.17 220 / 0.10), transparent 60%),
-      radial-gradient(ellipse 75% 60% at 50% 100%,
-        oklch(0.44 0.20 258 / 0.08), transparent 70%),
+      radial-gradient(ellipse 65% 50% at 12% 18%,
+        oklch(0.60 0.22 252 / 0.18), transparent 62%),
+      radial-gradient(ellipse 55% 45% at 88% 8%,
+        oklch(0.72 0.16 222 / 0.14), transparent 58%),
+      radial-gradient(ellipse 70% 55% at 50% 100%,
+        oklch(0.50 0.22 262 / 0.20), transparent 68%),
       linear-gradient(160deg,
-        oklch(0.965 0.018 232) 0%,
-        oklch(0.975 0.012 228) 50%,
-        oklch(0.960 0.016 235) 100%);
+        oklch(0.18 0.05 260) 0%,
+        oklch(0.14 0.04 258) 50%,
+        oklch(0.11 0.035 256) 100%);
   }
 
-  /* Dot grid — steel-blue on white */
+  /* Dot grid — subtle on dark */
   .grid-dots {
     background-image: radial-gradient(
-      oklch(0.22 0.055 240 / 0.07) 1px, transparent 1px);
+      oklch(0.95 0.008 240 / 0.07) 1px, transparent 1px);
     background-size: 26px 26px;
   }
 
-  /* Light rays — electric blue sweep */
+  /* Light rays — electric blue & sky sweep */
   .light-rays {
     background:
       conic-gradient(from 200deg at 50% 100%,
         transparent 0deg,
-        oklch(0.52 0.22 252 / 0.10) 22deg,
+        oklch(0.60 0.22 252 / 0.14) 22deg,
         transparent 50deg,
-        oklch(0.68 0.17 220 / 0.08) 82deg,
+        oklch(0.72 0.16 222 / 0.10) 82deg,
         transparent 112deg,
-        oklch(0.52 0.22 252 / 0.08) 142deg,
+        oklch(0.60 0.22 252 / 0.10) 142deg,
         transparent 170deg);
   }
 
   .glow-violet {
     box-shadow:
-      0 0 0 1px oklch(0.52 0.22 252 / 0.20),
-      0 20px 60px -16px oklch(0.52 0.22 252 / 0.22);
+      0 0 0 1px oklch(0.60 0.22 252 / 0.25),
+      0 20px 60px -16px oklch(0.60 0.22 252 / 0.40);
   }
   .ring-glow {
     box-shadow:
-      0 0 0 1px oklch(0.22 0.055 240 / 0.08),
-      0 16px 48px -16px oklch(0.44 0.20 258 / 0.18);
+      0 0 0 1px oklch(0.95 0.008 240 / 0.10),
+      0 16px 48px -16px oklch(0.50 0.22 262 / 0.35);
   }
 
-  /* ── Utility: card surface ── */
   .card-surface {
-    background: oklch(1 0 0 / 0.80);
-    border: 1px solid oklch(0.22 0.055 240 / 0.09);
+    background: oklch(0.95 0.008 240 / 0.06);
+    border: 1px solid oklch(0.95 0.008 240 / 0.10);
     box-shadow:
-      0 1px 2px oklch(0.22 0.055 240 / 0.05),
-      0 4px 16px oklch(0.22 0.055 240 / 0.06);
+      0 1px 2px oklch(0 0 0 / 0.20),
+      0 4px 16px oklch(0 0 0 / 0.15);
   }
 }

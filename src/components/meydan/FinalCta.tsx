@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Zap } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import tennisImg from "@/assets/sport-tennis.png";
+import tennisImg from "@/assets/sport-tennis-nobg.png";
 
 export function FinalCta() {
   return (
@@ -82,7 +82,7 @@ export function FinalCta() {
               href="mailto:info@meydan.tr"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 rounded-full border border-foreground/12 bg-white/80 px-6 py-3 text-sm font-medium text-foreground/70 shadow-sm backdrop-blur-sm transition-all hover:border-violet/25 hover:text-violet hover:shadow"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground/20 bg-foreground/8 px-6 py-3 text-sm font-medium text-foreground/75 backdrop-blur-sm transition-all hover:border-violet/40 hover:text-foreground"
             >
               <Mail className="h-4 w-4" />
               Bize Ulaş
@@ -100,7 +100,7 @@ export function FinalCta() {
             {["Ücretsiz katıl", "Doğrudan destek", "Şeffaf fon akışı"].map((t) => (
               <span
                 key={t}
-                className="rounded-full border border-foreground/10 bg-white/70 px-4 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground shadow-sm backdrop-blur-sm"
+                className="rounded-full border border-foreground/15 bg-foreground/8 px-4 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground backdrop-blur-sm"
               >
                 {t}
               </span>

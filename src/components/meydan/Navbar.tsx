@@ -19,8 +19,8 @@ export function Navbar() {
       <div className="mx-auto mt-3 max-w-7xl px-4 sm:px-6">
         <motion.div
           animate={scrolled
-            ? { background: "oklch(1 0 0 / 0.92)", borderColor: "oklch(0.22 0.055 240 / 0.12)", boxShadow: "0 4px 24px oklch(0.22 0.055 240 / 0.08)" }
-            : { background: "oklch(1 0 0 / 0.10)", borderColor: "oklch(1 0 0 / 0.20)", boxShadow: "none" }
+            ? { background: "oklch(0.14 0.04 258 / 0.92)", borderColor: "oklch(0.95 0.008 240 / 0.12)", boxShadow: "0 4px 24px oklch(0 0 0 / 0.30)" }
+            : { background: "oklch(0 0 0 / 0.15)", borderColor: "oklch(1 0 0 / 0.18)", boxShadow: "none" }
           }
           transition={{ duration: 0.3 }}
           className="flex items-center justify-between rounded-full border px-4 py-2.5 backdrop-blur-md sm:px-5"
@@ -35,7 +35,7 @@ export function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${scrolled ? "text-foreground/60 hover:text-foreground" : "text-white/75 hover:text-white"}`}
+                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
               >
                 {link.label}
               </a>
@@ -44,21 +44,13 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <a
               href="#cta"
-              className={`hidden rounded-full px-4 py-2 text-sm font-medium transition-all sm:inline-flex ${
-                scrolled
-                  ? "border border-violet/25 bg-violet/8 text-violet hover:bg-violet/14"
-                  : "border border-white/25 text-white/90 hover:bg-white/12"
-              }`}
+              className="hidden rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/85 transition-all hover:bg-white/10 sm:inline-flex"
             >
               Giriş Yap
             </a>
             <button
               aria-label="Menü"
-              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
-                scrolled
-                  ? "border-foreground/10 bg-foreground/5 text-foreground hover:bg-foreground/10"
-                  : "border-white/20 bg-white/10 text-white hover:bg-white/18"
-              }`}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition-colors hover:bg-white/15"
             >
               <Menu className="h-4 w-4" />
             </button>

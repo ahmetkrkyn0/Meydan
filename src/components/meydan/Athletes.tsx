@@ -59,7 +59,7 @@ export function Athletes() {
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -4 }}
-              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-white/60 shadow-sm backdrop-blur-sm transition-shadow duration-500 hover:shadow-xl"
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-foreground/[0.04] transition-all duration-500 hover:border-foreground/15 hover:bg-foreground/[0.07]"
             >
               {a.featured && (
                 <div className="absolute left-4 top-4 z-10 flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-50 px-2.5 py-1">
@@ -75,7 +75,7 @@ export function Athletes() {
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 />
                 {/* Gradient — fades into white card bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.14_0.04_258)] via-[oklch(0.14_0.04_258/0.35)] to-transparent" />
 
                 {/* Sport tag — top right if not featured */}
                 {!a.featured && (
@@ -96,7 +96,7 @@ export function Athletes() {
                   <div className="flex items-center gap-1.5">
                     <div className="flex -space-x-1.5">
                       {[...Array(3)].map((_, j) => (
-                        <div key={j} className="h-6 w-6 rounded-full border-2 border-white bg-gradient-to-br from-violet/60 to-sky/40 shadow-sm" />
+                        <div key={j} className="h-6 w-6 rounded-full border-2 border-foreground/10 bg-gradient-to-br from-violet/60 to-sky/40 shadow-sm" />
                       ))}
                     </div>
                     <span className="text-xs text-muted-foreground">{a.supporters}</span>
