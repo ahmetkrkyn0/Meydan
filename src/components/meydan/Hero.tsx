@@ -26,7 +26,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full"
+        className="flex h-[100svh] w-full items-center justify-center"
       >
         <motion.img
           src={heroImg}
@@ -34,7 +34,7 @@ export function Hero() {
           initial={{ opacity: 0, filter: "blur(10px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-auto w-full object-contain object-center"
+          className="block h-full max-h-[100svh] w-full object-contain object-center"
         />
       </motion.figure>
 
