@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Zap } from "lucide-react";
+import { FloatingAthlete } from "./FloatingAthlete";
+import tennisImg from "@/assets/sport-tennis.png";
 
 export function FinalCta() {
   return (
     <section id="cta" className="relative isolate overflow-hidden py-32 sm:py-44">
+      <FloatingAthlete src={tennisImg} alt="Tenis sporcusu" side="left" />
       {/* Light aurora background */}
       <div className="absolute inset-0 -z-30 bg-aurora" />
       <div className="absolute inset-x-0 top-0 -z-20 h-full light-rays opacity-50" />
@@ -19,7 +22,7 @@ export function FinalCta() {
       <div className="pointer-events-none absolute -left-32 top-1/4 -z-10 h-[420px] w-[420px] rounded-full bg-violet/10 blur-[120px]" />
       <div className="pointer-events-none absolute -right-32 bottom-1/4 -z-10 h-[380px] w-[380px] rounded-full bg-sky/12 blur-[110px]" />
 
-      <div className="mx-auto max-w-5xl px-5 sm:px-8">
+      <div className="mx-auto max-w-5xl px-5 sm:px-8 lg:pl-80">
         <div className="relative text-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}

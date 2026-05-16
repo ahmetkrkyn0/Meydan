@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Compass, HandHeart, Flame } from "lucide-react";
+import { FloatingAthlete } from "./FloatingAthlete";
+import basketballImg from "@/assets/sport-basketball.png";
 
 const pillars = [
   {
@@ -57,11 +59,12 @@ const item = {
 
 export function Sunar() {
   return (
-    <section id="sunar" className="relative overflow-hidden py-28 sm:py-36">
+    <section id="sunar" className="relative isolate overflow-hidden py-28 sm:py-36">
+      <FloatingAthlete src={basketballImg} alt="Basketbol sporcusu" side="left" />
       {/* Very gentle bloom */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/5 blur-[180px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pl-80">
         {/* Label */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}

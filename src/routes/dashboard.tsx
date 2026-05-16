@@ -3,474 +3,416 @@ import { motion } from "framer-motion";
 import {
   Bell,
   Search,
-  ArrowUpRight,
   ArrowRight,
-  Radio,
+  Home,
+  Compass,
   MapPin,
-  Clock,
-  Sparkles,
+  Radio,
+  Users,
+  Heart,
+  User,
+  ChevronDown,
+  Star,
+  Shield,
 } from "lucide-react";
-import { Navbar } from "@/components/meydan/Navbar";
 import adaImg from "@/assets/athlete-ada.jpg";
 import keremImg from "@/assets/athlete-kerem.jpg";
 import linaImg from "@/assets/athlete-lina.jpg";
-import mertImg from "@/assets/athlete-mert.jpg";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
   head: () => ({
-    meta: [
-      { title: "Ana Sahne — Meydan" },
-      {
-        name: "description",
-        content:
-          "Takip ettiğin sporcular, canlı maçlar, yaklaşan etkinlikler ve sana özel keşifler — editorial bir sahne olarak.",
-      },
-      { property: "og:title", content: "Ana Sahne — Meydan" },
-      { property: "og:image", content: adaImg },
-    ],
+    meta: [{ title: "Ana Sayfa — Meydan" }],
   }),
 });
 
-const stripAthletes = [
-  { name: "Ada Yıldız", branch: "Okçuluk", city: "İzmir", img: adaImg, status: "10:30 — Final" },
-  { name: "Kerem Demir", branch: "Eskrim", city: "Ankara", img: keremImg, status: "Canlı · 12-9" },
-  { name: "Lina Aksoy", branch: "Atletizm", city: "İstanbul", img: linaImg, status: "11 Haz · 1500m" },
-  { name: "Mert Uçar", branch: "Yelken", city: "Bodrum", img: mertImg, status: "Yarın · regatta" },
+/* ── data ── */
+const featuredAthletes = [
+  { name: "Eray Şamdan", branch: "Atletizm", img: adaImg },
+  { name: "Zeynep Güneş", branch: "Voleybol", img: keremImg },
+  { name: "Mete Gazoz", branch: "Okçuluk", img: linaImg },
 ];
 
-const discover = [
-  { n: "01", name: "Naz Erol", branch: "Kaya Tırmanışı", reason: "İzmir + 'Disiplin' uyumu %94" },
-  { n: "02", name: "Onur Çelik", branch: "Tekvando", reason: "Ada Yıldız ile aynı kulüpten" },
-  { n: "03", name: "Ezgi Kara", branch: "Yelken", reason: "Bu hafta öne çıkanlar" },
-  { n: "04", name: "Bora Aslan", branch: "Eskrim", reason: "Kerem'i izleyenler de izledi" },
+const todayMatches = [
+  { time: "17:00", home: "Fenerbahçe", away: "Beşiktaş Dynavit", sport: "🏐", status: "Canlı", live: true },
+  { time: "19:30", home: "Galatasaray", away: "Beşiktaş", sport: "⚽", status: "Yakında", live: false },
+  { time: "20:00", home: "Anadolu Efes", away: "Pınar Karşıyaka", sport: "🏀", status: "Yakında", live: false },
 ];
+
+const events = [
+  { day: "25", month: "MAY", title: "İstanbul Yarı Maratonu", tags: "Koşu • İstanbul" },
+  { day: "28", month: "MAY", title: "Okçuluk Başlangıç Atölyesi", tags: "Okçuluk • İstanbul" },
+  { day: "01", month: "HAZ", title: "Ankara Basketbol Turnuvası", tags: "Basketbol • Ankara" },
+];
+
+const supported = [
+  { name: "Eray Şamdan", branch: "Atletizm", pct: 74, img: adaImg },
+  { name: "Zeynep Güneş", branch: "Voleybol", pct: 58, img: keremImg },
+  { name: "Mete Gazoz", branch: "Okçuluk", pct: 81, img: linaImg },
+];
+
+const navItems = [
+  { icon: Home,    label: "Ana Sayfa",         active: true },
+  { icon: Compass, label: "Keşfet",             active: false },
+  { icon: MapPin,  label: "Şehrimde Ne Var?",  active: false },
+  { icon: Radio,   label: "Canlı Maçlar",      active: false },
+  { icon: Users,   label: "Sporcular",          active: false },
+  { icon: Heart,   label: "Desteklerim",        active: false },
+  { icon: User,    label: "Profilim",           active: false },
+];
+
+/* ── stagger helpers ── */
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
 
 function DashboardPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-aurora">
-      <Navbar />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-x-0 top-0 h-[55%] light-rays opacity-30" />
-        <div className="absolute inset-0 grid-dots opacity-[0.05]" />
-      </div>
+    <div className="flex h-screen overflow-hidden bg-[oklch(0.975_0.012_228)] font-sans">
 
-      {/* ——— HERO ——— */}
-      <section className="relative mx-auto max-w-[1400px] px-4 pt-28 sm:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="grid items-end gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-16"
-        >
-          <div className="relative z-10 max-w-2xl">
-            <div className="mb-5 flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-              <span className="h-px w-10 bg-foreground/40" />
-              Cumartesi · 16 Mayıs
-              <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 normal-case tracking-normal">
-                <Sparkles className="h-3 w-3 text-[var(--violet)]" />
-                Meydan Günlüğü
-              </span>
-            </div>
-            <h1 className="font-display text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] tracking-tight">
-              <span className="text-gradient">Bugün</span>
-              <br />
-              <span className="text-gradient-violet">iki sporcun</span>
-              <br />
-              sahnede.
-            </h1>
-            <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
-              Ada yayını çekti, Kerem ise üçüncü turda. Sessiz tezahüratını yazmadan akşam bitmesin.
-            </p>
-            <div className="mt-8 flex items-center gap-3">
-              <button className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-transform hover:scale-[1.02]">
-                Sahneye geç
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-              <button className="glass inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm transition-colors hover:bg-foreground/10">
-                <Search className="h-4 w-4" /> Keşfet
-              </button>
-              <button className="relative glass inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors hover:bg-foreground/10">
-                <Bell className="h-4 w-4" />
-                <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--coral)]" />
-              </button>
-            </div>
+      {/* ════ SIDEBAR ════ */}
+      <motion.aside
+        initial={{ x: -40, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="flex w-56 shrink-0 flex-col border-r border-[oklch(0.22_0.055_240/0.08)] bg-white"
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-6 py-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[oklch(0.52_0.22_252)] text-white shadow-md shadow-[oklch(0.52_0.22_252/0.35)]">
+            <span className="font-display text-base font-bold leading-none">M</span>
           </div>
+          <span className="font-display text-xl font-bold text-[oklch(0.22_0.055_240)]">Meydan</span>
+        </div>
 
-          {/* Ada portresi */}
-          <div className="relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 1.05, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="ring-glow relative aspect-[3/4] overflow-hidden rounded-[2rem]"
-            >
-              <img
-                src={adaImg}
-                alt="Ada Yıldız — okçuluk"
-                width={832}
-                height={1216}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Şu an takip ettiğin
-                </p>
-                <p className="font-display text-2xl leading-tight">Ada Yıldız</p>
-                <p className="text-xs text-muted-foreground">Okçuluk · TR 8. / Dünya 247.</p>
-              </div>
-            </motion.div>
-
-            {/* yan etiket */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
+        {/* Nav */}
+        <nav className="flex-1 space-y-0.5 px-3">
+          {navItems.map((item, i) => (
+            <motion.button
+              key={item.label}
+              initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="glass-strong absolute -left-4 top-10 hidden rounded-2xl px-4 py-3 lg:block"
+              transition={{ delay: 0.05 + i * 0.04, duration: 0.4 }}
+              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                item.active
+                  ? "bg-[oklch(0.52_0.22_252/0.10)] text-[oklch(0.52_0.22_252)]"
+                  : "text-[oklch(0.40_0.04_240)] hover:bg-[oklch(0.22_0.055_240/0.05)] hover:text-[oklch(0.22_0.055_240)]"
+              }`}
             >
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Bu hafta
-              </p>
-              <p className="font-display text-lg">+24% etki</p>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* ince stat hattı */}
-        <div className="mt-14 flex flex-wrap items-end justify-between gap-y-6 border-t border-border pt-6">
-          {[
-            { k: "Takip ettiğin", v: "12", sub: "sporcu" },
-            { k: "Bu ay destek", v: "₺ 420", sub: "4 sporcuya" },
-            { k: "Sessiz tezahürat", v: "38", sub: "mesaj" },
-            { k: "Etki skoru", v: "+24%", sub: "geçen haftaya göre" },
-          ].map((s) => (
-            <div key={s.k} className="min-w-[140px]">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{s.k}</p>
-              <p className="mt-1 font-display text-3xl leading-none">{s.v}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{s.sub}</p>
-            </div>
+              <item.icon className={`h-4 w-4 shrink-0 ${item.active ? "text-[oklch(0.52_0.22_252)]" : "text-[oklch(0.55_0.04_240)]"}`} strokeWidth={item.active ? 2.2 : 1.8} />
+              {item.label}
+            </motion.button>
           ))}
-        </div>
-      </section>
+        </nav>
+      </motion.aside>
 
-      {/* ——— FEATURED LIVE — Kerem ——— */}
-      <section className="relative mt-24">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-8">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <p className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-[var(--coral)]">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--coral)] opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--coral)]" />
-                </span>
-                Şu an meydanda
-              </p>
-              <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-                <span className="text-gradient">Kerem üçüncü turda.</span>
-              </h2>
-            </div>
-            <Link
-              to="/sporcu"
-              className="hidden text-xs uppercase tracking-[0.22em] text-muted-foreground hover:text-foreground sm:inline-flex items-center gap-1"
-            >
-              Sahneye geç <ArrowUpRight className="h-3 w-3" />
-            </Link>
-          </div>
-        </div>
+      {/* ════ MAIN ════ */}
+      <div className="flex flex-1 flex-col overflow-hidden">
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mx-auto max-w-[1400px] overflow-hidden rounded-none sm:rounded-[2rem] sm:mx-8"
+        {/* ── TOP BAR ── */}
+        <motion.header
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="flex h-16 shrink-0 items-center gap-4 border-b border-[oklch(0.22_0.055_240/0.08)] bg-white px-6"
         >
-          <div className="relative grid lg:grid-cols-[1.4fr_1fr]">
-            <div className="relative aspect-[16/10] lg:aspect-auto">
-              <img
-                src={keremImg}
-                alt="Kerem Demir — eskrim"
-                width={1216}
-                height={832}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/40 via-transparent to-[var(--background)]/80" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-white/70">
-                  Eskrim · Tour de 16
-                </p>
-                <p className="font-display text-2xl text-white sm:text-3xl">
-                  Kerem Demir <span className="text-white/50">vs.</span> M. Petrov
-                </p>
-              </div>
-            </div>
-
-            <div className="relative bg-gradient-to-br from-[color-mix(in_oklab,var(--foreground)_10%,transparent)] to-[color-mix(in_oklab,var(--violet)_18%,transparent)] p-7 sm:p-9">
-              <div className="flex items-baseline gap-6">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    Kerem
-                  </p>
-                  <p className="font-display text-6xl leading-none">12</p>
-                </div>
-                <span className="font-display text-2xl text-muted-foreground">—</span>
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    Petrov
-                  </p>
-                  <p className="font-display text-6xl leading-none text-muted-foreground">9</p>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  <span>Momentum</span>
-                  <span>%78 Kerem</span>
-                </div>
-                <div className="mt-2 h-1 overflow-hidden rounded-full bg-foreground/10">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "78%" }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="h-full rounded-full bg-gradient-to-r from-[var(--sky)] via-[var(--violet)] to-[var(--coral)]"
-                  />
-                </div>
-              </div>
-
-              <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                "Üçüncü turda hızı düştü ama duruşu sertleşti. Bir sonraki touchede final
-                yumruğu gibi geliyor." —{" "}
-                <span className="text-foreground">Meydan AI Yorumu</span>
-              </p>
-
-              <button className="group mt-7 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] transition-transform hover:scale-[1.02]">
-                <Radio className="h-4 w-4" /> Canlı akışa katıl
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-            </div>
+          {/* Search */}
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[oklch(0.55_0.04_240)]" strokeWidth={1.8} />
+            <input
+              type="text"
+              placeholder="Sporcu, branş veya etkinlik ara"
+              className="w-full rounded-xl border border-[oklch(0.22_0.055_240/0.10)] bg-[oklch(0.975_0.012_228)] py-2 pl-9 pr-4 text-sm text-[oklch(0.22_0.055_240)] placeholder:text-[oklch(0.55_0.04_240)] focus:border-[oklch(0.52_0.22_252/0.40)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.52_0.22_252/0.15)]"
+            />
           </div>
-        </motion.div>
-      </section>
 
-      {/* ——— SPORCULARIM ŞERİDİ ——— */}
-      <section className="relative mt-28">
-        <div className="mx-auto mb-8 max-w-[1400px] px-4 sm:px-8">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Senin meydanın
-              </p>
-              <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-                <span className="text-gradient-violet">Sporcularım.</span>
-              </h2>
-            </div>
-            <button className="text-xs uppercase tracking-[0.22em] text-muted-foreground hover:text-foreground">
-              Tümü (12)
+          <div className="ml-auto flex items-center gap-3">
+            {/* Bell */}
+            <button className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[oklch(0.22_0.055_240/0.10)] bg-[oklch(0.975_0.012_228)] text-[oklch(0.40_0.04_240)] transition-colors hover:border-[oklch(0.52_0.22_252/0.25)] hover:text-[oklch(0.52_0.22_252)]">
+              <Bell className="h-4 w-4" strokeWidth={1.8} />
+              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[oklch(0.52_0.22_252)]" />
+            </button>
+
+            {/* User */}
+            <button className="flex items-center gap-2.5 rounded-xl border border-[oklch(0.22_0.055_240/0.10)] bg-[oklch(0.975_0.012_228)] px-2.5 py-1.5 transition-colors hover:border-[oklch(0.52_0.22_252/0.25)]">
+              <img src={adaImg} alt="Mehmet" className="h-7 w-7 rounded-lg object-cover object-top" />
+              <div className="text-left">
+                <p className="text-xs font-semibold leading-none text-[oklch(0.22_0.055_240)]">Mehmet Kaya</p>
+                <p className="mt-0.5 text-[10px] leading-none text-[oklch(0.55_0.04_240)]">İstanbul</p>
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-[oklch(0.55_0.04_240)]" />
             </button>
           </div>
-        </div>
+        </motion.header>
 
-        <div className="overflow-x-auto pb-4">
-          <div className="mx-auto flex w-max gap-5 px-4 sm:px-8">
-            {stripAthletes.map((a, i) => (
-              <motion.div
-                key={a.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.6 }}
-              >
-                <Link
-                  to="/sporcu"
-                  className="group relative block aspect-[3/4] w-[260px] overflow-hidden rounded-3xl"
-                >
-                  <img
-                    src={a.img}
-                    alt={a.name}
-                    width={832}
-                    height={1216}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/10 to-transparent" />
-                  <div className="absolute inset-x-5 bottom-5">
-                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/70">
-                      {a.branch} · {a.city}
-                    </p>
-                    <p className="font-display text-xl leading-tight">{a.name}</p>
-                    <p className="mt-1 text-xs text-[var(--violet)]">{a.status}</p>
-                  </div>
-                  <ArrowUpRight className="absolute right-4 top-4 h-4 w-4 text-white/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+        {/* ── CONTENT SCROLL ── */}
+        <main className="flex-1 overflow-y-auto px-6 py-6">
 
-      {/* ——— LINA — Editorial Split ——— */}
-      <section className="relative mt-28">
-        <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-4 sm:px-8 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              Bu hafta sahnede
-            </p>
-            <h3 className="mt-3 font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1] tracking-tight">
-              <span className="text-gradient">Lina pisti</span>
-              <br />
-              <span className="text-gradient-violet">silmeye geliyor.</span>
-            </h3>
-            <p className="mt-5 max-w-md text-base text-muted-foreground">
-              Balkan Atletizm Şampiyonası'nda 1500 metrede Türkiye rekoruna 0.4 saniye uzakta.
-              Sofya pisti, 11 Haziran 16:45.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Mesafe
-                </p>
-                <p className="font-display text-2xl">1500 m</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  En iyi
-                </p>
-                <p className="font-display text-2xl">4:02.18</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Hedef
-                </p>
-                <p className="font-display text-2xl text-[var(--coral)]">4:01.80</p>
-              </div>
-            </div>
-            <Link
-              to="/sporcu"
-              className="group mt-8 inline-flex items-center gap-2 text-sm font-semibold story-link"
-            >
-              Lina'nın hikâyesi
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-
+          {/* Welcome */}
           <motion.div
-            initial={{ opacity: 0, scale: 1.04 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="ring-glow relative aspect-[5/6] overflow-hidden rounded-[2rem]"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.1 }}
+            className="mb-6"
           >
-            <img
-              src={linaImg}
-              alt="Lina Aksoy — atletizm"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--background)]/40 via-transparent to-transparent" />
+            <h1 className="font-display text-2xl font-bold text-[oklch(0.22_0.055_240)]">
+              Hoş geldin, Mehmet! 👋
+            </h1>
+            <p className="mt-1 text-sm text-[oklch(0.50_0.05_238)]">Bugün sporda neler oluyor, hemen göz at.</p>
           </motion.div>
-        </div>
-      </section>
 
-      {/* ——— KEŞFET — Editorial Liste ——— */}
-      <section className="relative mt-32">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-8">
-          <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Sana özel
-              </p>
-              <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-                <span className="text-gradient">Yeni meydanlar.</span>
-              </h2>
-            </div>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              Meydan AI; takip ettiğin sporcuların branş, şehir ve değer örüntülerinden
-              öğreniyor. İşte bu hafta dikkatini hak edenler.
-            </p>
-          </div>
+          {/* ── 3-COL GRID ── */}
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid gap-5 lg:grid-cols-[1fr_1fr_320px]"
+          >
 
-          <ul>
-            {discover.map((d, i) => (
-              <motion.li
-                key={d.name}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.5 }}
-                className="group grid cursor-pointer grid-cols-[auto_1fr_auto] items-baseline gap-6 border-b border-border py-6 transition-colors hover:bg-foreground/[0.03] sm:gap-10 sm:py-7"
-              >
-                <span className="font-display text-sm text-[var(--violet)]">{d.n}</span>
-                <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-                  <h3 className="font-display text-2xl leading-none sm:text-3xl">{d.name}</h3>
-                  <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    {d.branch}
-                  </span>
-                  <p className="basis-full text-sm text-muted-foreground sm:basis-auto sm:max-w-md">
-                    <span className="text-[var(--violet)]">AI · </span>
-                    {d.reason}
-                  </p>
+            {/* ── COL 1 ── */}
+            <div className="space-y-5">
+
+              {/* Öne Çıkan Sporcular */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-[oklch(0.22_0.055_240)]">Öne Çıkan Sporcular</h2>
+                  <button className="flex items-center gap-1 text-xs font-medium text-[oklch(0.52_0.22_252)] hover:underline">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      </section>
+                <div className="grid grid-cols-3 gap-3">
+                  {featuredAthletes.map((a) => (
+                    <div key={a.name} className="group cursor-pointer">
+                      <div className="relative overflow-hidden rounded-xl aspect-[3/4]">
+                        <img src={a.img} alt={a.name} className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      </div>
+                      <p className="mt-2 text-xs font-semibold text-[oklch(0.22_0.055_240)] leading-tight">{a.name}</p>
+                      <p className="text-[10px] text-[oklch(0.55_0.04_240)]">{a.branch}</p>
+                      <button className="mt-2 w-full rounded-lg border border-[oklch(0.22_0.055_240/0.14)] py-1 text-[11px] font-medium text-[oklch(0.22_0.055_240)] transition-colors hover:border-[oklch(0.52_0.22_252/0.40)] hover:text-[oklch(0.52_0.22_252)]">
+                        Profili Gör
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
 
-      {/* ——— MERT — Sessiz Tezahürat CTA ——— */}
-      <section className="relative mt-32">
-        <div className="mx-auto max-w-[1400px] px-4 pb-24 sm:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-[2rem]"
-          >
-            <img
-              src={mertImg}
-              alt="Mert Uçar — yelken"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              className="h-[560px] w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/70 to-transparent" />
-            <div className="absolute inset-y-0 left-0 flex w-full max-w-2xl flex-col justify-center p-8 sm:p-14">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Sessiz Tezahürat
-              </p>
-              <h3 className="mt-3 font-display text-[clamp(2rem,5vw,3.5rem)] leading-[1.02]">
-                <span className="text-gradient-violet">Mert'in yelkenini</span>
-                <br />
-                bir cümlenle doldur.
-              </h3>
-              <p className="mt-4 max-w-md text-base text-muted-foreground">
-                Yarın Bodrum'da regatta var. Maç anında AI özetiyle sporcuya tek mesaj olarak
-                ulaşır — ses değil, niyet.
-              </p>
-              <div className="mt-7 flex items-center gap-3">
-                <Link
-                  to="/sporcu"
-                  className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition-transform hover:scale-[1.02]"
+              {/* Desteklediğin Sporcular */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-[oklch(0.22_0.055_240)]">Desteklediğin Sporcular</h2>
+                  <button className="flex items-center gap-1 text-xs font-medium text-[oklch(0.52_0.22_252)]">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <div className="space-y-3.5">
+                  {supported.map((s) => (
+                    <div key={s.name} className="flex items-center gap-3">
+                      <img src={s.img} alt={s.name} className="h-9 w-9 rounded-full object-cover object-top ring-2 ring-white" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[oklch(0.22_0.055_240)] truncate">{s.name}</p>
+                          <span className="text-xs font-bold text-[oklch(0.52_0.22_252)]">%{s.pct}</span>
+                        </div>
+                        <p className="text-[10px] text-[oklch(0.55_0.04_240)]">{s.branch}</p>
+                        <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[oklch(0.22_0.055_240/0.08)]">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${s.pct}%` }}
+                            transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="h-full rounded-full bg-[oklch(0.52_0.22_252)]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* ── COL 2 ── */}
+            <div className="space-y-5">
+
+              {/* Bugünün Maçları */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-[oklch(0.22_0.055_240)]">Bugünün Maçları</h2>
+                  <button className="flex items-center gap-1 text-xs font-medium text-[oklch(0.52_0.22_252)]">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {todayMatches.map((m, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.08 }}
+                      className="flex items-center gap-3 rounded-xl border border-[oklch(0.22_0.055_240/0.07)] bg-[oklch(0.975_0.012_228)] px-3.5 py-3"
+                    >
+                      <span className="w-10 text-xs font-semibold tabular-nums text-[oklch(0.50_0.05_238)]">{m.time}</span>
+                      <span className="text-lg">{m.sport}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-[oklch(0.22_0.055_240)] truncate">{m.home}</p>
+                        <p className="text-[10px] text-[oklch(0.55_0.04_240)] truncate">{m.away}</p>
+                      </div>
+                      <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                        m.live
+                          ? "bg-[oklch(0.60_0.20_16/0.12)] text-[oklch(0.55_0.22_16)]"
+                          : "bg-[oklch(0.22_0.055_240/0.07)] text-[oklch(0.50_0.05_238)]"
+                      }`}>
+                        {m.status}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Keşfet Modu card */}
+              <motion.div
+                variants={fadeUp}
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[oklch(0.92_0.025_240)] via-[oklch(0.95_0.018_232)] to-[oklch(0.97_0.012_225)] p-5 shadow-sm"
+              >
+                {/* decorative archery target */}
+                <div className="pointer-events-none absolute -right-4 -bottom-4 text-[100px] select-none opacity-70">🎯</div>
+
+                <h2 className="text-sm font-bold text-[oklch(0.22_0.055_240)]">Keşfet Modu</h2>
+                <p className="mt-1.5 max-w-[180px] text-xs leading-relaxed text-[oklch(0.45_0.05_240)]">
+                  Yeni sporları keşfet, etkinliklere katıl ve kendini geliştir.
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[oklch(0.52_0.22_252)] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[oklch(0.52_0.22_252/0.30)]"
                 >
-                  Mesaj yaz
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-                <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" /> 12 saat içinde
-                  <MapPin className="ml-2 h-3 w-3" /> Bodrum
-                </span>
-              </div>
+                  Keşfetmeye Başla <ArrowRight className="h-3.5 w-3.5" />
+                </motion.button>
+              </motion.div>
+
+              {/* Stats row */}
+              <motion.div
+                variants={fadeUp}
+                className="grid grid-cols-3 gap-3"
+              >
+                {[
+                  { icon: "👥", val: "12", label: "Takip ettiğin sporcu" },
+                  { icon: "📅", val: "5",  label: "Bu hafta etkinlik"   },
+                  { icon: "❤️", val: "21.300 ₺", label: "Toplam destek" },
+                ].map((s, i) => (
+                  <motion.div
+                    key={s.label}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + i * 0.08 }}
+                    className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-4 shadow-sm text-center"
+                  >
+                    <div className="mb-2 flex justify-center">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[oklch(0.975_0.012_228)] text-lg">{s.icon}</span>
+                    </div>
+                    <p className="font-display text-lg font-bold leading-none text-[oklch(0.22_0.055_240)]">{s.val}</p>
+                    <p className="mt-1 text-[10px] leading-tight text-[oklch(0.55_0.04_240)]">{s.label}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* ── COL 3 ── */}
+            <div className="space-y-5">
+
+              {/* Yakındaki Etkinlikler */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-[oklch(0.22_0.055_240)]">Yakındaki Etkinlikler</h2>
+                  <button className="flex items-center gap-1 text-xs font-medium text-[oklch(0.52_0.22_252)]">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {events.map((e, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.35 + i * 0.08 }}
+                      className="flex gap-3 group cursor-pointer"
+                    >
+                      <div className="flex w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-[oklch(0.52_0.22_252/0.09)] py-2 text-center">
+                        <span className="font-display text-sm font-bold leading-none text-[oklch(0.52_0.22_252)]">{e.day}</span>
+                        <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide text-[oklch(0.52_0.22_252/0.70)]">{e.month}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-[oklch(0.22_0.055_240)] group-hover:text-[oklch(0.52_0.22_252)] transition-colors leading-tight">{e.title}</p>
+                        <p className="mt-0.5 flex items-center gap-1 text-[10px] text-[oklch(0.55_0.04_240)]">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          {e.tags}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* İlk Adım Rozeti */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <h2 className="text-sm font-semibold text-[oklch(0.22_0.055_240)]">İlk Adım Rozeti</h2>
+                    <p className="mt-1 text-[11px] text-[oklch(0.55_0.04_240)]">3 / 5 görev tamamlandı</p>
+
+                    {/* progress bar */}
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-[oklch(0.22_0.055_240/0.08)]">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "60%" }}
+                        transition={{ duration: 1.0, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                        className="h-full rounded-full bg-gradient-to-r from-[oklch(0.52_0.22_252)] to-[oklch(0.68_0.17_220)]"
+                      />
+                    </div>
+
+                    <p className="mt-3 text-[11px] leading-relaxed text-[oklch(0.50_0.05_238)]">
+                      Devam et, spor yolculuğunu bir adım daha ileri taşı!
+                    </p>
+                  </div>
+
+                  {/* Badge icon */}
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[oklch(0.52_0.22_252)] to-[oklch(0.44_0.20_258)] shadow-lg shadow-[oklch(0.52_0.22_252/0.35)]"
+                  >
+                    <Shield className="h-6 w-6 text-white" />
+                    <Star className="absolute h-3 w-3 text-yellow-300" style={{ marginTop: -16, marginLeft: 16 }} />
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Quick actions */}
+              <motion.div variants={fadeUp} className="rounded-2xl border border-[oklch(0.22_0.055_240/0.08)] bg-white p-5 shadow-sm">
+                <h2 className="mb-3 text-sm font-semibold text-[oklch(0.22_0.055_240)]">Hızlı Eylemler</h2>
+                <div className="space-y-2">
+                  {[
+                    { icon: "🏆", label: "Sporcu Keşfet" },
+                    { icon: "💰", label: "Destek Ver" },
+                    { icon: "📍", label: "Yakındaki Maçlar" },
+                  ].map((a) => (
+                    <motion.button
+                      key={a.label}
+                      whileHover={{ x: 3 }}
+                      className="flex w-full items-center gap-3 rounded-xl border border-[oklch(0.22_0.055_240/0.08)] px-3 py-2.5 text-left text-xs font-medium text-[oklch(0.40_0.04_240)] transition-colors hover:border-[oklch(0.52_0.22_252/0.25)] hover:bg-[oklch(0.52_0.22_252/0.05)] hover:text-[oklch(0.52_0.22_252)]"
+                    >
+                      <span className="text-base">{a.icon}</span>
+                      {a.label}
+                      <ArrowRight className="ml-auto h-3.5 w-3.5 opacity-50" />
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
             </div>
           </motion.div>
-        </div>
-      </section>
+        </main>
+      </div>
     </div>
   );
 }
