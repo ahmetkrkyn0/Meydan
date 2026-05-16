@@ -97,43 +97,33 @@ export function Hero() {
         </div>
 
 
-        {/* Hero centerpiece visual */}
-        <motion.div
-          initial={{ opacity: 0, y: 64, scale: 0.94, filter: "blur(12px)" }}
-          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mt-10 sm:mt-14"
-        >
-          <div className="absolute -inset-x-10 -top-10 -z-10 h-[60%] bg-gradient-to-b from-violet/30 via-sky/10 to-transparent blur-3xl" />
+      </div>
 
-          <div className="relative overflow-hidden rounded-[2.25rem] border border-foreground/15 ring-glow">
-            <img
-              src={heroImg}
-              alt="Meydan: farklı branşlardan Türk sporcular parlayan M kapısının etrafında"
-              width={1920}
-              height={1080}
-              className="block h-auto w-full"
-            />
-            {/* Top fade into background */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/70 to-transparent" />
-            {/* Bottom fade */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      {/* Hero centerpiece visual — full-bleed, edge to edge */}
+      <motion.div
+        initial={{ opacity: 0, y: 64, scale: 0.98, filter: "blur(12px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mt-10 sm:mt-14"
+      >
+        <div className="pointer-events-none absolute inset-x-0 -top-10 -z-10 h-[60%] bg-gradient-to-b from-violet/30 via-sky/10 to-transparent blur-3xl" />
 
-            {/* Floating glass chips on the image */}
-            <div className="absolute left-4 top-4 hidden flex-col gap-2 sm:flex">
-              <span className="glass-strong rounded-full px-3 py-1.5 text-[11px] tracking-wide text-foreground">
-                7 branş · 240+ sporcu
-              </span>
-            </div>
-            <div className="absolute right-4 top-4 hidden sm:block">
-              <span className="glass-strong inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] tracking-wide text-foreground">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral" />
-                Canlı: İzmir Open · Okçuluk
-              </span>
-            </div>
+        <div className="relative overflow-hidden border-y border-foreground/15">
+          <img
+            src={heroImg}
+            alt="Meydan: farklı branşlardan Türk sporcular parlayan M kapısının etrafında, üstte Atatürk ileriyi işaret ediyor"
+            width={1920}
+            height={1080}
+            className="block h-auto w-full"
+          />
+          {/* Top fade into background — kept subtle so Atatürk stays clean */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background/60 to-transparent" />
+          {/* Bottom fade */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
-            {/* Bottom stat strip */}
-            <div className="absolute inset-x-4 bottom-4 hidden sm:block">
+          {/* Bottom stat strip — sits over the running track, not over Atatürk */}
+          <div className="absolute inset-x-0 bottom-4 hidden sm:block sm:bottom-6">
+            <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
               <div className="glass-strong flex flex-wrap items-center justify-between gap-6 rounded-2xl px-6 py-4">
                 <Stat label="Futbol dışı sporlar" value="7+" index={0} />
                 <Divider />
@@ -145,8 +135,10 @@ export function Hero() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
+      </motion.div>
 
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Scroll indicator */}
         <motion.a
           href="#sunar"
