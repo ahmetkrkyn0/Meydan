@@ -41,7 +41,6 @@ export function Hero() {
           }}
         />
       </motion.figure>
-      </motion.figure>
 
       {/* Text block — clearly below the image */}
       <div className="relative z-10 px-4 pb-20 pt-12 sm:px-6 sm:pb-24 sm:pt-16 lg:pb-28">
