@@ -120,9 +120,9 @@ export function Hero() {
 
         {/* Hero centerpiece visual */}
         <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.1, delay: 0.3, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 64, scale: 0.94, filter: "blur(12px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="relative mt-10 sm:mt-14"
         >
           <div className="absolute -inset-x-10 -top-10 -z-10 h-[60%] bg-gradient-to-b from-violet/30 via-sky/10 to-transparent blur-3xl" />
