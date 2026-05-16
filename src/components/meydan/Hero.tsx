@@ -42,11 +42,10 @@ export function Hero() {
           <img
             src={heroFallback}
             alt="Meydan: farklı branşlardan Türk sporcular ve önderlik eden Atatürk figürü"
-            // LCP image: load eagerly with high priority instead of lazy
+            // LCP image: eager + high priority (no lazy)
             loading="eager"
             decoding="async"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore - valid HTML attribute, types lag
+            // @ts-expect-error - valid HTML attribute, React types lag
             fetchpriority="high"
             sizes="100vw"
             className="block h-auto w-full object-contain object-center"
