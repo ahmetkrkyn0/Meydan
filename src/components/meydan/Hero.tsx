@@ -102,8 +102,15 @@ export function Hero() {
               <span className="text-gradient-violet font-medium">Meydan</span>, futbolun gölgesinde
               kalan sporcuları taraftarla buluşturan, doğrudan destek için kurulmuş bir dijital sahnedir.
             </p>
+            <div className="ml-auto mt-6 flex max-w-sm items-start gap-3 lg:justify-end">
+              <span className="mt-1.5 h-8 w-px shrink-0 bg-gradient-to-b from-violet via-sky to-transparent lg:order-2 lg:bg-gradient-to-t" />
+              <p className="text-xs italic leading-relaxed text-foreground/75 lg:order-1 lg:text-right">
+                "19 Mayıs ruhuyla: gençleri, sporu ve görünmeyen kahramanları Meydan'a çıkarıyoruz."
+              </p>
+            </div>
           </motion.div>
         </div>
+
 
         {/* Hero centerpiece visual */}
         <motion.div
