@@ -57,7 +57,7 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.6 }}
+          transition={{ duration: 0.9, delay: 1.0 }}
           className="pointer-events-none absolute top-[14%] left-[3%] max-w-[38%] hidden md:block"
         >
           <div className="pointer-events-auto rounded-2xl border border-white/15 bg-black/45 p-7 backdrop-blur-md lg:p-8">
