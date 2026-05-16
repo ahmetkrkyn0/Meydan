@@ -26,7 +26,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto flex w-full justify-center px-4 sm:px-8 lg:px-12"
+        className="mx-auto flex w-full justify-center px-2 sm:px-4 lg:px-6"
       >
         <motion.img
           src={heroImg}
@@ -34,7 +34,11 @@ export function Hero() {
           initial={{ scale: 1.02, filter: "blur(10px)" }}
           animate={{ scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="block h-auto max-h-[calc(100svh-8rem)] w-full max-w-[1800px] object-contain object-center"
+          className="block h-auto w-full max-w-full object-contain object-center"
+          style={{
+            maxHeight: "calc(100svh - 8rem)",
+            aspectRatio: "16 / 9",
+          }}
         />
       </motion.figure>
 
