@@ -36,11 +36,11 @@ export function Hero() {
       {/* Gradient overlays — darken bottom & left for text legibility, keep center/right bright */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         {/* Bottom fade so content area is readable */}
-        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-[oklch(0.14_0.06_270)] via-[oklch(0.18_0.06_270/0.85)] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-[oklch(0.26_0.07_272)] via-[oklch(0.30_0.07_272/0.80)] to-transparent" />
         {/* Left fade for headline legibility */}
-        <div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-[oklch(0.14_0.06_270/0.75)] to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-[oklch(0.26_0.07_272/0.70)] to-transparent" />
         {/* Subtle top vignette */}
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[oklch(0.14_0.06_270/0.5)] to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[oklch(0.26_0.07_272/0.45)] to-transparent" />
       </div>
 
       {/* Content — anchored to bottom-left, keeps the epic visual center clear */}

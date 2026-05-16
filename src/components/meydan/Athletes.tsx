@@ -92,7 +92,7 @@ export function Athletes() {
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 />
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.06_270)] via-[oklch(0.14_0.06_270/0.4)] to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.24_0.07_272)] via-[oklch(0.28_0.07_272/0.4)] to-transparent" />
 
                 {/* Sport tag */}
                 <div className="absolute left-4 top-4">
