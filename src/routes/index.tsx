@@ -15,6 +15,9 @@ const Sunar = lazy(() =>
 const Features = lazy(() =>
   import("@/components/meydan/Features").then((m) => ({ default: m.Features })),
 );
+const Athletes = lazy(() =>
+  import("@/components/meydan/Athletes").then((m) => ({ default: m.Athletes })),
+);
 const FinalCta = lazy(() =>
   import("@/components/meydan/FinalCta").then((m) => ({ default: m.FinalCta })),
 );
@@ -65,6 +68,7 @@ function Index() {
             <Problem />
             <Sunar />
             <Features />
+            <Athletes />
             <FinalCta />
           </Suspense>
         </main>

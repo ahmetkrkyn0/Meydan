@@ -5,8 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Meydan — bright cinematic sports-tech design system.
- * Luminous blue / indigo / soft purple, premium and energetic.
+ * Meydan — Teal Stadium + Gold Trophy design system.
+ * Deep emerald-teal base, warm amber/gold accent, cream white text.
+ * Stadium floodlight meets championship podium.
  */
 
 @theme inline {
@@ -51,40 +52,42 @@
 :root {
   --radius: 1rem;
 
-  /* Bright luminous indigo palette */
-  --background: oklch(0.22 0.06 270);
-  --ink: oklch(0.18 0.06 270);
-  --foreground: oklch(0.985 0.005 250);
+  /* ── Base: deep teal-emerald, stadium night ── */
+  --background: oklch(0.32 0.06 195);
+  --ink:        oklch(0.26 0.06 195);
+  --foreground: oklch(0.97 0.01 85);   /* warm cream white */
 
-  --card: oklch(0.985 0.005 250 / 0.06);
-  --card-foreground: oklch(0.985 0.005 250);
-  --popover: oklch(0.3 0.07 270);
-  --popover-foreground: oklch(0.985 0.005 250);
+  --card:             oklch(0.97 0.01 85 / 0.07);
+  --card-foreground:  oklch(0.97 0.01 85);
+  --popover:          oklch(0.40 0.07 195);
+  --popover-foreground: oklch(0.97 0.01 85);
 
-  --primary: oklch(0.985 0.005 250);
-  --primary-foreground: oklch(0.22 0.08 270);
+  --primary:            oklch(0.97 0.01 85);
+  --primary-foreground: oklch(0.26 0.06 195);
 
-  --secondary: oklch(0.32 0.08 270);
-  --secondary-foreground: oklch(0.985 0.005 250);
+  --secondary:            oklch(0.42 0.07 195);
+  --secondary-foreground: oklch(0.97 0.01 85);
 
-  --muted: oklch(0.985 0.005 250 / 0.1);
-  --muted-foreground: oklch(0.82 0.03 260);
+  --muted:            oklch(0.97 0.01 85 / 0.09);
+  --muted-foreground: oklch(0.76 0.04 185);
 
-  --accent: oklch(0.72 0.2 290);
-  --accent-foreground: oklch(0.22 0.08 270);
+  /* ── Accent: warm amber / championship gold ── */
+  --accent:            oklch(0.78 0.16 68);   /* golden amber */
+  --accent-foreground: oklch(0.22 0.05 195);
 
-  --indigo: oklch(0.55 0.22 275);
-  --indigo-soft: oklch(0.7 0.18 270);
-  --violet: oklch(0.65 0.24 300);
-  --sky: oklch(0.78 0.13 235);
-  --coral: oklch(0.7 0.21 25);
+  /* ── Brand palette ── */
+  --indigo:      oklch(0.60 0.18 220);   /* steel blue — secondary accent */
+  --indigo-soft: oklch(0.72 0.14 215);
+  --violet:      oklch(0.78 0.16 68);    /* repurposed: "violet" slot → amber gold */
+  --sky:         oklch(0.72 0.13 200);   /* teal-cyan highlight */
+  --coral:       oklch(0.72 0.18 38);    /* warm orange — tertiary */
 
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.985 0.005 250);
+  --destructive:            oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.97 0.01 85);
 
-  --border: oklch(0.985 0.005 250 / 0.12);
-  --input: oklch(0.985 0.005 250 / 0.16);
-  --ring: oklch(0.72 0.2 290 / 0.6);
+  --border: oklch(0.97 0.01 85 / 0.12);
+  --input:  oklch(0.97 0.01 85 / 0.16);
+  --ring:   oklch(0.78 0.16 68 / 0.6);
 }
 
 @layer base {
@@ -102,7 +105,7 @@
     font-feature-settings: "ss01", "cv11";
   }
   ::selection {
-    background: color-mix(in oklab, var(--violet) 50%, transparent);
+    background: color-mix(in oklab, var(--accent) 45%, transparent);
     color: var(--foreground);
   }
 }
@@ -113,67 +116,96 @@
     letter-spacing: -0.025em;
     font-weight: 600;
   }
+
+  /* ── Glass surfaces: teal-tinted frost ── */
   .glass {
     background: linear-gradient(
       135deg,
       color-mix(in oklab, var(--foreground) 8%, transparent),
       color-mix(in oklab, var(--foreground) 2%, transparent)
     );
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid color-mix(in oklab, var(--foreground) 11%, transparent);
   }
   .glass-strong {
     background: linear-gradient(
       135deg,
-      color-mix(in oklab, var(--foreground) 14%, transparent),
+      color-mix(in oklab, var(--foreground) 13%, transparent),
       color-mix(in oklab, var(--foreground) 4%, transparent)
     );
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
+    backdrop-filter: blur(28px) saturate(170%);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
   }
+
+  /* ── Gradients ── */
   .text-gradient {
-    background: linear-gradient(135deg, oklch(0.98 0.02 250) 0%, oklch(0.82 0.17 280) 60%, oklch(0.78 0.13 235) 100%);
+    background: linear-gradient(135deg,
+      oklch(0.97 0.01 85) 0%,
+      oklch(0.85 0.15 68) 60%,
+      oklch(0.72 0.13 200) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  /* Main accent gradient: gold → warm orange */
   .text-gradient-violet {
-    background: linear-gradient(135deg, oklch(0.85 0.14 300) 0%, oklch(0.7 0.22 290) 100%);
+    background: linear-gradient(135deg,
+      oklch(0.90 0.14 78) 0%,
+      oklch(0.75 0.18 55) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  /* Aurora: teal lake + gold sunrise glow */
   .bg-aurora {
     background:
-      radial-gradient(ellipse 60% 50% at 15% 20%, color-mix(in oklab, var(--violet) 35%, transparent), transparent 60%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, color-mix(in oklab, var(--sky) 30%, transparent), transparent 60%),
-      radial-gradient(ellipse 80% 50% at 50% 100%, color-mix(in oklab, var(--indigo) 40%, transparent), transparent 70%),
-      linear-gradient(180deg, oklch(0.28 0.08 275) 0%, oklch(0.22 0.06 270) 60%, oklch(0.18 0.05 270) 100%);
+      radial-gradient(ellipse 55% 45% at 10% 15%,
+        color-mix(in oklab, oklch(0.72 0.13 200) 40%, transparent), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 88% 8%,
+        color-mix(in oklab, oklch(0.78 0.16 68) 30%, transparent), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 50% 95%,
+        color-mix(in oklab, oklch(0.60 0.18 220) 35%, transparent), transparent 70%),
+      linear-gradient(160deg,
+        oklch(0.38 0.08 200) 0%,
+        oklch(0.32 0.06 195) 55%,
+        oklch(0.27 0.06 192) 100%);
   }
+
+  /* Dot grid */
   .grid-dots {
-    background-image: radial-gradient(color-mix(in oklab, var(--foreground) 12%, transparent) 1px, transparent 1px);
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--foreground) 10%, transparent) 1px,
+      transparent 1px
+    );
     background-size: 28px 28px;
   }
+
+  /* Light rays: teal + gold sweep */
   .light-rays {
     background:
       conic-gradient(from 200deg at 50% 100%,
         transparent 0deg,
-        color-mix(in oklab, var(--sky) 18%, transparent) 25deg,
-        transparent 50deg,
-        color-mix(in oklab, var(--violet) 20%, transparent) 80deg,
-        transparent 110deg,
-        color-mix(in oklab, var(--sky) 16%, transparent) 140deg,
-        transparent 170deg);
+        color-mix(in oklab, oklch(0.72 0.13 200) 20%, transparent) 22deg,
+        transparent 48deg,
+        color-mix(in oklab, oklch(0.78 0.16 68) 22%, transparent) 78deg,
+        transparent 108deg,
+        color-mix(in oklab, oklch(0.72 0.13 200) 18%, transparent) 138deg,
+        transparent 168deg);
   }
+
+  /* Glow helpers */
   .glow-violet {
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--violet) 40%, transparent),
-      0 24px 80px -20px color-mix(in oklab, var(--violet) 60%, transparent);
+      0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent),
+      0 24px 80px -20px color-mix(in oklab, var(--accent) 55%, transparent);
   }
   .ring-glow {
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 12%, transparent),
-      0 20px 60px -20px color-mix(in oklab, var(--indigo) 50%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent),
+      0 20px 60px -20px color-mix(in oklab, var(--indigo) 45%, transparent);
   }
 }
