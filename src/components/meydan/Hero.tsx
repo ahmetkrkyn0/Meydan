@@ -14,9 +14,9 @@ export function Hero() {
       {/* Atatürk line-art — front-facing, pointing at the viewer. Dramatic, prominent, immediately eye-catching. */}
       <motion.div
         aria-hidden
-        initial={{ opacity: 0, scale: 1.05, x: 20 }}
-        animate={{ opacity: 1, scale: 1, x: 0 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
+        initial={{ opacity: 0, scale: 1.08, x: 60, filter: "blur(14px)" }}
+        animate={{ opacity: 1, scale: 1, x: 0, filter: "blur(0px)" }}
+        transition={{ duration: 1.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         className="pointer-events-none absolute -z-10 right-[-8%] top-20 h-[420px] w-[280px] opacity-50 mix-blend-screen sm:right-[-4%] sm:top-24 sm:h-[560px] sm:w-[360px] sm:opacity-60 md:right-[2%] md:h-[640px] md:w-[420px] md:opacity-70 lg:right-[4%] lg:top-20 lg:h-[760px] lg:w-[500px] lg:opacity-80 xl:right-[6%] xl:h-[840px] xl:w-[560px]"
         style={{
           backgroundImage: `url(${ataturkLine})`,
