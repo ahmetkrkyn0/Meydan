@@ -1,23 +1,23 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import archeryImg from "@/assets/sport-archery-nobg.png";
+import meteGazozImg from "@/assets/metegazoz.png";
 
 const problems = [
   {
     num: "01",
     title: "Sporcu görünmez",
     desc: "Olimpik branşların yıldızları kendi şehrinde bile tanınmıyor. Hikâye yok, sahne yok, tribün yok.",
-    stat: "94%",
-    statLabel: "medyada futbol",
+    stat: "%87",
+    statLabel: "spor medyası futbol",
     color: "oklch(0.52 0.22 252)",
   },
   {
     num: "02",
     title: "Taraftar dağınık",
     desc: "Tribün boş değil — sadece bağlanacağı bir yer arıyor. Topluluk parçalı, enerji çevresiz.",
-    stat: "12M",
-    statLabel: "potansiyel taraftar",
+    stat: "7M",
+    statLabel: "lisanslı sporcu",
     color: "oklch(0.68 0.17 220)",
   },
   {
@@ -25,7 +25,7 @@ const problems = [
     title: "Destek ulaşmıyor",
     desc: "İyi niyet var, kanal yok. Küçük katkıların sporcuya direkt ulaşacağı bir köprü eksik.",
     stat: "₺0",
-    statLabel: "ortalama sporcu geliri",
+    statLabel: "bireysel sporcu maaşı",
     color: "oklch(0.60 0.20 16)",
   },
 ];
@@ -37,21 +37,28 @@ export function Problem() {
 
   return (
     <section id="problem" ref={ref} className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={archeryImg} alt="Okçuluk sporcusu" side="right" />
+      <FloatingAthlete
+        src={meteGazozImg}
+        alt="Nisan Çelik"
+        side="right"
+        mirror
+        scale={1.25}
+        offsetX={-40}
+      />
       {/* Dot grid */}
       <div className="pointer-events-none absolute inset-0 -z-10 grid-dots" />
       {/* Subtle color blooms */}
       <div className="pointer-events-none absolute -left-48 -top-48 -z-10 h-[500px] w-[500px] rounded-full bg-violet/8 blur-[140px]" />
       <div className="pointer-events-none absolute -bottom-48 -right-48 -z-10 h-[400px] w-[400px] rounded-full bg-sky/10 blur-[120px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-[30rem]">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-foreground/8 pb-10">
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
               <span className="h-1.5 w-1.5 rounded-full bg-violet" />
@@ -89,7 +96,7 @@ export function Problem() {
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
               className="group grid cursor-default grid-cols-12 items-center gap-4 rounded-2xl px-4 py-10 transition-colors hover:bg-foreground/[0.03] sm:gap-8"
             >
               <div className="col-span-2 sm:col-span-1">

@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
-import adaImg   from "@/assets/athlete-ada.jpg";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg  from "@/assets/athlete-lina.jpg";
-import mertImg  from "@/assets/athlete-mert.jpg";
+import okculukImg  from "@/assets/athlete-okculuk-kadin.png";
+import guresImg    from "@/assets/athlete-gures-erkek.png";
+import boksImg     from "@/assets/athlete-boks-kadin.png";
+import satrancImg  from "@/assets/athlete-satranc-erkek.png";
 
 const athletes = [
-  { img: adaImg,   name: "Ada Yılmaz",  sport: "Okçuluk", rank: "#3 Ulusal",    supporters: "1.2K", featured: false },
-  { img: keremImg, name: "Kerem Taş",   sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
-  { img: linaImg,  name: "Lina Demir",  sport: "Yüzme",   rank: "Olimpik Aday", supporters: "980",  featured: false },
-  { img: mertImg,  name: "Mert Kaya",   sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
+  { img: okculukImg, name: "Nisan Çelik",           sport: "Okçuluk", rank: "#3 Dünya",     supporters: "2.1K", featured: false },
+  { img: guresImg,   name: "Taha Akgül",            sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
+  { img: boksImg,    name: "Seda Yılmaz",    sport: "Boks",    rank: "#2 Dünya",     supporters: "1.5K", featured: false },
+  { img: satrancImg, name: "Emre Can Özkan",        sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
 ];
 
 export function Athletes() {
@@ -26,7 +26,7 @@ export function Athletes() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
               <span className="h-1.5 w-1.5 rounded-full bg-violet" />
@@ -57,7 +57,7 @@ export function Athletes() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
               whileHover={{ y: -4 }}
               className="group relative cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-foreground/[0.04] transition-all duration-500 hover:border-foreground/15 hover:bg-foreground/[0.07]"
             >

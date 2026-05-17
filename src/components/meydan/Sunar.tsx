@@ -1,70 +1,122 @@
 import { motion } from "framer-motion";
-import { Compass, HandHeart, Flame } from "lucide-react";
+import { Compass, HandHeart, Flame, ArrowUpRight } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import basketballImg from "@/assets/sport-basketball-nobg.png";
-
-const pillars = [
-  {
-    icon: Compass,
-    num: "I",
-    title: "Keşfet",
-    desc: "Okçuluktan güreşe, satranç turnuvalarından yüzme maçlarına — radar senin için çalışıyor. Yeni branşlar, yeni yıldızlar, yeni hikâyeler.",
-    tag: "Keşif",
-    accent: "oklch(0.52 0.22 252)",
-    bg: "bg-[oklch(0.52_0.22_252/0.06)] hover:bg-[oklch(0.52_0.22_252/0.10)]",
-    border: "border-[oklch(0.52_0.22_252/0.18)] hover:border-[oklch(0.52_0.22_252/0.32)]",
-    iconBg: "bg-[oklch(0.52_0.22_252/0.12)]",
-    iconText: "text-violet",
-    barFrom: "from-violet",
-    shadow: "hover:shadow-[0_8px_32px_-8px_oklch(0.52_0.22_252/0.22)]",
-  },
-  {
-    icon: HandHeart,
-    num: "II",
-    title: "Destekle",
-    desc: "Aylık 50₺ bir sporcunun ekipman masrafını karşılar. Toplu fon, doğrudan katkı — para nereye gittiğini hep görürsün.",
-    tag: "Finansman",
-    accent: "oklch(0.68 0.17 220)",
-    bg: "bg-[oklch(0.68_0.17_220/0.06)] hover:bg-[oklch(0.68_0.17_220/0.10)]",
-    border: "border-[oklch(0.68_0.17_220/0.18)] hover:border-[oklch(0.68_0.17_220/0.32)]",
-    iconBg: "bg-[oklch(0.68_0.17_220/0.12)]",
-    iconText: "text-sky",
-    barFrom: "from-sky",
-    shadow: "hover:shadow-[0_8px_32px_-8px_oklch(0.68_0.17_220/0.22)]",
-  },
-  {
-    icon: Flame,
-    num: "III",
-    title: "Sahaya Çık",
-    desc: "İzlemekten öte: yakınındaki antrenman kamplarını bul, deneme seanslarına kaydol, tribünden sahaya adım at.",
-    tag: "Katılım",
-    accent: "oklch(0.60 0.20 16)",
-    bg: "bg-[oklch(0.60_0.20_16/0.05)] hover:bg-[oklch(0.60_0.20_16/0.08)]",
-    border: "border-[oklch(0.60_0.20_16/0.16)] hover:border-[oklch(0.60_0.20_16/0.28)]",
-    iconBg: "bg-[oklch(0.60_0.20_16/0.10)]",
-    iconText: "text-coral",
-    barFrom: "from-coral",
-    shadow: "hover:shadow-[0_8px_32px_-8px_oklch(0.60_0.20_16/0.18)]",
-  },
-];
+import busenazImg from "@/assets/busenaz.png";
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14 } },
+  show: { transition: { staggerChildren: 0.12 } },
 };
 const item = {
   hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
 };
+
+const pillars = [
+  {
+    num: "01",
+    kicker: "Keşif",
+    title: "Keşfet",
+    icon: Compass,
+    hue: "violet",
+    desc: "Okçuluktan güreşe, satrançtan yüzmeye — radar senin için çalışıyor. Yeni branşlar, yeni yıldızlar, yeni hikâyeler.",
+    stats: [
+      { value: "32", label: "branş" },
+      { value: "320+", label: "sporcu" },
+    ],
+    rows: [
+      "Sporcu kartları & canlı sıralamalar",
+      "Şehrinde bu hafta hangi maç var",
+      "Algoritma değil, serüven",
+    ],
+    cta: "Sporcuları gör",
+  },
+  {
+    num: "02",
+    kicker: "Finansman",
+    title: "Destekle",
+    icon: HandHeart,
+    hue: "sky",
+    desc: "Aylık 50₺ bir sporcunun ekipman masrafını karşılar. Paranın nereye gittiğini hep görürsün.",
+    stats: [
+      { value: "50₺", label: "aylık" },
+      { value: "%100", label: "şeffaf" },
+    ],
+    rows: [
+      "Tek sporcu veya topluluk havuzu",
+      "Ekipman, yol, turnuva harcaması",
+      "Aylık etki raporu doğrudan sana",
+    ],
+    cta: "Destek ol",
+  },
+  {
+    num: "03",
+    kicker: "Katılım",
+    title: "Sahaya Çık",
+    icon: Flame,
+    hue: "coral",
+    desc: "İzlemekten öte: yakınındaki antrenman kamplarını bul, deneme seanslarına kaydol, kulübe gel.",
+    stats: [
+      { value: "85+", label: "kulüp" },
+      { value: "14 / 81", label: "il" },
+    ],
+    rows: [
+      "Açık antrenman & deneme dersleri",
+      "Yaş ve seviyeye göre filtreleme",
+      "Tek tıkla kayıt, hatırlatma SMS",
+    ],
+    cta: "Yakınımdakini bul",
+  },
+] as const;
+
+const hueClass = {
+  violet: {
+    border: "hover:border-violet/40",
+    bg: "from-violet/12 via-violet/4 to-transparent",
+    glow: "bg-violet/20 group-hover:bg-violet/30",
+    text: "text-violet",
+    chipBorder: "border-violet/20",
+    chipBg: "bg-violet/10",
+    line: "from-violet/40",
+    statBorder: "border-violet/15",
+  },
+  sky: {
+    border: "hover:border-sky/40",
+    bg: "from-sky/12 via-sky/4 to-transparent",
+    glow: "bg-sky/20 group-hover:bg-sky/30",
+    text: "text-sky",
+    chipBorder: "border-sky/20",
+    chipBg: "bg-sky/10",
+    line: "from-sky/40",
+    statBorder: "border-sky/15",
+  },
+  coral: {
+    border: "hover:border-coral/40",
+    bg: "from-coral/10 via-coral/3 to-transparent",
+    glow: "bg-coral/20 group-hover:bg-coral/30",
+    text: "text-coral",
+    chipBorder: "border-coral/20",
+    chipBg: "bg-coral/10",
+    line: "from-coral/40",
+    statBorder: "border-coral/15",
+  },
+} as const;
 
 export function Sunar() {
   return (
     <section id="sunar" className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={basketballImg} alt="Basketbol sporcusu" side="left" />
+      <FloatingAthlete
+        src={busenazImg}
+        alt="Busenaz"
+        side="left"
+        mirror
+        scale={2.5}
+        offsetY={180}
+      />
       {/* Very gentle bloom */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/5 blur-[180px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pl-80">
+      <div className="mx-auto max-w-[88rem] px-5 sm:px-8 lg:pl-[22rem] lg:pr-10 xl:pl-[26rem]">
         {/* Label */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -85,7 +137,7 @@ export function Sunar() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const }}
           className="font-display mx-auto max-w-4xl text-center text-5xl leading-[0.95] text-foreground sm:text-7xl lg:text-[5.5rem]"
         >
           Meydan ne{" "}
@@ -107,39 +159,88 @@ export function Sunar() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-40px" }}
-          className="mt-20 grid gap-5 md:grid-cols-3"
+          className="mt-20 grid gap-5 md:grid-cols-3 md:gap-6"
         >
-          {pillars.map((p) => (
-            <motion.div
-              key={p.title}
-              variants={item}
-              className={`group relative overflow-hidden rounded-3xl border transition-all duration-500 ${p.bg} ${p.border} ${p.shadow}`}
-            >
-              <div className="relative flex h-full flex-col p-8 lg:p-10">
-                {/* Decorative numeral */}
-                <span className="pointer-events-none absolute right-5 top-3 select-none font-display text-[5.5rem] font-bold leading-none opacity-[0.04]">
-                  {p.num}
-                </span>
+          {pillars.map((p) => {
+            const c = hueClass[p.hue];
+            const Icon = p.icon;
+            return (
+              <motion.div
+                key={p.num}
+                variants={item}
+                className={`group relative isolate flex flex-col overflow-hidden rounded-[2rem] border border-foreground/10 bg-gradient-to-br ${c.bg} backdrop-blur-sm transition-all duration-500 ${c.border}`}
+              >
+                <div className={`absolute -top-32 -right-32 h-72 w-72 rounded-full ${c.glow} blur-[110px] transition-all duration-700`} />
 
-                {/* Icon */}
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${p.iconBg} ring-1 ring-inset ring-foreground/5 transition-all duration-400 group-hover:scale-105`}>
-                  <p.icon className={`h-5 w-5 ${p.iconText}`} strokeWidth={1.6} />
+                <div className="relative flex h-full flex-col p-7 lg:p-8">
+                  {/* Header row */}
+                  <div className="flex items-center justify-between">
+                    <span className={`font-mono text-[11px] uppercase tracking-[0.3em] ${c.text}`}>
+                      {p.num} · {p.kicker}
+                    </span>
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-2xl border ${c.chipBorder} ${c.chipBg}`}>
+                      <Icon className={`h-5 w-5 ${c.text}`} strokeWidth={1.4} />
+                    </div>
+                  </div>
+
+                  <div className={`mt-6 h-px w-full bg-gradient-to-r ${c.line} to-transparent`} />
+
+                  {/* Title */}
+                  <h3 className="font-display mt-7 text-[2.75rem] leading-[0.95] text-foreground lg:text-5xl xl:text-[3.25rem]">
+                    {p.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
+                    {p.desc}
+                  </p>
+
+                  {/* Mini stats */}
+                  <div className="mt-7 grid grid-cols-2 gap-2.5">
+                    {p.stats.map((s) => (
+                      <div
+                        key={s.label}
+                        className={`rounded-xl border ${c.statBorder} bg-foreground/[0.02] px-3 py-2.5`}
+                      >
+                        <div className={`font-display text-xl leading-none ${c.text}`}>
+                          {s.value}
+                        </div>
+                        <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          {s.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Rows / mini list */}
+                  <ul className="mt-7 space-y-2.5">
+                    {p.rows.map((r) => (
+                      <li
+                        key={r}
+                        className="flex items-start gap-2.5 text-sm text-foreground/75"
+                      >
+                        <span className={`mt-[7px] h-1 w-1 flex-none rounded-full ${c.text} bg-current`} />
+                        <span>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA */}
+                  <div className="mt-auto pt-9">
+                    <div className="flex items-center justify-between border-t border-foreground/8 pt-5">
+                      <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground transition-transform duration-500 group-hover:translate-x-0.5">
+                        {p.cta}
+                      </span>
+                      <ArrowUpRight
+                        className={`h-4 w-4 ${c.text} transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5`}
+                        strokeWidth={1.6}
+                      />
+                    </div>
+                  </div>
                 </div>
-
-                {/* Tag */}
-                <span className="mt-6 inline-flex w-fit items-center rounded-full border border-foreground/10 bg-white/60 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {p.tag}
-                </span>
-
-                <h3 className="font-display mt-4 text-4xl text-foreground sm:text-5xl">{p.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{p.desc}</p>
-
-                <div
-                  className={`mt-8 h-[2px] w-10 rounded-full bg-gradient-to-r ${p.barFrom} to-transparent transition-all duration-500 group-hover:w-full`}
-                />
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

@@ -205,4 +205,229 @@
       0 1px 2px oklch(0 0 0 / 0.20),
       0 4px 16px oklch(0 0 0 / 0.15);
   }
+
+  /* ============================================
+   * APP SURFACE — Light / Warm cream for inner app pages
+   * Landing palette korunur (violet/sky/coral), zemin warm cream.
+   * ============================================ */
+  .app-surface {
+    --app-bg:        oklch(0.985 0.005 90);    /* warm cream paper */
+    --app-bg-soft:   oklch(0.97 0.012 80);     /* slightly warmer */
+    --app-bg-muted:  oklch(0.945 0.018 78);    /* section backgrounds */
+    --app-ink:       oklch(0.22 0.05 258);     /* deep navy ink (text) */
+    --app-ink-soft:  oklch(0.42 0.04 258);     /* secondary text */
+    --app-ink-mute:  oklch(0.58 0.025 258);    /* tertiary / placeholder */
+    --app-line:      oklch(0.22 0.05 258 / 0.10);
+    --app-line-soft: oklch(0.22 0.05 258 / 0.06);
+
+    /* ── Stage palette: hero ↔ spotlight akış renkleri ── */
+    --stage-ink:        var(--app-ink);
+    --stage-veil-light: linear-gradient(to right, #fff, oklch(1 0 0 / 0.85) 45%, transparent 100%);
+    --stage-veil-tint:  linear-gradient(to top right, oklch(0.55 0.22 262 / 0.15), transparent 50%, oklch(0.65 0.20 18 / 0.10));
+    --stage-merge-down: linear-gradient(to top, var(--stage-ink), oklch(0.22 0.05 258 / 0.80) 40%, transparent 100%);
+    --stage-merge-glow: radial-gradient(ellipse at 30% 100%, oklch(0.55 0.22 262 / 0.35), transparent 70%);
+    --stage-dark-veil:  linear-gradient(to right, var(--stage-ink), oklch(0.22 0.05 258 / 0.95) 40%, oklch(0.22 0.05 258 / 0.60));
+    --stage-dark-glow:  radial-gradient(circle at 30% 50%, oklch(0.55 0.22 262 / 0.28), transparent 60%);
+
+    background-color: var(--app-bg);
+    color: var(--app-ink);
+  }
+
+  /* ─────────────────────────────────────────────────────
+   * APP AMBIENT — mesh blobs + grain texture
+   * Bigger, softer light pools + 3% film grain overlay
+   * ───────────────────────────────────────────────────── */
+  .app-ambient {
+    position: relative;
+    background:
+      /* Top-left violet pool — biraz daha derin */
+      radial-gradient(ellipse 85% 65% at 0% -8%,
+        oklch(0.60 0.22 252 / 0.16), transparent 58%),
+      /* Top-right warm coral whisper */
+      radial-gradient(ellipse 65% 55% at 108% 4%,
+        oklch(0.65 0.20 18 / 0.10), transparent 62%),
+      /* Center floating sky */
+      radial-gradient(ellipse 75% 60% at 62% 42%,
+        oklch(0.72 0.16 222 / 0.09), transparent 66%),
+      /* Mid-left soft mint */
+      radial-gradient(ellipse 55% 45% at -5% 55%,
+        oklch(0.78 0.10 175 / 0.07), transparent 65%),
+      /* Bottom-left violet wash */
+      radial-gradient(ellipse 95% 65% at 12% 112%,
+        oklch(0.50 0.22 262 / 0.14), transparent 62%),
+      /* Bottom-right sky pool */
+      radial-gradient(ellipse 75% 60% at 98% 102%,
+        oklch(0.72 0.16 222 / 0.11), transparent 60%),
+      oklch(0.985 0.005 90);
+  }
+
+  /* Grain overlay — adds paper texture, sits above gradient */
+  .app-ambient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.13 0 0 0 0 0.22 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+  }
+
+  /* Subtle dot grid — sits above gradient, below content. Editorial breath. */
+  .app-ambient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.45;
+    background-image: radial-gradient(
+      oklch(0.22 0.05 258 / 0.06) 1px, transparent 1.4px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 100%);
+  }
+
+  /* Ensure content stays above grain layer */
+  .app-ambient > *:not(aside):not(.app-ambient-fixed) { position: relative; z-index: 1; }
+  .app-ambient > aside, .app-ambient > .app-ambient-fixed { z-index: 30; }
+
+  /* ── Stage veil utilities (hero + spotlight akış) ── */
+  .stage-veil-light  { background: var(--stage-veil-light); }
+  .stage-veil-tint   { background: var(--stage-veil-tint); }
+  .stage-merge-down  { background: var(--stage-merge-down); }
+  .stage-merge-glow  { background: var(--stage-merge-glow); }
+  .stage-dark-veil   { background: var(--stage-dark-veil); }
+  .stage-dark-glow   { background: var(--stage-dark-glow); }
+
+  /* Stage tipografi — koyu sahne üstünde tutarlı kontrast */
+  .stage-text        { color: #fff; }
+  .stage-text-soft   { color: oklch(1 0 0 / 0.78); }
+  .stage-text-mute   { color: oklch(1 0 0 / 0.62); }
+  .stage-label       { color: oklch(1 0 0 / 0.70); font-family: var(--font-mono, ui-monospace, monospace); letter-spacing: 0.22em; text-transform: uppercase; }
+
+  /* Full-bleed: sidebar → sağ ekran kenarına uzanır */
+  .stage-bleed {
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+  }
+  @media (min-width: 640px) {
+    .stage-bleed {
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+  }
+  @media (min-width: 1024px) {
+    .stage-bleed {
+      margin-left: calc(50% + 8rem - 50vw);
+      margin-right: calc(50% + 8rem - 50vw);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────
+   * SIDEBAR GLASS — sticky sidebar with depth + aurora veil
+   * ───────────────────────────────────────────────────── */
+  .sidebar-glass {
+    background:
+      radial-gradient(ellipse 120% 45% at 0% 0%,
+        oklch(0.60 0.22 252 / 0.10), transparent 60%),
+      radial-gradient(ellipse 110% 40% at 100% 100%,
+        oklch(0.72 0.16 222 / 0.09), transparent 60%),
+      linear-gradient(180deg,
+        oklch(1 0 0 / 0.82) 0%,
+        oklch(0.985 0.005 90 / 0.78) 100%);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow:
+      inset -1px 0 0 oklch(1 0 0 / 0.6),
+      4px 0 24px -16px oklch(0.22 0.05 258 / 0.18);
+  }
+
+  /* Custom thin scrollbar for sidebar nav */
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.22 0.05 258 / 0.12) transparent;
+  }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: oklch(0.22 0.05 258 / 0.12);
+    border-radius: 999px;
+  }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+
+  /* Soft card — for app pages (no harsh borders, organic) */
+  .soft-card {
+    background: oklch(1 0 0 / 0.7);
+    border: 1px solid oklch(0.22 0.05 258 / 0.07);
+    box-shadow:
+      0 1px 0 oklch(1 0 0),
+      0 1px 3px oklch(0.22 0.05 258 / 0.04),
+      0 8px 24px -12px oklch(0.22 0.05 258 / 0.08);
+    backdrop-filter: blur(8px);
+  }
+
+  .soft-card-strong {
+    background: oklch(1 0 0);
+    border: 1px solid oklch(0.22 0.05 258 / 0.08);
+    box-shadow:
+      0 1px 2px oklch(0.22 0.05 258 / 0.04),
+      0 12px 32px -16px oklch(0.22 0.05 258 / 0.12);
+  }
+
+  /* Subtle dot pattern for warm bg */
+  .grid-dots-warm {
+    background-image: radial-gradient(
+      oklch(0.22 0.05 258 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Aurora light — same aurora but on cream */
+  .bg-aurora-light {
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 20%,
+        oklch(0.60 0.22 252 / 0.10), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 88% 12%,
+        oklch(0.72 0.16 222 / 0.08), transparent 58%),
+      radial-gradient(ellipse 70% 55% at 50% 100%,
+        oklch(0.65 0.20 18 / 0.06), transparent 65%),
+      oklch(0.985 0.005 90);
+  }
+
+  /* Chip / pill — universal compact label */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: oklch(0.22 0.05 258 / 0.06);
+    color: oklch(0.32 0.05 258);
+    border: 1px solid oklch(0.22 0.05 258 / 0.08);
+  }
+  .chip-violet { background: oklch(0.60 0.22 252 / 0.10); color: oklch(0.48 0.22 252); border-color: oklch(0.60 0.22 252 / 0.20); }
+  .chip-sky    { background: oklch(0.72 0.16 222 / 0.12); color: oklch(0.42 0.16 222); border-color: oklch(0.72 0.16 222 / 0.20); }
+  .chip-coral  { background: oklch(0.65 0.20 18 / 0.12);  color: oklch(0.45 0.18 18);  border-color: oklch(0.65 0.20 18 / 0.20);  }
+  .chip-emerald{ background: oklch(0.70 0.16 152 / 0.12); color: oklch(0.40 0.14 152); border-color: oklch(0.70 0.16 152 / 0.20); }
+
+  /* Soft button (primary on light) */
+  .btn-primary-light {
+    background: linear-gradient(135deg, oklch(0.60 0.22 252), oklch(0.50 0.22 262));
+    color: white;
+    box-shadow:
+      0 1px 2px oklch(0.50 0.22 262 / 0.20),
+      0 8px 24px -8px oklch(0.60 0.22 252 / 0.45);
+  }
+  .btn-ghost-light {
+    background: oklch(1 0 0);
+    color: oklch(0.22 0.05 258);
+    border: 1px solid oklch(0.22 0.05 258 / 0.10);
+  }
+  .btn-ghost-light:hover {
+    background: oklch(0.96 0.012 80);
+    border-color: oklch(0.22 0.05 258 / 0.18);
+  }
 }

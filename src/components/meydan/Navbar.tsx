@@ -16,15 +16,15 @@ export function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50"
     >
-      <div className="mx-auto mt-3 max-w-7xl px-4 sm:px-6">
-        <motion.div
-          animate={scrolled
-            ? { background: "oklch(0.14 0.04 258 / 0.92)", borderColor: "oklch(0.95 0.008 240 / 0.12)", boxShadow: "0 4px 24px oklch(0 0 0 / 0.30)" }
-            : { background: "oklch(0 0 0 / 0.15)", borderColor: "oklch(1 0 0 / 0.18)", boxShadow: "none" }
-          }
-          transition={{ duration: 0.3 }}
-          className="flex items-center justify-between rounded-full border px-4 py-2.5 backdrop-blur-md sm:px-5"
-        >
+      <motion.div
+        animate={scrolled
+          ? { background: "oklch(0.11 0.035 258 / 1)", borderColor: "oklch(0.95 0.008 240 / 0.10)", boxShadow: "0 4px 24px oklch(0 0 0 / 0.30)" }
+          : { background: "oklch(0.11 0.035 258 / 1)", borderColor: "oklch(1 0 0 / 0.08)", boxShadow: "none" }
+        }
+        transition={{ duration: 0.3 }}
+        className="border-b"
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-8">
           <Logo />
           <nav className="hidden items-center gap-8 md:flex">
             {[
@@ -43,7 +43,7 @@ export function Navbar() {
           </nav>
           <div className="flex items-center gap-2">
             <a
-              href="#cta"
+              href="/dashboard"
               className="hidden rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/85 transition-all hover:bg-white/10 sm:inline-flex"
             >
               Giriş Yap
@@ -55,8 +55,8 @@ export function Navbar() {
               <Menu className="h-4 w-4" />
             </button>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </motion.header>
   );
 }

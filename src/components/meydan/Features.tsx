@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { IdCard, Radio, MapPin, Coins, Users, Compass } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import billiardsImg from "@/assets/sport-billiards-nobg.png";
+import cemKaanImg from "@/assets/cem-kaan-gokerkan.png";
 
 const features = [
   { icon: IdCard,  title: "Sporcu Kartı",     desc: "Sıralama, son maç ve destekçiler tek bakışta. Her sporcunun kendi dijital kimliği.", hue: "violet" },
@@ -23,25 +23,25 @@ const cardVariants = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: (i % 3) * 0.09, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, delay: (i % 3) * 0.09, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
 export function Features() {
   return (
     <section id="ozellikler" className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={billiardsImg} alt="Bilardo sporcusu" side="right" />
+      <FloatingAthlete src={cemKaanImg} alt="Cem Kaan Gökerkan" side="right" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-violet/5 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-[30rem]">
         {/* Header */}
         <div className="grid items-end gap-8 lg:grid-cols-2">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-sky/25 bg-sky/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-sky">
               <span className="h-1.5 w-1.5 rounded-full bg-sky" />
@@ -110,9 +110,9 @@ export function Features() {
           className="mt-14 grid grid-cols-3 divide-x divide-foreground/8 overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.04]"
         >
           {[
-            { val: "240+",  label: "Sporcu profili" },
-            { val: "7+",    label: "Olimpik branş"  },
-            { val: "₺840K", label: "Doğrudan destek" },
+            { val: "320+",  label: "Sporcu profili" },
+            { val: "20+",   label: "Olimpik branş"  },
+            { val: "₺186K", label: "Doğrudan destek" },
           ].map((s, i) => (
             <motion.div
               key={s.label}

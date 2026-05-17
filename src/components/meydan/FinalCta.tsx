@@ -22,7 +22,7 @@ export function FinalCta() {
       <div className="pointer-events-none absolute -left-32 top-1/4 -z-10 h-[420px] w-[420px] rounded-full bg-violet/10 blur-[120px]" />
       <div className="pointer-events-none absolute -right-32 bottom-1/4 -z-10 h-[380px] w-[380px] rounded-full bg-sky/12 blur-[110px]" />
 
-      <div className="mx-auto max-w-5xl px-5 sm:px-8 lg:pl-80">
+      <div className="mx-auto max-w-5xl px-5 sm:px-8 lg:pl-[30rem]">
         <div className="relative text-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -41,7 +41,7 @@ export function FinalCta() {
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1.0, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.0, delay: 0.12, ease: [0.22, 1, 0.36, 1] as const }}
             className="font-display mx-auto mt-7 max-w-3xl text-5xl leading-[0.93] text-foreground sm:text-7xl lg:text-[5.5rem]"
           >
             Türkiye'nin görünmeyen sporcuları için{" "}
@@ -67,7 +67,7 @@ export function FinalCta() {
             className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
           >
             <motion.a
-              href="#top"
+              href="/dashboard"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-3 rounded-full bg-violet py-2.5 pl-2.5 pr-7 text-sm font-semibold text-white shadow-lg shadow-violet/30 transition-shadow hover:shadow-xl hover:shadow-violet/35"

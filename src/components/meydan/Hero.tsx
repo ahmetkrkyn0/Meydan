@@ -5,9 +5,9 @@ import heroWebpSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&forma
 import heroFallback from "@/assets/meydan-hero.png?w=1280&format=webp";
 
 const stats = [
-  { icon: Trophy,        label: "Olimpik branş",   value: "7+"    },
-  { icon: Users,         label: "Aktif tribün",     value: "12K"   },
-  { icon: HeartHandshake,label: "Doğrudan destek",  value: "₺840K" },
+  { icon: Trophy,         label: "Olimpik branş",    value: "20+"  },
+  { icon: Users,          label: "Erken üye",        value: "2.4K" },
+  { icon: HeartHandshake, label: "Doğrudan destek",  value: "₺186K" },
 ];
 
 export function Hero() {
@@ -16,8 +16,8 @@ export function Hero() {
       <motion.picture
         initial={{ opacity: 0, scale: 1.04 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0 -z-20 h-full w-full"
+        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] as const }}
+        className="absolute inset-x-0 bottom-0 top-16 -z-20 w-full"
       >
         <source type="image/avif" srcSet={heroAvifSet} sizes="100vw" />
         <source type="image/webp" srcSet={heroWebpSet} sizes="100vw" />
@@ -28,7 +28,7 @@ export function Hero() {
           decoding="async"
           fetchPriority="high"
           sizes="100vw"
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-cover object-top"
         />
       </motion.picture>
 
@@ -59,7 +59,7 @@ export function Hero() {
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.0, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 1.0, delay: 0.55, ease: [0.22, 1, 0.36, 1] as const }}
                   className="font-display mt-5 text-[2.8rem] leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-[5rem]"
                 >
                   Her sporun
@@ -123,7 +123,7 @@ export function Hero() {
                     </span>
                     <div>
                       <p className="font-display text-lg leading-none text-white">{s.value}</p>
-                      <p className="mt-0.5 text-[11px] text-white/58">{s.label}</p>
+                      <p className="mt-0.5 text-[11px] text-white/70">{s.label}</p>
                     </div>
                   </motion.div>
                 ))}
