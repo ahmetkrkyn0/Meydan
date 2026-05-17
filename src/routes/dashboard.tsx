@@ -114,31 +114,28 @@ function DashboardPage() {
         variants={stagger}
         className="mx-auto flex w-full max-w-5xl flex-col gap-14"
       >
-        {/* ─── Cinematic hero ─── */}
+        {/* ─── Hero ─── */}
         <motion.header
           variants={fadeUp}
           className="stage-bleed relative -mt-6 overflow-hidden sm:-mt-8"
         >
-          <div className="relative h-[480px] sm:h-[560px]">
-            {/* Background portrait */}
+          <div className="relative min-h-[400px] sm:min-h-[460px]">
+            {/* Fotoğraf — sağda görünür, solda sayfa rengine karışır */}
             <img
               src={heroAthlete}
               alt=""
               aria-hidden
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className="absolute inset-0 h-full w-full object-cover object-[75%_center] opacity-30 sm:opacity-40"
             />
-            {/* Gradient veils — merkezi stage paleti + seam softener */}
-            <div className="stage-veil-light absolute inset-0" />
-            <div className="stage-merge-down absolute inset-x-0 bottom-0 h-32" />
-            <div className="stage-merge-glow absolute inset-x-0 bottom-0 h-40" />
-            <div className="stage-veil-tint absolute inset-0" />
+            {/* Sol→sağ: sayfa renginden şeffafa — fotoğraf sağda net görünsün */}
             <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 backdrop-blur-[6px]"
-              style={{
-                maskImage: "linear-gradient(to top, black, transparent)",
-                WebkitMaskImage: "linear-gradient(to top, black, transparent)",
-              }}
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(to right, var(--app-bg) 30%, var(--app-bg)/70% 60%, transparent 100%)" }}
+            />
+            {/* Alt kenar: sayfaya yumuşak geçiş */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-24"
+              style={{ background: "linear-gradient(to top, var(--app-bg), transparent)" }}
             />
 
             {/* Content */}
@@ -153,10 +150,10 @@ function DashboardPage() {
                 </p>
               </div>
 
-              <div className="max-w-2xl">
+              <div className="max-w-xl py-10">
                 <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-7xl">
                   Hoş geldin{" "}
-                  <span className="italic text-gradient-to-r bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
                     {firstName}
                   </span>
                   <span className="text-violet">.</span>
@@ -167,7 +164,7 @@ function DashboardPage() {
                 </p>
 
                 {/* Live ticker pill */}
-                <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-coral/30 bg-white/80 px-4 py-2 backdrop-blur">
+                <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-coral/25 bg-[color:var(--app-bg-soft)] px-4 py-2 shadow-sm">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
@@ -176,76 +173,68 @@ function DashboardPage() {
                     Şu an canlı
                   </span>
                   <span className="text-xs text-[color:var(--app-ink-soft)]">
-                    Zeynep · Tenis · Set 2
+                    Defne · Tenis · Set 2
                   </span>
                   <span className="text-[color:var(--app-ink-mute)]">·</span>
                   <span className="text-xs text-[color:var(--app-ink-soft)]">
-                    Seda Yılmaz · Boks · R3
+                    Seda · Boks · R3
                   </span>
                 </div>
-              </div>
 
-              <div className="flex items-end justify-between gap-4">
-                <div className="hidden flex-col gap-1 sm:flex">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
-                    Bugünkü tribün
-                  </p>
-                  <p className="font-display text-3xl font-bold text-white tabular-nums">
-                    <CountUp to={3420} />
-                  </p>
-                  <p className="text-[11px] text-white/75">
-                    izleyici · <CountUp to={860} duration={1.4} /> tezahürat
-                  </p>
+                <div className="mt-8 flex items-center gap-4">
+                  <Link
+                    to="/canli"
+                    className="btn-primary-light inline-flex items-center gap-2 rounded-full py-3 pl-3 pr-5 text-xs font-bold shadow-lg shadow-violet/20"
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25">
+                      <Play className="h-3.5 w-3.5 fill-white text-white" />
+                    </span>
+                    Tribüne katıl
+                  </Link>
+                  <div className="hidden flex-col gap-0.5 sm:flex">
+                    <p className="font-display text-2xl font-bold tabular-nums text-[color:var(--app-ink)]">
+                      <CountUp to={3420} />
+                    </p>
+                    <p className="text-[11px] text-[color:var(--app-ink-mute)]">
+                      izleyici · <CountUp to={860} duration={1.4} /> tezahürat
+                    </p>
+                  </div>
                 </div>
-
-                <Link
-                  to="/canli"
-                  className="btn-primary-light inline-flex items-center gap-2 rounded-full py-3 pl-3 pr-5 text-xs font-bold shadow-lg shadow-violet/20"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25">
-                    <Play className="h-3.5 w-3.5 fill-white text-white" />
-                  </span>
-                  Tribüne katıl
-                </Link>
               </div>
             </div>
           </div>
         </motion.header>
 
-        {/* ─── Dark spotlight: Sessiz Tezahürat ─── */}
-        <motion.section variants={fadeUp} className="stage-bleed -mt-14">
-          <div className="relative overflow-hidden">
+        {/* ─── Sessiz Tezahürat spotlight ─── */}
+        <motion.section variants={fadeUp} className="px-5 sm:px-8">
+          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--app-line)] bg-[color:var(--app-bg-soft)]">
+            {/* Fotoğraf — sağda arka plan dokusu, düşük opaklık */}
             <img
               src={spotlightAthlete}
               alt=""
               aria-hidden
-              className="absolute inset-0 h-full w-full object-cover object-center opacity-40"
+              className="absolute right-0 top-0 h-full w-1/2 object-cover object-left opacity-15 sm:opacity-20"
             />
-            <div className="stage-dark-veil absolute inset-0" />
-            <div className="stage-dark-glow absolute inset-0" />
+            {/* Sağdan soldan sayfa rengine karışır */}
             <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-0 h-16 backdrop-blur-[6px]"
-              style={{
-                maskImage: "linear-gradient(to bottom, black, transparent)",
-                WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
-              }}
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(to right, var(--app-bg-soft) 50%, transparent 100%)" }}
             />
 
-            <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12">
+            <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-10">
               <div className="max-w-xl">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 backdrop-blur">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-coral/20 bg-coral/8 px-3 py-1">
                   <Volume2 className="h-3 w-3 text-coral" />
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/90">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-coral">
                     Sessiz Tezahürat
                   </span>
                 </div>
-                <p className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                  Mert şu an yelken yarışında.
-                  <span className="block text-white/60">4 kişi ona mesaj yazdı.</span>
+                <p className="font-display text-2xl font-bold leading-tight text-[color:var(--app-ink)] sm:text-3xl">
+                  Seda şu an ringde.
+                  <span className="block text-[color:var(--app-ink-soft)]">4 kişi ona mesaj yazdı.</span>
                 </p>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                  Telefonu yanında değil ama dümene tuttuğu her an, senin sözünü taşıyor.
+                <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
+                  Köşede beklediği her anda, senin sözünü taşıyor.
                   Maç bitiminde hepsini okuyacak.
                 </p>
               </div>
@@ -253,16 +242,16 @@ function DashboardPage() {
               <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
                 <Link
                   to="/sporcu/$slug"
-                  params={{ slug: "mert-ucar" }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-bold text-[color:var(--app-ink)] transition hover:bg-white/90"
+                  params={{ slug: "seda-yilmaz" }}
+                  className="inline-flex items-center gap-2 rounded-full bg-[color:var(--app-ink)] px-5 py-3 text-xs font-bold text-white transition hover:opacity-85"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Mesaj yaz
                 </Link>
                 <Link
                   to="/sporcu/$slug"
-                  params={{ slug: "mert-ucar" }}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-3 text-xs font-semibold text-white/90 transition hover:bg-white/10"
+                  params={{ slug: "seda-yilmaz" }}
+                  className="inline-flex items-center gap-2 rounded-full border border-[color:var(--app-line)] px-5 py-3 text-xs font-semibold text-[color:var(--app-ink-soft)] transition hover:text-[color:var(--app-ink)]"
                 >
                   Profili gör <ArrowUpRight className="h-3 w-3" />
                 </Link>
