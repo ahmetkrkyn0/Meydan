@@ -129,7 +129,7 @@ function DashboardPage() {
             />
             {/* Gradient veils — left readability + bottom merge */}
             <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[color:var(--app-ink)] via-[color:var(--app-ink)]/70 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[color:var(--app-ink)] to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-tr from-violet/15 via-transparent to-coral/10" />
 
             {/* Content */}
