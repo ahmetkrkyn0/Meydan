@@ -127,11 +127,19 @@ function DashboardPage() {
               aria-hidden
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
-            {/* Gradient veils — merkezi stage paleti */}
+            {/* Gradient veils — merkezi stage paleti + seam softener */}
             <div className="stage-veil-light absolute inset-0" />
             <div className="stage-merge-down absolute inset-x-0 bottom-0 h-32" />
             <div className="stage-merge-glow absolute inset-x-0 bottom-0 h-40" />
             <div className="stage-veil-tint absolute inset-0" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 backdrop-blur-[6px]"
+              style={{
+                maskImage: "linear-gradient(to top, black, transparent)",
+                WebkitMaskImage: "linear-gradient(to top, black, transparent)",
+              }}
+            />
 
             {/* Content */}
             <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-10">
@@ -215,6 +223,14 @@ function DashboardPage() {
             />
             <div className="stage-dark-veil absolute inset-0" />
             <div className="stage-dark-glow absolute inset-0" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 h-16 backdrop-blur-[6px]"
+              style={{
+                maskImage: "linear-gradient(to bottom, black, transparent)",
+                WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
+              }}
+            />
 
             <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12">
               <div className="max-w-xl">
