@@ -664,7 +664,7 @@ function DashboardPage() {
             </article>
           </Link>
         </motion.section>
-        <motion.section variants={fadeUp}>
+        <motion.section variants={fadeUp} className="stage-bleed px-5 sm:px-8">
           <Link to="/rozetlerim" className="block">
             <div className="flex items-center gap-4 rounded-2xl border border-[color:var(--app-line-soft)] bg-white/60 px-5 py-4 transition-colors hover:bg-white">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-coral/12 text-coral">
