@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   Calendar,
@@ -12,6 +13,9 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug } from "@/lib/mock-data";
+import { createDonation, listProfiles } from "@/lib/api";
+import { findAthleteBySlug, findProfileBySlug } from "@/lib/api-mappers";
+import { useActiveFan } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/destekle/$slug")({
   component: SupportPage,
@@ -33,12 +37,52 @@ const PRESETS = [50, 100, 250, 500];
 
 function SupportPage() {
   const { slug } = Route.useParams();
-  const a = athleteBySlug(slug);
+  const activeFan = useActiveFan();
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const a = useMemo(
+    () => findAthleteBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+  const athleteProfile = useMemo(
+    () => findProfileBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
 
   const [selected, setSelected] = useState<number>(250);
   const [custom, setCustom] = useState<string>("");
   const isCustom = selected === -1;
   const amount = isCustom ? Number(custom || 0) : selected;
+
+  const donationMutation = useMutation({
+    mutationFn: () => {
+      if (!activeFan.profile?.id) {
+        throw new Error("Bağış için backend'de bir taraftar profili gerekli.");
+      }
+      if (!athleteProfile?.id) {
+        throw new Error("Bu sporcu backend'de bulunamadı.");
+      }
+      return createDonation({
+        supporter_profile_id: activeFan.profile.id,
+        athlete_profile_id: athleteProfile.id,
+        amount,
+        is_recurring: true,
+      });
+    },
+  });
+
+  const canDonate = Boolean(
+    amount > 0 && activeFan.profile?.id && athleteProfile?.id && !donationMutation.isPending,
+  );
+
+  function handleDonate() {
+    if (!canDonate) return;
+    donationMutation.mutate();
+  }
+
 
   return (
     <AppShell role="fan">
@@ -214,15 +258,31 @@ function SupportPage() {
                 </p>
 
                 <button
-                  disabled={!amount}
+                  onClick={handleDonate}
+                  disabled={!canDonate}
                   className="btn-primary-light mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Heart className="h-4 w-4 fill-white" />
-                  Desteklemeye Başla
+                  {donationMutation.isPending
+                    ? "Kaydediliyor..."
+                    : donationMutation.isSuccess
+                      ? "Destek kaydedildi"
+                      : "Desteklemeye Başla"}
                 </button>
                 <p className="mt-3 text-center text-[10px] text-[color:var(--app-ink-mute)]">
                   Tek tıkla iptal. Hiçbir gizli ücret yok.
                 </p>
+                {(donationMutation.isError || donationMutation.isSuccess || !activeFan.profile) && (
+                  <p className="mt-2 rounded-lg bg-violet/8 px-2 py-1.5 text-center text-[10px] text-violet">
+                    {donationMutation.isSuccess
+                      ? "Bağışın backend'e kaydedildi. (Ödeme entegrasyonu henüz yok — demo)"
+                      : donationMutation.isError
+                        ? donationMutation.error instanceof Error
+                          ? donationMutation.error.message
+                          : "Bağış kaydedilemedi."
+                        : "Bağış için backend'de bir taraftar profili gerekli."}
+                  </p>
+                )}
               </div>
             </div>
 

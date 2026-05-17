@@ -107,6 +107,15 @@ function LiveMatchPage() {
     setSent((s) => s + 1);
   }
 
+  const backendReady = Boolean(athleteProfile?.id);
+  const backendStatusMessage = profilesQuery.isLoading
+    ? "Sporcu profili yükleniyor..."
+    : profilesQuery.isError
+      ? "Backend'e ulaşılamadı; tezahürat backend'e iletilmiyor."
+      : !backendReady
+        ? `Bu sporcu (${match.athleteName}) backend'de bulunamadı; tezahürat backend'e iletilmiyor.`
+        : null;
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     sendCheer(draft);
@@ -381,6 +390,11 @@ function LiveMatchPage() {
                 <span>Sporcu maç bittikten sonra özetini görür.</span>
                 <span className="tabular-nums">{draft.length}/140</span>
               </p>
+              {backendStatusMessage && (
+                <p className="mt-1.5 rounded-lg bg-coral/8 px-2 py-1 text-[9px] leading-relaxed text-coral">
+                  {backendStatusMessage}
+                </p>
+              )}
             </div>
           </aside>
         </motion.section>

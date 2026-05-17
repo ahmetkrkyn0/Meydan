@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import {
   Heart,
   UserPlus,
+  UserCheck,
   MessageCircle,
   AtSign,
   Hash,
@@ -19,8 +20,14 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug } from "@/lib/mock-data";
-import { listProfiles } from "@/lib/api";
-import { findAthleteBySlug } from "@/lib/api-mappers";
+import {
+  checkFollow,
+  followAthlete,
+  listProfiles,
+  unfollowAthlete,
+} from "@/lib/api";
+import { findAthleteBySlug, findProfileBySlug } from "@/lib/api-mappers";
+import { useActiveFan } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/sporcu/$slug/")({
   component: AthleteProfilePage,
@@ -50,6 +57,8 @@ function formatCurrency(n: number): string {
 
 function AthleteProfilePage() {
   const { slug } = Route.useParams();
+  const queryClient = useQueryClient();
+  const activeFan = useActiveFan();
   const profilesQuery = useQuery({
     queryKey: ["profiles", "sporcu"],
     queryFn: () => listProfiles({ role: "sporcu" }),
@@ -59,6 +68,62 @@ function AthleteProfilePage() {
     () => findAthleteBySlug(slug, profilesQuery.data?.profiles),
     [profilesQuery.data?.profiles, slug],
   );
+  const athleteProfile = useMemo(
+    () => findProfileBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+
+  const followStatusQuery = useQuery({
+    queryKey: ["follows", "check", activeFan.profile?.id, athleteProfile?.id],
+    queryFn: () =>
+      checkFollow({
+        follower_profile_id: activeFan.profile!.id,
+        athlete_profile_id: athleteProfile!.id,
+      }),
+    enabled: Boolean(activeFan.profile?.id && athleteProfile?.id),
+    retry: 1,
+  });
+
+  const isFollowing = followStatusQuery.data?.is_following ?? false;
+
+  const followMutation = useMutation({
+    mutationFn: () => {
+      if (!activeFan.profile?.id || !athleteProfile?.id) {
+        throw new Error("Takip için taraftar ve sporcu profili gerekli.");
+      }
+      return followAthlete({
+        follower_profile_id: activeFan.profile.id,
+        athlete_profile_id: athleteProfile.id,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["follows"] });
+    },
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: () => {
+      if (!activeFan.profile?.id || !athleteProfile?.id) {
+        throw new Error("Takipten çıkmak için taraftar ve sporcu profili gerekli.");
+      }
+      return unfollowAthlete({
+        follower_profile_id: activeFan.profile.id,
+        athlete_profile_id: athleteProfile.id,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["follows"] });
+    },
+  });
+
+  const canFollow = Boolean(activeFan.profile?.id && athleteProfile?.id);
+  const followPending = followMutation.isPending || unfollowMutation.isPending;
+
+  function handleFollowToggle() {
+    if (!canFollow || followPending) return;
+    if (isFollowing) unfollowMutation.mutate();
+    else followMutation.mutate();
+  }
 
   const stats = [
     { label: "Takipçi", value: formatNumber(a.followers) },
@@ -336,14 +401,49 @@ function AthleteProfilePage() {
               <Heart className="h-4 w-4" strokeWidth={2} fill="currentColor" />
               Destek Ol
             </Link>
-            <button className="hidden h-11 items-center gap-1.5 rounded-full px-4 text-xs font-semibold text-[color:var(--app-ink-soft)] transition-colors hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)] sm:inline-flex">
-              <UserPlus className="h-3.5 w-3.5" strokeWidth={2} /> Takip Et
+            <button
+              onClick={handleFollowToggle}
+              disabled={!canFollow || followPending}
+              title={
+                canFollow
+                  ? isFollowing
+                    ? "Takipten çık"
+                    : "Takip et"
+                  : "Takip için backend'de bir taraftar profili gerekli"
+              }
+              className={`hidden h-11 items-center gap-1.5 rounded-full px-4 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:inline-flex ${
+                isFollowing
+                  ? "bg-violet/12 text-violet hover:bg-violet/20"
+                  : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+              }`}
+            >
+              {isFollowing ? (
+                <>
+                  <UserCheck className="h-3.5 w-3.5" strokeWidth={2} /> Takiptesin
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-3.5 w-3.5" strokeWidth={2} /> Takip Et
+                </>
+              )}
             </button>
             <button className="hidden h-11 items-center gap-1.5 rounded-full px-4 text-xs font-semibold text-[color:var(--app-ink-soft)] transition-colors hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)] sm:inline-flex">
               <MessageCircle className="h-3.5 w-3.5" strokeWidth={2} /> Mesaj
             </button>
-            <button className="flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--app-ink-soft)] transition-colors hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)] sm:hidden">
-              <UserPlus className="h-4 w-4" strokeWidth={2} />
+            <button
+              onClick={handleFollowToggle}
+              disabled={!canFollow || followPending}
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:hidden ${
+                isFollowing
+                  ? "bg-violet/12 text-violet"
+                  : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+              }`}
+            >
+              {isFollowing ? (
+                <UserCheck className="h-4 w-4" strokeWidth={2} />
+              ) : (
+                <UserPlus className="h-4 w-4" strokeWidth={2} />
+              )}
             </button>
             <button className="flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--app-ink-soft)] transition-colors hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)] sm:hidden">
               <MessageCircle className="h-4 w-4" strokeWidth={2} />

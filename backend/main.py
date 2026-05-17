@@ -51,6 +51,13 @@ class NeedCreateRequest(BaseModel):
     athlete_id: str
     title: str
     description: str
+    need_type: Literal["money", "talent"] | None = None
+    category: str | None = None
+    target_amount: int | None = None
+    deadline: str | None = None
+    talent_needed: str | None = None
+    availability: Literal["local", "online"] | None = None
+    is_urgent: bool | None = None
 
 
 class NeedFulfillRequest(BaseModel):
@@ -82,12 +89,34 @@ class NeedUpdateRequest(BaseModel):
     description: str | None = None
     is_fulfilled: bool | None = None
     fulfilled_by: str | None = None
+    need_type: Literal["money", "talent"] | None = None
+    category: str | None = None
+    target_amount: int | None = None
+    collected_amount: int | None = None
+    deadline: str | None = None
+    talent_needed: str | None = None
+    availability: Literal["local", "online"] | None = None
+    is_urgent: bool | None = None
 
 
 class JournalUpdateRequest(BaseModel):
     athlete_id: str | None = None
     content: str | None = None
     audio_url: str | None = None
+
+
+class FollowRequest(BaseModel):
+    follower_profile_id: str
+    athlete_profile_id: str
+
+
+class DonationRequest(BaseModel):
+    supporter_profile_id: str
+    athlete_profile_id: str
+    amount: int
+    need_id: str | None = None
+    message: str | None = None
+    is_recurring: bool | None = False
 
 
 class EventCreateRequest(BaseModel):
@@ -235,7 +264,7 @@ def get_needs(athlete_id: str | None = None):
 def post_need(body: NeedCreateRequest):
     """Yeni sporcu ihtiyacı oluşturur."""
     try:
-        data = body.model_dump()
+        data = body.model_dump(exclude_none=True)
         metin = body.title + ". " + body.description
         data["need_embedding"] = gemini_service.generate_embedding(metin)
 
@@ -436,10 +465,14 @@ def get_events(
 def get_nearby_events(
     city: str | None = None,
     branch: str | None = None,
+    is_free: bool | None = None,
+    range: Literal["week", "month"] | None = None,
 ):
-    """Yaklaşan spor etkinliklerini şehir ve branş filtresiyle listeler."""
+    """Yaklaşan spor etkinliklerini şehir, branş, ücret ve zaman aralığı filtresiyle listeler."""
     try:
-        events = supabase_service.list_nearby_events(city=city, branch=branch)
+        events = supabase_service.list_nearby_events(
+            city=city, branch=branch, is_free=is_free, range_window=range
+        )
         return {"events": events}
     except Exception as e:
         print(f"/events/nearby listeleme hatası: {e}")
@@ -504,4 +537,119 @@ def delete_event(event_id: str):
         raise
     except Exception as e:
         print(f"/events/{event_id} silme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- Donations ---
+
+@app.post("/donations")
+def post_donation(body: DonationRequest):
+    """Bağış kaydı oluşturur. Şimdilik ödeme gateway yok; status='completed'."""
+    try:
+        if body.amount <= 0:
+            raise HTTPException(status_code=400, detail="Bağış miktarı pozitif olmalı")
+        data = body.model_dump(exclude_none=True)
+        data["status"] = "completed"
+        donation = supabase_service.create_donation(data)
+        return {"id": donation["id"], "status": "created", "donation": donation}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/donations POST hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/donations")
+def get_donations_by_supporter(supporter_profile_id: str):
+    """Bir taraftarın yaptığı bağışları listeler."""
+    try:
+        donations = supabase_service.list_donations_by_supporter(supporter_profile_id)
+        return {"donations": donations}
+    except Exception as e:
+        print(f"/donations GET hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/donations/athlete/{athlete_profile_id}")
+def get_donations_by_athlete(athlete_profile_id: str):
+    """Bir sporcunun aldığı bağışları listeler."""
+    try:
+        donations = supabase_service.list_donations_by_athlete(athlete_profile_id)
+        return {"donations": donations}
+    except Exception as e:
+        print(f"/donations/athlete/{athlete_profile_id} hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/donations/summary/{athlete_profile_id}")
+def get_donation_summary(athlete_profile_id: str):
+    """Bir sporcunun toplam destek özetini döner."""
+    try:
+        summary = supabase_service.athlete_donation_summary(athlete_profile_id)
+        return summary
+    except Exception as e:
+        print(f"/donations/summary/{athlete_profile_id} hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- Follows ---
+
+@app.post("/follows")
+def post_follow(body: FollowRequest):
+    """Bir taraftar bir sporcuyu takip eder."""
+    try:
+        follow_id = supabase_service.follow_athlete(
+            body.follower_profile_id, body.athlete_profile_id
+        )
+        return {"id": follow_id, "status": "followed"}
+    except Exception as e:
+        print(f"/follows POST hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/follows")
+def delete_follow(follower_profile_id: str, athlete_profile_id: str):
+    """Takip ilişkisini siler. Query parametreleriyle iki id alınır."""
+    try:
+        deleted = supabase_service.unfollow_athlete(follower_profile_id, athlete_profile_id)
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Takip kaydı bulunamadı")
+        return {"status": "unfollowed"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/follows DELETE hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/follows")
+def get_follows(follower_profile_id: str):
+    """Verilen taraftarın takip ettiği sporcu profillerini listeler."""
+    try:
+        athletes = supabase_service.list_followed_athletes(follower_profile_id)
+        return {"athletes": athletes}
+    except Exception as e:
+        print(f"/follows GET hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/follows/check")
+def check_follow(follower_profile_id: str, athlete_profile_id: str):
+    """İki profil arasında takip ilişkisi var mı kontrol eder."""
+    try:
+        following = supabase_service.is_following(follower_profile_id, athlete_profile_id)
+        return {"is_following": following}
+    except Exception as e:
+        print(f"/follows/check hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/follows/count/{athlete_profile_id}")
+def count_follows(athlete_profile_id: str):
+    """Bir sporcunun takipçi sayısını döner."""
+    try:
+        count = supabase_service.count_athlete_followers(athlete_profile_id)
+        return {"followers": count}
+    except Exception as e:
+        print(f"/follows/count/{athlete_profile_id} hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))

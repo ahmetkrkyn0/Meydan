@@ -1,8 +1,61 @@
 # Frontend - Backend Baglanti Raporu
 
-Tarih: 17 Mayis 2026
+Tarih: 17 Mayis 2026 (son guncelleme)
 
 Bu dokuman, frontend mock datadan backend uyumlu veri akisine gecis icin yapilanlari ve kalan isleri ozetler.
+
+## Son tur duzeltmeleri (2026-05-17)
+
+Bu turda asagidaki kritik problemler kapatildi:
+
+1. **Aktif sporcu / aktif taraftar varsayimi** kaldirildi. Auth yok, ama yerine
+   `useActiveAthlete` ve `useActiveFan` hook'lari + `ActiveAthletePicker` widget'i
+   geldi. localStorage'da `meydan.activeAthleteId` / `meydan.activeFanId` saklaniyor.
+   Sporcu paneli ve canli tribun artik "ilk profili kap" davranmiyor.
+2. **Canli tribun cheer kopuklugu** giderildi. Backend'de sporcu profili yoksa
+   kullaniciya kirmizi uyari gosteriliyor; sessiz duser bug'i yok.
+3. **Etkinlik koordinat goruntuleme bug'i** duzeltildi. Mapper ekran koordinati
+   ureticek olan `coords`'u uretmeye devam ediyor ama orijinal lat/lon da
+   `event.latitude`/`event.longitude` olarak korunup detay sayfasinda dogru
+   bicimde gosteriliyor.
+4. **Sehrimde double-filter** kaldirildi. Backend `/events/nearby` artik
+   `is_free` ve `range` filtrelerini de destekliyor. Frontend client tarafi
+   filtre sadece mock fallback'te calisiyor.
+5. **Need create payload zenginlestirildi.** `need_type`, `category`,
+   `target_amount`, `deadline`, `talent_needed`, `availability`, `is_urgent`
+   alanlari artik backend'e structured olarak gidiyor. Migration 001 calistirilmali.
+6. **Takip sistemi** eklendi. `follows` tablosu + `/follows*` endpoint'leri.
+   Sporcu profil sayfasindaki "Takip Et" butonu artik canli. Dashboard "Senin
+   sporcularin" artik gercek takip listesini gosteriyor. Migration 002 calistirilmali.
+7. **Donations** akisi eklendi. `donations` tablosu + `/donations*` endpoint'leri.
+   `/destekle/$slug` bagis kaydi atmaya basladi (odeme entegrasyonu HENUZ YOK).
+   `/desteklerim` gercek bagis gecmisini gosteriyor. Migration 003 calistirilmali.
+8. **Backend roadmap** dokumani yazildi: `backend/BACKEND_ROADMAP.md`.
+
+## Calistirilmasi gereken SQL migration'lar
+
+Supabase Studio > SQL Editor uzerinden tek seferlik:
+
+- `backend/migrations/001_needs_extended_fields.sql`
+- `backend/migrations/002_follows_table.sql`
+- `backend/migrations/003_donations_table.sql`
+
+Migration calistirilmadan once `/needs` POST ve `/follows*`, `/donations*`
+endpoint'leri "column does not exist" / "relation does not exist" hatasi verir.
+
+## Hala mock olan ekranlar
+
+- Login / register / session
+- Mesajlar, bildirimler, rozet kazanma
+- Marka paneli (kampanyalar, teklifler, eslesme)
+- Canli mac listesi/skor datasi
+- Yetenek eslesme detay sayfasi
+
+Bu ekranlar icin endpoint ve tablo plani: `backend/BACKEND_ROADMAP.md`.
+
+---
+
+## Orijinal rapor (gecmis)
 
 ## Kisa Durum
 

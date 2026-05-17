@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -12,9 +12,9 @@ import {
   Wrench,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { athleteBySlug } from "@/lib/mock-data";
-import { createNeed, listProfiles } from "@/lib/api";
-import { profileToAthlete } from "@/lib/api-mappers";
+import { ActiveAthletePicker } from "@/components/meydan/ActiveAthletePicker";
+import { createNeed } from "@/lib/api";
+import { useActiveAthlete } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/sporcu-panel/ihtiyac-olustur")({
   component: CreateNeedPage,
@@ -30,52 +30,12 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const MONEY_CATS = ["Yol", "Ekipman", "Antrenör", "Beslenme", "Kamp katkısı"];
 const TALENT_CATS = ["İçerik", "Tasarım", "Tercüme", "Eğitmen", "Mentor", "Beslenme"];
 
-function buildNeedDescription({
-  type,
-  category,
-  desc,
-  amount,
-  deadline,
-  talentNeed,
-  availability,
-  urgent,
-}: {
-  type: "money" | "talent";
-  category: string;
-  desc: string;
-  amount: number;
-  deadline: string;
-  talentNeed: string;
-  availability: "local" | "online";
-  urgent: boolean;
-}) {
-  const details =
-    type === "money"
-      ? [`Hedef tutar: ${amount.toLocaleString("tr-TR")} TL`, `Son tarih: ${deadline}`]
-      : [`Aranan yetenek: ${talentNeed}`, `Uygunluk: ${availability === "local" ? "Yerel" : "Online"}`];
-
-  return [
-    desc.trim(),
-    "",
-    `Kategori: ${category}`,
-    `Tür: ${type === "money" ? "Para" : "Yetenek"}`,
-    ...details,
-    `Acil: ${urgent ? "Evet" : "Hayır"}`,
-  ].join("\n");
-}
-
 function CreateNeedPage() {
   const queryClient = useQueryClient();
-  const profilesQuery = useQuery({
-    queryKey: ["profiles", "sporcu"],
-    queryFn: () => listProfiles({ role: "sporcu" }),
-    retry: 1,
-  });
-  const activeProfile = profilesQuery.data?.profiles?.[0] ?? null;
-  const me = useMemo(
-    () => (activeProfile ? profileToAthlete(activeProfile, 0) : athleteBySlug("mete-gazoz")),
-    [activeProfile],
-  );
+  const navigate = useNavigate();
+  const activeAthlete = useActiveAthlete();
+  const activeProfile = activeAthlete.profile;
+  const me = activeAthlete.athlete;
   const [type, setType] = useState<"money" | "talent">("money");
   const [category, setCategory] = useState("Yol");
   const [title, setTitle] = useState("Avrupa Şampiyonası yol masrafı");
@@ -96,20 +56,20 @@ function CreateNeedPage() {
       return createNeed({
         athlete_id: activeProfile.id,
         title: title.trim(),
-        description: buildNeedDescription({
-          type,
-          category,
-          desc,
-          amount,
-          deadline,
-          talentNeed,
-          availability,
-          urgent,
-        }),
+        description: desc.trim(),
+        need_type: type,
+        category,
+        is_urgent: urgent,
+        ...(type === "money"
+          ? { target_amount: amount, deadline }
+          : { talent_needed: talentNeed, availability }),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["needs"] });
+      setTimeout(() => {
+        navigate({ to: "/sporcu-panel/ihtiyaclar" }).catch(() => undefined);
+      }, 600);
     },
   });
 
@@ -122,6 +82,21 @@ function CreateNeedPage() {
 
   const cats = type === "money" ? MONEY_CATS : TALENT_CATS;
 
+  if (!me) {
+    return (
+      <AppShell role="athlete">
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 py-16">
+          <ActiveAthletePicker state={activeAthlete} />
+          <p className="text-sm text-[color:var(--app-ink-soft)]">
+            Yeni ihtiyaç kartı yayınlamak için aktif bir sporcu profili gerekli. Backend'de
+            en az bir <span className="font-semibold">role=sporcu</span> kaydı oluşturduktan
+            sonra forma erişebilirsin.
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell role="athlete" userName={me.name} userCity={me.city}>
       <motion.div
@@ -130,6 +105,7 @@ function CreateNeedPage() {
         variants={stagger}
         className="mx-auto flex w-full max-w-6xl flex-col gap-8"
       >
+        <ActiveAthletePicker state={activeAthlete} />
         <motion.header variants={fadeUp} className="flex flex-col gap-2">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
             Sporcu paneli · İhtiyaç
@@ -347,13 +323,13 @@ function CreateNeedPage() {
                 {createNeedMutation.isPending ? "Yayınlanıyor..." : "Yayınla"} <ArrowRight className="h-4 w-4" />
               </button>
             </div>
-            {((!activeProfile && !profilesQuery.isLoading) ||
-              profilesQuery.isError ||
+            {((!activeProfile && !activeAthlete.isLoading) ||
+              activeAthlete.isError ||
               createNeedMutation.isError ||
               createNeedMutation.isSuccess) && (
               <p className="text-right text-xs text-[color:var(--app-ink-mute)]">
                 {createNeedMutation.isSuccess
-                  ? "İhtiyaç backend'e kaydedildi."
+                  ? "İhtiyaç backend'e kaydedildi. Listeye yönlendiriliyorsun..."
                   : createNeedMutation.isError
                     ? createNeedMutation.error instanceof Error
                       ? createNeedMutation.error.message

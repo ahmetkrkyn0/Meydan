@@ -142,6 +142,8 @@ export function backendEventToEvent(event: BackendEvent, index = 0): Event {
     free: Boolean(event.is_free),
     description: event.venue ? `${event.venue} etkinliği.` : fallback.description,
     coords: mapCoords(event.latitude, event.longitude),
+    latitude: event.latitude ?? undefined,
+    longitude: event.longitude ?? undefined,
   };
 }
 
@@ -151,15 +153,25 @@ export function backendEventsToEvents(backendEvents?: BackendEvent[]) {
 }
 
 function inferNeedType(need: BackendNeed): "money" | "talent" {
+  if (need.need_type === "money" || need.need_type === "talent") return need.need_type;
   const text = normalize(`${need.title} ${need.description}`);
   return /(edit|mentor|beslen|fizyo|tasar|tercü|tercu|gönüll|gonull|yetenek|uzman)/.test(text)
     ? "talent"
     : "money";
 }
 
+function formatDeadline(value?: string | null) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("tr-TR");
+}
+
 export function backendNeedToNeed(need: BackendNeed, athlete: Athlete, index = 0): Need {
   const fallback = needs[index % needs.length] ?? needs[0];
   const type = inferNeedType(need);
+  const deadlineStr = formatDeadline(need.deadline) ?? formatDeadline(need.created_at) ?? fallback.deadline;
+  const isUrgent = need.is_urgent ?? (need.is_fulfilled === false);
 
   return {
     ...fallback,
@@ -168,13 +180,15 @@ export function backendNeedToNeed(need: BackendNeed, athlete: Athlete, index = 0
     athleteName: athlete.name,
     athleteImg: athlete.img,
     type,
-    category: type === "talent" ? "Yetenek" : "Destek",
+    category: need.category || (type === "talent" ? "Yetenek" : "Destek"),
     title: need.title,
     description: need.description || "",
     city: athlete.city,
-    urgent: !need.is_fulfilled,
-    deadline: need.created_at ? new Date(need.created_at).toLocaleDateString("tr-TR") : fallback.deadline,
-    talentNeeded: type === "talent" ? need.title : undefined,
+    urgent: Boolean(isUrgent),
+    deadline: deadlineStr,
+    targetAmount: type === "money" ? need.target_amount ?? fallback.targetAmount : undefined,
+    collectedAmount: type === "money" ? need.collected_amount ?? 0 : undefined,
+    talentNeeded: type === "talent" ? (need.talent_needed || need.title) : undefined,
   };
 }
 
