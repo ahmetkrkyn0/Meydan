@@ -532,7 +532,7 @@ function CreateNeedPage() {
                                 >
                                   ₺{a.label}
                                 </p>
-                                <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                                <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
                                   {a.description}
                                 </p>
                               </button>

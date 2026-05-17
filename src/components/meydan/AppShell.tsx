@@ -126,7 +126,7 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
                   active
                     ? "bg-[color:oklch(0.60_0.22_252/0.10)] text-[color:oklch(0.45_0.22_252)]"
                     : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
@@ -189,12 +189,12 @@ export function AppShell({
 
         {/* User card */}
         <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
-          <img src={okculukImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
+          <img src={session.profile?.avatar_url ?? okculukImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
             <p className="text-[10px] text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
           </div>
-          <button className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]">
+          <button aria-label="Kullanıcı menüsü" className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 focus-visible:rounded-lg">
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -237,7 +237,7 @@ export function AppShell({
               onClick={() => setMenuOpen((v) => !v)}
               className="flex items-center gap-2.5 rounded-xl border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 transition-colors hover:bg-[color:var(--app-line-soft)]"
             >
-              <img src={okculukImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
+              <img src={session.profile?.avatar_url ?? okculukImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
               <div className="hidden text-left sm:block">
                 <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">{effectiveName}</p>
                 <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
@@ -284,7 +284,8 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex h-9 w-11 items-center justify-center rounded-full transition-colors ${
+                aria-label={item.label}
+                className={`flex h-9 w-11 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
                   active ? "bg-[color:var(--app-ink)] text-white" : "text-[color:var(--app-ink-soft)]"
                 }`}
               >

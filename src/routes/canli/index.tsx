@@ -232,7 +232,7 @@ function FeaturedCard({ match }: { match: Match }) {
           {match.score && (
             <div className="flex items-center gap-6 rounded-2xl border border-[color:var(--app-line)] bg-white/70 px-5 py-4 backdrop-blur">
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
                   Skor
                 </p>
                 <p className="mt-0.5 font-mono text-4xl font-bold leading-none text-[color:var(--app-ink)]">
@@ -243,7 +243,7 @@ function FeaturedCard({ match }: { match: Match }) {
                 <>
                   <div className="h-10 w-px bg-[color:var(--app-line)]" />
                   <div>
-                    <p className="text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
                       Set
                     </p>
                     <p className="mt-0.5 font-mono text-2xl font-bold leading-none text-[color:var(--app-ink-soft)]">
@@ -253,7 +253,7 @@ function FeaturedCard({ match }: { match: Match }) {
                 </>
               )}
               <div className="ml-auto flex flex-col items-end">
-                <p className="text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
                   Momentum
                 </p>
                 <div className="mt-1.5 flex items-center gap-2">
@@ -328,7 +328,7 @@ function MatchCard({ match }: { match: Match }) {
             alt={match.athleteName}
             className="relative h-16 w-16 rounded-2xl object-cover object-top ring-2 ring-white"
           />
-          <span className="absolute -bottom-1 -right-1 inline-flex items-center gap-1 rounded-full bg-coral px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white ring-2 ring-white">
+          <span className="absolute -bottom-1 -right-1 inline-flex items-center gap-1 rounded-full bg-coral px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white ring-2 ring-white">
             <span className="h-1 w-1 animate-pulse rounded-full bg-white" /> LIVE
           </span>
         </div>
@@ -356,7 +356,7 @@ function MatchCard({ match }: { match: Match }) {
                   {match.score}
                 </p>
                 {match.setScore && (
-                  <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                  <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
                     Set {match.setScore}
                   </p>
                 )}
@@ -422,7 +422,7 @@ function EndedCard({ match }: { match: Match }) {
         />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--app-line-soft)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-soft)]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--app-line-soft)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-ink-soft)]">
               <CheckCircle2 className="h-2.5 w-2.5" /> Bitti
             </span>
             <span className="text-[10px] text-[color:var(--app-ink-mute)]">
@@ -441,7 +441,7 @@ function EndedCard({ match }: { match: Match }) {
             <p className="font-mono text-base font-bold leading-none text-[color:var(--app-ink)]">
               {match.score}
             </p>
-            <p className="mt-0.5 text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+            <p className="mt-0.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
               Final
             </p>
           </div>

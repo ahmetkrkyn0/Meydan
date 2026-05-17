@@ -643,7 +643,10 @@ function AthleteCard({ a, index }: { a: Athlete; index: number }) {
               {a.followers >= 1000 ? `${(a.followers / 1000).toFixed(1)}K` : a.followers}
             </span>
           </span>
-          <button className="rounded-full bg-violet/12 px-2.5 py-0.5 text-[10px] font-bold text-violet transition-colors hover:bg-violet hover:text-white">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="rounded-full bg-violet/12 px-2.5 py-0.5 text-[10px] font-bold text-violet transition-colors hover:bg-violet hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50"
+          >
             Takip et
           </button>
         </div>

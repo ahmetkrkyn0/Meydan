@@ -7,6 +7,7 @@ import {
   Eye,
   Send,
   Sparkles,
+  Shield,
   ShieldAlert,
   ShieldCheck,
   Loader2,
@@ -779,7 +780,7 @@ function LiveMatchPage() {
               </motion.form>
 
               {/* Microstatus row */}
-              <div className="mt-1.5 flex items-center justify-between gap-2 text-[9px]">
+              <div className="mt-1.5 flex items-center justify-between gap-2 text-[10px]">
                 <ComposerStatusLine status={status} backendReady={backendReady} />
                 <span className="tabular-nums text-[color:var(--app-ink-mute)]">
                   {draft.length}/140
@@ -894,7 +895,7 @@ function BipolarMomentum({
         >
           {leftName}
         </span>
-        <span className="text-[9px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+        <span className="text-[10px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
           Momentum
         </span>
         <span
@@ -944,11 +945,21 @@ function LivePulse() {
   );
 }
 
-function AIShieldBadge({ ready: _ready }: { ready: boolean }) {
+function AIShieldBadge({ ready }: { ready: boolean }) {
+  if (!ready) {
+    return (
+      <span
+        title="AI bağlı değil — mesajlar denetlenmiyor."
+        className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]"
+      >
+        <Shield className="h-2.5 w-2.5" /> AI off
+      </span>
+    );
+  }
   return (
     <span
       title="Mesajların Gemini AI tarafından küfür/hakarete karşı kontrol edilir."
-      className="inline-flex items-center gap-1 rounded-full border border-violet/25 bg-violet/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-violet"
+      className="inline-flex items-center gap-1 rounded-full border border-violet/25 bg-violet/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet"
     >
       <Zap className="h-2.5 w-2.5" /> AI Korumalı
     </span>
@@ -1066,7 +1077,7 @@ function FeedRow({
           </span>
         </p>
         <div className="mt-0.5 flex items-center gap-1.5">
-          <p className="text-[9px] text-[color:var(--app-ink-mute)]">
+          <p className="text-[10px] text-[color:var(--app-ink-mute)]">
             {item.time}
           </p>
           {item.aiCleared && (
@@ -1076,7 +1087,7 @@ function FeedRow({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className="inline-flex items-center gap-0.5 rounded-full bg-[color:oklch(0.70_0.16_152/0.15)] px-1.5 py-px text-[8px] font-bold uppercase tracking-wider text-[color:oklch(0.40_0.14_152)]"
+                  className="inline-flex items-center gap-0.5 rounded-full bg-[color:oklch(0.70_0.16_152/0.15)] px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-[color:oklch(0.40_0.14_152)]"
                 >
                   <CheckCircle2 className="h-2 w-2" />
                   AI onayladı
