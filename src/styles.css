@@ -97,6 +97,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "ss01", "cv11";
   }
@@ -417,17 +419,57 @@
   .btn-primary-light {
     background: linear-gradient(135deg, oklch(0.60 0.22 252), oklch(0.50 0.22 262));
     color: white;
+    cursor: pointer;
+    transition: opacity 150ms ease, transform 150ms ease, box-shadow 150ms ease;
     box-shadow:
       0 1px 2px oklch(0.50 0.22 262 / 0.20),
       0 8px 24px -8px oklch(0.60 0.22 252 / 0.45);
   }
+  .btn-primary-light:hover {
+    opacity: 0.92;
+    box-shadow:
+      0 1px 2px oklch(0.50 0.22 262 / 0.25),
+      0 12px 28px -8px oklch(0.60 0.22 252 / 0.55);
+  }
+  .btn-primary-light:active {
+    transform: scale(0.97);
+    box-shadow:
+      0 1px 2px oklch(0.50 0.22 262 / 0.15),
+      0 4px 12px -4px oklch(0.60 0.22 252 / 0.30);
+  }
+
   .btn-ghost-light {
     background: oklch(1 0 0);
     color: oklch(0.22 0.05 258);
     border: 1px solid oklch(0.22 0.05 258 / 0.10);
+    cursor: pointer;
+    transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
   }
   .btn-ghost-light:hover {
     background: oklch(0.96 0.012 80);
     border-color: oklch(0.22 0.05 258 / 0.18);
   }
+  .btn-ghost-light:active {
+    transform: scale(0.97);
+  }
+
+  /* Support/CTA button — dönüşüm aksiyonları için (Destek Ol) */
+  .btn-support {
+    background: linear-gradient(135deg, oklch(0.65 0.16 152), oklch(0.55 0.18 152));
+    color: white;
+    cursor: pointer;
+    transition: opacity 150ms ease, transform 150ms ease;
+    box-shadow:
+      0 1px 2px oklch(0.55 0.18 152 / 0.20),
+      0 8px 24px -8px oklch(0.65 0.16 152 / 0.45);
+  }
+  .btn-support:hover  { opacity: 0.92; }
+  .btn-support:active { transform: scale(0.97); }
+
+  /* Z-index scale */
+  --z-base:   10;
+  --z-sticky: 20;
+  --z-nav:    30;
+  --z-modal:  50;
+  --z-toast:  60;
 }

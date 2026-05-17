@@ -632,7 +632,8 @@ function AthleteCard({ a, index }: { a: Athlete; index: number }) {
     <motion.article
       variants={fadeUp}
       whileHover={{ y: -4 }}
-      className="soft-card group relative flex flex-col overflow-hidden rounded-3xl transition-shadow hover:shadow-lg"
+      whileTap={{ scale: 0.98 }}
+      className="soft-card group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl transition-shadow hover:shadow-lg"
     >
       <Link to="/sporcu/$slug" params={{ slug: a.slug }} className="block">
         <div className="relative aspect-square overflow-hidden bg-violet/8">
