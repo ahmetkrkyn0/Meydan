@@ -44,6 +44,22 @@ function formatTodayTR() {
   return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
 }
 
+function CountUp({ to, duration = 1.6 }: { to: number; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const [display, setDisplay] = useState("0");
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, to, {
+      duration,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => setDisplay(Math.round(v).toLocaleString("tr-TR")),
+    });
+    return () => controls.stop();
+  }, [inView, to, duration]);
+  return <span ref={ref}>{display}</span>;
+}
+
 function DashboardPage() {
   const session = useSession();
   const activeFan = useActiveFan();
