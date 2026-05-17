@@ -293,6 +293,32 @@
   .app-ambient > *:not(aside):not(.app-ambient-fixed) { position: relative; z-index: 1; }
   .app-ambient > aside, .app-ambient > .app-ambient-fixed { z-index: 30; }
 
+  /* ── Stage veil utilities (hero + spotlight akış) ── */
+  .stage-veil-light  { background: var(--stage-veil-light); }
+  .stage-veil-tint   { background: var(--stage-veil-tint); }
+  .stage-merge-down  { background: var(--stage-merge-down); }
+  .stage-merge-glow  { background: var(--stage-merge-glow); }
+  .stage-dark-veil   { background: var(--stage-dark-veil); }
+  .stage-dark-glow   { background: var(--stage-dark-glow); }
+
+  /* Full-bleed: sidebar → sağ ekran kenarına uzanır */
+  .stage-bleed {
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+  }
+  @media (min-width: 640px) {
+    .stage-bleed {
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+  }
+  @media (min-width: 1024px) {
+    .stage-bleed {
+      margin-left: calc(50% + 8rem - 50vw);
+      margin-right: calc(50% + 8rem - 50vw);
+    }
+  }
+
   /* ─────────────────────────────────────────────────────
    * SIDEBAR GLASS — sticky sidebar with depth + aurora veil
    * ───────────────────────────────────────────────────── */
