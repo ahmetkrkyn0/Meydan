@@ -44,7 +44,7 @@ export function Problem() {
       <div className="pointer-events-none absolute -left-48 -top-48 -z-10 h-[500px] w-[500px] rounded-full bg-violet/8 blur-[140px]" />
       <div className="pointer-events-none absolute -bottom-48 -right-48 -z-10 h-[400px] w-[400px] rounded-full bg-sky/10 blur-[120px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-[30rem]">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-foreground/8 pb-10">
           <motion.div

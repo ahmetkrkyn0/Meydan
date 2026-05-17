@@ -64,7 +64,7 @@ export function Sunar() {
       {/* Very gentle bloom */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/5 blur-[180px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pl-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pl-[30rem]">
         {/* Label */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
