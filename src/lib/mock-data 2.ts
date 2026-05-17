@@ -13,39 +13,6 @@ import basketballPng from "@/assets/sport-basketball-nobg.png";
 import billiardsPng from "@/assets/sport-billiards-nobg.png";
 import tennisPng from "@/assets/sport-tennis-nobg.png";
 
-// Branş bazlı saha/atmosfer görselleri — etkinlik kartı ve harita preview'i için.
-import tennisVenue from "@/assets/tenissaha.png";
-import archeryVenue from "@/assets/okçulukalan.png";
-import boxingVenue from "@/assets/bokssaha.png";
-import volleyballVenue from "@/assets/voleybolsaha.png";
-import fencingVenue from "@/assets/eskrimarena.png";
-import wrestlingVenue from "@/assets/güreşarena.png";
-import runningVenue from "@/assets/koşusaha.png";
-import billiardsVenue from "@/assets/bilardomasa.png";
-import shootingVenue from "@/assets/atıcısaha.png";
-import chessVenue from "@/assets/satrançsaha.png";
-import sailingVenue from "@/assets/yelkenfoto.png";
-
-export const sportImages: Record<string, string> = {
-  Tenis: tennisVenue,
-  Okçuluk: archeryVenue,
-  Boks: boxingVenue,
-  Voleybol: volleyballVenue,
-  Eskrim: fencingVenue,
-  Güreş: wrestlingVenue,
-  Atletizm: runningVenue,
-  Bilardo: billiardsVenue,
-  Atıcılık: shootingVenue,
-  Satranç: chessVenue,
-  Yelken: sailingVenue,
-  Basketbol: volleyballVenue, // fallback — basketbol görseli yoksa salon
-};
-
-export function getSportImage(sport?: string | null): string {
-  if (!sport) return runningVenue;
-  return sportImages[sport] ?? runningVenue;
-}
-
 export type Accent = "violet" | "sky" | "coral" | "emerald";
 
 export type Athlete = {
@@ -358,31 +325,16 @@ export type Event = {
   coords: { x: number; y: number }; // map mock position 0-100
   latitude?: number; // gerçek coğrafi konum (backend'den gelir)
   longitude?: number;
-  // Fiyat (TL). Free=true ise 0. Fiyat aralığı filtreleri bu alana göre çalışır.
-  priceTL: number;
-  // Branş bazlı saha/atmosfer görseli — kart ve harita hover preview'i için.
-  image: string;
 };
 
 export const events: Event[] = [
-  { id: "e1",  title: "İstanbul Yarı Maratonu",        sport: "Atletizm",  emoji: "🏃", city: "İstanbul",  district: "Maltepe",       date: "2026-05-25", day: "25", month: "MAY", time: "08:00", free: true,  cap: 5000, attending: 4350, description: "21 km sahil rotası.",             coords: { x: 60, y: 38 }, latitude: 40.9351, longitude: 29.1543, priceTL: 0,    image: runningVenue },
-  { id: "e2",  title: "Okçuluk Başlangıç Atölyesi",    sport: "Okçuluk",   emoji: "🏹", city: "İstanbul",  district: "Kadıköy",       date: "2026-05-28", day: "28", month: "MAY", time: "14:00", free: false, cap: 30,   attending: 10,   description: "Sıfırdan ok atışı dersi.",        coords: { x: 62, y: 39 }, latitude: 40.9923, longitude: 29.0274, priceTL: 350,  image: archeryVenue },
-  { id: "e3",  title: "Türkiye Satranç Şampiyonası",   sport: "Satranç",   emoji: "♟️", city: "Ankara",    district: "Çankaya",       date: "2026-05-22", day: "22", month: "MAY", time: "10:00", free: true,  cap: 5000, attending: 4350, description: "TSF Ankara Salonu finalleri.",    coords: { x: 56, y: 50 }, latitude: 39.9208, longitude: 32.8541, priceTL: 0,    image: chessVenue },
-  { id: "e4",  title: "Bodrum Sahil Yelken Kupası",    sport: "Yelken",    emoji: "⛵", city: "Bodrum",    district: "Yalıkavak",     date: "2026-06-07", day: "07", month: "HAZ", time: "11:00", free: false, cap: 80,   attending: 73,   description: "Açık deniz parkur yarışı.",       coords: { x: 48, y: 80 }, latitude: 37.0805, longitude: 27.3245, priceTL: 850,  image: sailingVenue },
-  { id: "e5",  title: "Avrupa Okçuluk Şampiyonası",    sport: "Okçuluk",   emoji: "🏹", city: "İzmir",     district: "Konak",         date: "2026-06-15", day: "15", month: "HAZ", time: "13:30", free: true,  cap: 1200, attending: 980,  description: "Avrupa'nın 28 takımı İzmir'de.",  coords: { x: 44, y: 60 }, latitude: 38.4189, longitude: 27.1284, priceTL: 0,    image: archeryVenue },
-  { id: "e6",  title: "Bursa Üniversite Güreşi",       sport: "Güreş",     emoji: "🤼", city: "Bursa",     district: "Osmangazi",     date: "2026-06-22", day: "22", month: "HAZ", time: "16:00", free: true,  cap: 400,  attending: 152,  description: "Üniversiteler birinciliği.",      coords: { x: 53, y: 44 }, latitude: 40.1956, longitude: 29.0610, priceTL: 0,    image: wrestlingVenue },
-  { id: "e7",  title: "Eskişehir Eskrim Showcase",     sport: "Eskrim",    emoji: "🤺", city: "Eskişehir", district: "Tepebaşı",      date: "2026-06-30", day: "30", month: "HAZ", time: "18:00", free: false, cap: 250,  attending: 38,   description: "Genç eskrimciler showcase.",      coords: { x: 55, y: 47 }, latitude: 39.7836, longitude: 30.5067, priceTL: 200,  image: fencingVenue },
-
-  /* ── Ankara — 8 ek etkinlik, farklı branş & fiyat aralığı, harita için
-   *    şehir merkezi etrafında dağıtılmış koordinatlarla ── */
-  { id: "ank1", title: "Ankara Açık Tenis Turnuvası",     sport: "Tenis",     emoji: "🎾", city: "Ankara", district: "Bilkent",       date: "2026-05-30", day: "30", month: "MAY", time: "09:00", free: false, cap: 320,  attending: 198,  description: "Dış kortlarda 3 günlük turnuva.",  coords: { x: 56, y: 50 }, latitude: 39.8682, longitude: 32.7491, priceTL: 450,  image: tennisVenue },
-  { id: "ank2", title: "Başkent Yarı Maratonu",           sport: "Atletizm",  emoji: "🏃", city: "Ankara", district: "Çankaya",       date: "2026-06-02", day: "02", month: "HAZ", time: "07:30", free: true,  cap: 8000, attending: 6420, description: "Anıtkabir önünden çıkış, 21 km.",  coords: { x: 56, y: 51 }, latitude: 39.9255, longitude: 32.8369, priceTL: 0,    image: runningVenue },
-  { id: "ank3", title: "TBMM Cup — Voleybol",             sport: "Voleybol",  emoji: "🏐", city: "Ankara", district: "Yenimahalle",   date: "2026-06-05", day: "05", month: "HAZ", time: "18:00", free: false, cap: 1500, attending: 920,  description: "Kurumlar arası dostluk kupası.",   coords: { x: 56, y: 49 }, latitude: 39.9626, longitude: 32.7975, priceTL: 150,  image: volleyballVenue },
-  { id: "ank4", title: "Anadolu Boks Galası",             sport: "Boks",      emoji: "🥊", city: "Ankara", district: "Keçiören",      date: "2026-06-08", day: "08", month: "HAZ", time: "20:00", free: false, cap: 1100, attending: 880,  description: "Profesyonel ringde 12 maç.",       coords: { x: 56, y: 49 }, latitude: 39.9941, longitude: 32.8633, priceTL: 1200, image: boxingVenue },
-  { id: "ank5", title: "Ankara Bilardo Open",             sport: "Bilardo",   emoji: "🎱", city: "Ankara", district: "Çankaya",       date: "2026-06-11", day: "11", month: "HAZ", time: "19:00", free: false, cap: 200,  attending: 134,  description: "3-bant ulusal derece maçları.",    coords: { x: 56, y: 50 }, latitude: 39.9056, longitude: 32.8584, priceTL: 250,  image: billiardsVenue },
-  { id: "ank6", title: "Kızılay Atıcılık Şampiyonası",    sport: "Atıcılık",  emoji: "🎯", city: "Ankara", district: "Çankaya",       date: "2026-06-14", day: "14", month: "HAZ", time: "11:00", free: false, cap: 180,  attending: 96,   description: "10 m havalı tabanca finalleri.",   coords: { x: 56, y: 50 }, latitude: 39.9181, longitude: 32.8553, priceTL: 350,  image: shootingVenue },
-  { id: "ank7", title: "Başkent Okçuluk Kupası",          sport: "Okçuluk",   emoji: "🏹", city: "Ankara", district: "Gölbaşı",       date: "2026-06-18", day: "18", month: "HAZ", time: "13:00", free: false, cap: 400,  attending: 210,  description: "Olimpik 70 m kategorisi.",         coords: { x: 56, y: 51 }, latitude: 39.7878, longitude: 32.8092, priceTL: 200,  image: archeryVenue },
-  { id: "ank8", title: "ODTÜ Genç Eskrim Galası",         sport: "Eskrim",    emoji: "🤺", city: "Ankara", district: "Çankaya",       date: "2026-06-21", day: "21", month: "HAZ", time: "17:00", free: true,  cap: 300,  attending: 142,  description: "Üniversite kulüpleri showcase.",   coords: { x: 56, y: 50 }, latitude: 39.8923, longitude: 32.7841, priceTL: 0,    image: fencingVenue },
+  { id: "e1", title: "İstanbul Yarı Maratonu",       sport: "Atletizm", emoji: "🏃", city: "İstanbul",  district: "Maltepe",  date: "2026-05-25", day: "25", month: "MAY", time: "08:00", free: true,  cap: 5000, attending: 4350, description: "21 km sahil rotası.",            coords: { x: 60, y: 38 } },
+  { id: "e2", title: "Okçuluk Başlangıç Atölyesi",   sport: "Okçuluk",  emoji: "🏹", city: "İstanbul",  district: "Kadıköy",  date: "2026-05-28", day: "28", month: "MAY", time: "14:00", free: false, cap: 30,   attending: 10,   description: "Sıfırdan ok atışı dersi.",       coords: { x: 62, y: 39 } },
+  { id: "e3", title: "Ankara Basketbol Turnuvası",   sport: "Basketbol",emoji: "🏀", city: "Ankara",    district: "Çankaya",  date: "2026-06-01", day: "01", month: "HAZ", time: "10:00", free: true,  cap: 200,  attending: 104,  description: "Üniversiteler arası kupa.",       coords: { x: 56, y: 50 } },
+  { id: "e4", title: "Bodrum Sahil Yelken Kupası",   sport: "Yelken",   emoji: "⛵", city: "Bodrum",    district: "Yalıkavak",date: "2026-06-07", day: "07", month: "HAZ", time: "11:00", free: false, cap: 80,   attending: 73,   description: "Açık deniz parkur yarışı.",       coords: { x: 48, y: 80 } },
+  { id: "e5", title: "Avrupa Okçuluk Şampiyonası",   sport: "Okçuluk",  emoji: "🏹", city: "İzmir",     district: "Konak",    date: "2026-06-15", day: "15", month: "HAZ", time: "13:30", free: true,  cap: 1200, attending: 980,  description: "Avrupa'nın 28 takımı İzmir'de.",   coords: { x: 44, y: 60 } },
+  { id: "e6", title: "Bursa Üniversite Güreşi",      sport: "Güreş",    emoji: "🤼", city: "Bursa",     district: "Osmangazi",date: "2026-06-22", day: "22", month: "HAZ", time: "16:00", free: true,  cap: 400,  attending: 152,  description: "Türkiye üniversiteler birinciliği.",coords: { x: 53, y: 44 } },
+  { id: "e7", title: "Eskişehir Eskrim Showcase",    sport: "Eskrim",   emoji: "🤺", city: "Eskişehir", district: "Tepebaşı", date: "2026-06-30", day: "30", month: "HAZ", time: "18:00", free: false, cap: 250,  attending: 38,   description: "Genç eskrimciler için showcase.", coords: { x: 55, y: 47 } },
 ];
 
 /* ============================================================
@@ -604,53 +556,6 @@ export const recentCheers: Cheer[] = [
   { id: "c4", from: "Mert",     message: "Sakin kal, bilirsin",  time: "1 dk" },
   { id: "c5", from: "Selin",    message: "Pes etme",             time: "2 dk" },
 ];
-
-/* ── Geniş tribün havuzu — canlı maç chat akışı için ── */
-
-export const tribuneNames: string[] = [
-  "Ayşe", "Mehmet", "Selin", "Ufuk", "Pelin", "Onur", "Burak", "Ela",
-  "Mert", "Defne", "Berk", "Naz", "Kaan", "Sude", "Ege", "Doruk",
-  "Zeynep", "Ozan", "İrem", "Tuna", "Aslı", "Kerem", "Buse", "Deniz",
-  "Yiğit", "Cansu", "Emre", "Beril", "Ahmet", "Şevval", "Çağla",
-  "Bora", "Sıla", "Eren", "Melis", "Atilla", "Damla", "Furkan",
-  "Gizem", "Hakan", "İpek", "Tolga", "Yasemin",
-];
-
-export const tribuneMessages: string[] = [
-  // Genel motivasyon
-  "Seninleyim.",
-  "Pes etme!",
-  "Devam et, az kaldı.",
-  "Türkiye seninle 🇹🇷",
-  "Bir nefes daha.",
-  "Sakin kal, bilirsin.",
-  "Sen bu işi bilirsin.",
-  "Tribün ayakta.",
-  "Burdayız, duy bizi.",
-  "Her vuruşa odaklan.",
-  "Yıllarca bu an için çalıştın.",
-  "Güveniyorum sana.",
-  "Arkandayız!",
-  "Sakin nefes, temiz kafa.",
-  "Sen yaparsın.",
-  "Bu maç senin.",
-  "Vazgeçme sakın.",
-  "Gözünü topa dik.",
-  "Bütün Türkiye ekranda.",
-  // Kısa burst / emoji
-  "🔥🔥🔥",
-  "💪💪",
-  "🇹🇷🇹🇷🇹🇷",
-  "✨ aslan ✨",
-  "👏 muhteşemsin",
-  // Yapıcı / serbest
-  "İlk set kayıptı, dön bu setten.",
-  "Servis çok iyi gidiyor.",
-  "Konsantre ol, başaracaksın.",
-  "Ritmi bulduğun an her şey gelir.",
-  "Nefes al, kendine güven.",
-];
-
 
 /* ============================================================
  * BRAND OFFERS — for athlete inbox

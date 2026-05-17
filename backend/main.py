@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import Literal
 
 import gemini_service
+import ors_service
 import supabase_service
 
 
@@ -441,7 +442,15 @@ def get_need_matches(need_id: str, current_user: dict = Depends(get_current_prof
             metin = (need.get("title") or "") + ". " + (need.get("description") or "")
             embedding = gemini_service.generate_embedding(metin.strip())
 
-        matches = supabase_service.find_matching_talents(embedding, need["athlete_id"])
+        # Sporcunun şehri + need'in availability'si + talent kategorisi ile eşleştir.
+        athlete_city = (current_user or {}).get("city")
+        matches = supabase_service.find_matching_talents(
+            embedding,
+            need["athlete_id"],
+            city=athlete_city,
+            availability=need.get("availability"),
+            required_talent=need.get("talent_needed"),
+        )
 
         # Need'in embedding'sini ayıklayıp frontend'e safe versiyonu döndür.
         need_safe = {k: v for k, v in need.items() if not k.endswith("_embedding")}
@@ -831,6 +840,31 @@ def patch_event(event_id: str, body: EventUpdateRequest):
     except Exception as e:
         print(f"/events/{event_id} güncelleme hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/geo/isochrone")
+def get_geo_isochrone(
+    city: str,
+    mode: Literal["foot-walking", "cycling-regular", "driving-car"],
+    minutes: Literal[15, 30, 45],
+):
+    """Şehir merkezinden verilen mod+süre ile ulaşılabilir bölge polygonu.
+
+    ORS API key backend'de saklı; cevap 24h boyunca cache'lenir.
+    """
+    try:
+        return ors_service.get_isochrone(city=city, mode=mode, minutes=minutes)
+    except ors_service.UnknownCityError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"'{city}' için harita henüz hazır değil",
+        )
+    except ors_service.ORSConfigError as e:
+        print(f"/geo/isochrone config hatası: {e}")
+        raise HTTPException(status_code=503, detail="Harita servisi yapılandırılmamış")
+    except ors_service.ORSUpstreamError as e:
+        print(f"/geo/isochrone upstream hatası: {e}")
+        raise HTTPException(status_code=502, detail="Harita servisi geçici olarak erişilemiyor")
 
 
 @app.delete("/events/{event_id}")

@@ -39,7 +39,7 @@ import { ActiveAthletePicker } from "@/components/meydan/ActiveAthletePicker";
 import { createNeed } from "@/lib/api";
 import { useActiveAthlete } from "@/lib/active-athlete";
 
-export const Route = createFileRoute("/sporcu-panel/ihtiyac-olustur")({
+export const Route = createFileRoute("/sporcu-panel/ihtiyac-olustur 2")({
   component: CreateNeedPage,
   head: () => ({ meta: [{ title: "Yeni İhtiyaç Kartı — Meydan" }] }),
 });
@@ -245,7 +245,7 @@ function CreateNeedPage() {
   const [talentTemplateId, setTalentTemplateId] = useState<string>("editor");
   const [amountPreset, setAmountPreset] = useState<number>(25_000);
   const [deadlinePreset, setDeadlinePreset] = useState<string>("1m");
-  const [availability, setAvailability] = useState<"local" | "online" | null>(null);
+  const [availability, setAvailability] = useState<"local" | "online">("online");
   const [urgent, setUrgent] = useState(false);
 
   // Hesaplananlar
@@ -265,9 +265,6 @@ function CreateNeedPage() {
       if (!activeProfile?.id) {
         throw new Error("Backend'de sporcu profili bulunamadı.");
       }
-      if (type === "talent" && !availability) {
-        throw new Error("Çalışma şeklini seç (yerel ya da online).");
-      }
       return createNeed({
         athlete_id: activeProfile.id,
         title: selectedTemplate.title,
@@ -279,7 +276,7 @@ function CreateNeedPage() {
           ? { target_amount: amountPreset, deadline: deadlineDateStr }
           : {
               talent_needed: (selectedTemplate as TalentTemplate).talent,
-              availability: availability ?? "online",
+              availability,
             }),
       });
     },
@@ -291,10 +288,7 @@ function CreateNeedPage() {
     },
   });
 
-  const canPublish =
-    Boolean(activeProfile?.id) &&
-    !createNeedMutation.isPending &&
-    (type === "money" || availability !== null);
+  const canPublish = Boolean(activeProfile?.id) && !createNeedMutation.isPending;
 
   // ─── Empty state (no profile) ───
   if (!me) {
@@ -573,50 +567,35 @@ function CreateNeedPage() {
                   {type === "talent" && (
                     <FieldBlock
                       icon={Globe}
-                      label="Bu iş için fiziksel buluşma gerekiyor mu?"
+                      label="Çalışma Şekli"
                       tone="emerald"
                     >
-                      <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="grid grid-cols-2 gap-3">
                         <button
                           type="button"
                           onClick={() => setAvailability("local")}
-                          className={`flex flex-col items-start gap-1.5 rounded-2xl border px-4 py-3.5 text-left transition-all ${
+                          className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 text-sm font-semibold transition-all ${
                             availability === "local"
-                              ? "border-emerald-600/40 bg-emerald-500/10 ring-2 ring-emerald-500/30"
-                              : "border-[color:var(--app-line)] bg-white hover:border-emerald-500/30"
+                              ? "border-emerald-600/40 bg-emerald-500/10 text-emerald-700 ring-2 ring-emerald-500/30"
+                              : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-emerald-500/30"
                           }`}
                         >
-                          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--app-ink)]">
-                            <MapPin className="h-4 w-4 text-emerald-700" />
-                            Evet, {me.city}'da olmalı
-                          </span>
-                          <span className="text-[11px] leading-relaxed text-[color:var(--app-ink-soft)]">
-                            Terzi, fizyo, ulaşım, ekipman tamiri gibi yüz yüze işler.
-                          </span>
+                          <MapPin className="h-4 w-4" />
+                          Yerel · {me.city}
                         </button>
                         <button
                           type="button"
                           onClick={() => setAvailability("online")}
-                          className={`flex flex-col items-start gap-1.5 rounded-2xl border px-4 py-3.5 text-left transition-all ${
+                          className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 text-sm font-semibold transition-all ${
                             availability === "online"
-                              ? "border-emerald-600/40 bg-emerald-500/10 ring-2 ring-emerald-500/30"
-                              : "border-[color:var(--app-line)] bg-white hover:border-emerald-500/30"
+                              ? "border-emerald-600/40 bg-emerald-500/10 text-emerald-700 ring-2 ring-emerald-500/30"
+                              : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-emerald-500/30"
                           }`}
                         >
-                          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--app-ink)]">
-                            <Globe className="h-4 w-4 text-emerald-700" />
-                            Hayır, online olur
-                          </span>
-                          <span className="text-[11px] leading-relaxed text-[color:var(--app-ink-soft)]">
-                            Video editör, tasarım, dil dersi, mentor gibi uzaktan işler.
-                          </span>
+                          <Globe className="h-4 w-4" />
+                          Online · her yerden
                         </button>
                       </div>
-                      {availability === null && (
-                        <p className="mt-2 text-[11px] text-coral">
-                          Yayınlamadan önce bir seçenek işaretle.
-                        </p>
-                      )}
                     </FieldBlock>
                   )}
 
@@ -984,7 +963,7 @@ function PreviewCard({
   template: MoneyTemplate | TalentTemplate;
   amount: number;
   deadlineDays: number;
-  availability: "local" | "online" | null;
+  availability: "local" | "online";
   urgent: boolean;
 }) {
   return (
@@ -1076,14 +1055,10 @@ function PreviewCard({
                 <>
                   <MapPin className="h-3 w-3" /> Yerel · {me.city}
                 </>
-              ) : availability === "online" ? (
+              ) : (
                 <>
                   <Globe className="h-3 w-3" /> Online
                 </>
-              ) : (
-                <span className="text-[color:var(--app-ink-mute)]">
-                  Çalışma şekli seçilmedi
-                </span>
               )}
             </div>
           </div>
