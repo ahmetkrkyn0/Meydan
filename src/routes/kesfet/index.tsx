@@ -201,18 +201,25 @@ function KesfetPage() {
         {/* ─── Spotlight: Sahnedeki ─── */}
         {featured && (
           <motion.section variants={fadeUp} className="stage-bleed -mt-14">
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden rounded-3xl">
               <img
                 src={spotlightImg}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 h-full w-full object-cover object-center opacity-40"
+                className="absolute inset-0 h-full w-full object-cover object-center"
               />
-              <div className="stage-dark-veil absolute inset-0" />
-              <div className="stage-dark-glow absolute inset-0" />
+              {/* readable left-to-right dark wash; right side stays photographic */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 h-16 backdrop-blur-[6px]"
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to right, oklch(0.18 0.04 258 / 0.88) 0%, oklch(0.18 0.04 258 / 0.65) 40%, oklch(0.18 0.04 258 / 0.20) 75%, transparent 100%)",
+                }}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 h-12 backdrop-blur-[3px]"
                 style={{
                   maskImage: "linear-gradient(to bottom, black, transparent)",
                   WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
