@@ -357,7 +357,7 @@ function KesfetPage() {
                 : "Backend'e ulaşılamadı; demo verisi gösteriliyor."}
             </p>
           )}
-        </motion.section>
+        </section>
 
         {/* ─── Athlete grid ─── */}
         <motion.section
