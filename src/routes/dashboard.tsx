@@ -252,7 +252,8 @@ function DashboardPage() {
               return (
                 <motion.article
                   whileHover={{ y: -3 }}
-                  className="group relative overflow-hidden rounded-3xl"
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-3xl"
                 >
                   <img
                     src={m.athleteImg}
@@ -340,7 +341,8 @@ function DashboardPage() {
               return (
                 <motion.article
                   whileHover={{ y: -3 }}
-                  className="soft-card-strong relative overflow-hidden rounded-3xl"
+                  whileTap={{ scale: 0.98 }}
+                  className="soft-card-strong relative cursor-pointer overflow-hidden rounded-3xl"
                 >
                   <div className="relative flex h-full flex-col">
                     <div className="relative h-44 overflow-hidden">
@@ -438,7 +440,7 @@ function DashboardPage() {
                 key={a.slug}
                 to="/sporcu/$slug"
                 params={{ slug: a.slug }}
-                className="group relative block aspect-[3/4] overflow-hidden rounded-3xl"
+                className="group relative block aspect-[3/4] cursor-pointer overflow-hidden rounded-3xl transition-transform active:scale-[0.97]"
               >
                 <img
                   src={a.img}

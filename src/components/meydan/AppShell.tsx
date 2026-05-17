@@ -287,7 +287,7 @@ export function AppShell({
                 key={item.to}
                 to={item.to}
                 aria-label={item.label}
-                className={`flex h-9 w-11 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
+                className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-colors active:scale-[0.92] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
                   active ? "bg-[color:var(--app-ink)] text-white" : "text-[color:var(--app-ink-soft)]"
                 }`}
               >
