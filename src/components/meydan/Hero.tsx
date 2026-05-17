@@ -5,9 +5,9 @@ import heroWebpSet from "@/assets/meydan-hero.png?w=640;960;1280;1600;1920&forma
 import heroFallback from "@/assets/meydan-hero.png?w=1280&format=webp";
 
 const stats = [
-  { icon: Trophy,        label: "Olimpik branş",   value: "7+"    },
-  { icon: Users,         label: "Aktif tribün",     value: "12K"   },
-  { icon: HeartHandshake,label: "Doğrudan destek",  value: "₺840K" },
+  { icon: Trophy,         label: "Olimpik branş",    value: "20+"  },
+  { icon: Users,          label: "Erken üye",        value: "2.4K" },
+  { icon: HeartHandshake, label: "Doğrudan destek",  value: "₺186K" },
 ];
 
 export function Hero() {

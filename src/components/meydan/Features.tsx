@@ -23,7 +23,7 @@ const cardVariants = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: (i % 3) * 0.09, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, delay: (i % 3) * 0.09, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -110,9 +110,9 @@ export function Features() {
           className="mt-14 grid grid-cols-3 divide-x divide-foreground/8 overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.04]"
         >
           {[
-            { val: "240+",  label: "Sporcu profili" },
-            { val: "7+",    label: "Olimpik branş"  },
-            { val: "₺840K", label: "Doğrudan destek" },
+            { val: "320+",  label: "Sporcu profili" },
+            { val: "20+",   label: "Olimpik branş"  },
+            { val: "₺186K", label: "Doğrudan destek" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
