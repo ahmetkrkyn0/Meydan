@@ -119,27 +119,9 @@ function DashboardPage() {
           variants={fadeUp}
           className="stage-bleed relative -mt-6 overflow-hidden sm:-mt-8"
         >
-          <div className="relative min-h-[400px] sm:min-h-[460px]">
-            {/* Fotoğraf — sağda görünür, solda sayfa rengine karışır */}
-            <img
-              src={heroAthlete}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 h-full w-full object-cover object-[75%_center] opacity-30 sm:opacity-40"
-            />
-            {/* Sol→sağ: sayfa renginden şeffafa — fotoğraf sağda net görünsün */}
-            <div
-              className="absolute inset-0"
-              style={{ background: "linear-gradient(to right, var(--app-bg) 30%, var(--app-bg)/70% 60%, transparent 100%)" }}
-            />
-            {/* Alt kenar: sayfaya yumuşak geçiş */}
-            <div
-              className="absolute inset-x-0 bottom-0 h-24"
-              style={{ background: "linear-gradient(to top, var(--app-bg), transparent)" }}
-            />
-
-            {/* Content */}
-            <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-10">
+          <div className="grid grid-cols-[1fr_45%] sm:grid-cols-[1fr_48%]">
+            {/* Sol: içerik, sayfa rengi */}
+            <div className="flex flex-col justify-center gap-6 bg-[color:var(--app-bg)] py-12 pl-6 pr-8 sm:py-16 sm:pl-10 sm:pr-12">
               <div className="flex items-center gap-3">
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
                   {formatTodayTR()}
@@ -150,96 +132,71 @@ function DashboardPage() {
                 </p>
               </div>
 
-              <div className="max-w-xl py-10">
-                <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-7xl">
+              <div>
+                <h1 className="font-display text-4xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-6xl">
                   Hoş geldin{" "}
                   <span className="bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
                     {firstName}
                   </span>
                   <span className="text-violet">.</span>
                 </h1>
-                <p className="mt-5 max-w-lg text-base leading-relaxed text-[color:var(--app-ink-soft)] sm:text-lg">
+                <p className="mt-4 text-sm leading-relaxed text-[color:var(--app-ink-soft)] sm:text-base">
                   Bugün takip ettiğin <span className="font-bold text-[color:var(--app-ink)]">2 sporcun</span> sahnede.
-                  İlk düdük az kaldı — tribün hazır mı?
+                  İlk düdük az kaldı.
                 </p>
+              </div>
 
-                {/* Live ticker pill */}
-                <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-coral/25 bg-[color:var(--app-bg-soft)] px-4 py-2 shadow-sm">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
-                  </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-coral">
-                    Şu an canlı
-                  </span>
-                  <span className="text-xs text-[color:var(--app-ink-soft)]">
-                    Defne · Tenis · Set 2
-                  </span>
-                  <span className="text-[color:var(--app-ink-mute)]">·</span>
-                  <span className="text-xs text-[color:var(--app-ink-soft)]">
-                    Seda · Boks · R3
-                  </span>
-                </div>
+              <div className="inline-flex items-center gap-3 self-start rounded-full border border-coral/25 bg-[color:var(--app-bg-soft)] px-4 py-2 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
+                </span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-coral">Şu an canlı</span>
+                <span className="text-xs text-[color:var(--app-ink-soft)]">Defne · Seda</span>
+              </div>
 
-                <div className="mt-8 flex items-center gap-4">
-                  <Link
-                    to="/canli"
-                    className="btn-primary-light inline-flex items-center gap-2 rounded-full py-3 pl-3 pr-5 text-xs font-bold shadow-lg shadow-violet/20"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25">
-                      <Play className="h-3.5 w-3.5 fill-white text-white" />
-                    </span>
-                    Tribüne katıl
-                  </Link>
-                  <div className="hidden flex-col gap-0.5 sm:flex">
-                    <p className="font-display text-2xl font-bold tabular-nums text-[color:var(--app-ink)]">
-                      <CountUp to={3420} />
-                    </p>
-                    <p className="text-[11px] text-[color:var(--app-ink-mute)]">
-                      izleyici · <CountUp to={860} duration={1.4} /> tezahürat
-                    </p>
-                  </div>
-                </div>
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/canli"
+                  className="btn-primary-light inline-flex items-center gap-2 rounded-full py-3 pl-3 pr-5 text-xs font-bold"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25">
+                    <Play className="h-3.5 w-3.5 fill-white text-white" />
+                  </span>
+                  Tribüne katıl
+                </Link>
               </div>
             </div>
+
+            {/* Sağ: fotoğraf, hiç overlay yok */}
+            <img
+              src={heroAthlete}
+              alt=""
+              aria-hidden
+              className="h-full w-full object-cover object-top"
+            />
           </div>
         </motion.header>
 
         {/* ─── Sessiz Tezahürat spotlight ─── */}
         <motion.section variants={fadeUp} className="px-5 sm:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--app-line)] bg-[color:var(--app-bg-soft)]">
-            {/* Fotoğraf — sağda arka plan dokusu, düşük opaklık */}
-            <img
-              src={spotlightAthlete}
-              alt=""
-              aria-hidden
-              className="absolute right-0 top-0 h-full w-1/2 object-cover object-left opacity-15 sm:opacity-20"
-            />
-            {/* Sağdan soldan sayfa rengine karışır */}
-            <div
-              className="absolute inset-0"
-              style={{ background: "linear-gradient(to right, var(--app-bg-soft) 50%, transparent 100%)" }}
-            />
-
-            <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-10">
-              <div className="max-w-xl">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-coral/20 bg-coral/8 px-3 py-1">
-                  <Volume2 className="h-3 w-3 text-coral" />
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-coral">
-                    Sessiz Tezahürat
-                  </span>
-                </div>
-                <p className="font-display text-2xl font-bold leading-tight text-[color:var(--app-ink)] sm:text-3xl">
-                  Seda şu an ringde.
-                  <span className="block text-[color:var(--app-ink-soft)]">4 kişi ona mesaj yazdı.</span>
-                </p>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
-                  Köşede beklediği her anda, senin sözünü taşıyor.
-                  Maç bitiminde hepsini okuyacak.
-                </p>
+          <div className="grid grid-cols-[1fr_45%] overflow-hidden rounded-3xl border border-[color:var(--app-line)] sm:grid-cols-[1fr_42%]">
+            {/* Sol: içerik, sayfa rengi */}
+            <div className="flex flex-col justify-center gap-5 bg-[color:var(--app-bg-soft)] p-8 sm:p-10">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-coral/20 bg-coral/8 px-3 py-1">
+                <Volume2 className="h-3 w-3 text-coral" />
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-coral">
+                  Sessiz Tezahürat
+                </span>
               </div>
-
-              <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
+              <p className="font-display text-2xl font-bold leading-tight text-[color:var(--app-ink)] sm:text-3xl">
+                Seda şu an ringde.
+                <span className="block text-[color:var(--app-ink-soft)]">4 kişi ona mesaj yazdı.</span>
+              </p>
+              <p className="max-w-md text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
+                Köşede beklediği her anda, senin sözünü taşıyor. Maç bitiminde hepsini okuyacak.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
                 <Link
                   to="/sporcu/$slug"
                   params={{ slug: "seda-yilmaz" }}
@@ -257,6 +214,14 @@ function DashboardPage() {
                 </Link>
               </div>
             </div>
+
+            {/* Sağ: fotoğraf, hiç overlay yok */}
+            <img
+              src={spotlightAthlete}
+              alt=""
+              aria-hidden
+              className="h-full w-full object-cover object-top"
+            />
           </div>
         </motion.section>
 
