@@ -101,7 +101,7 @@ function KesfetPage() {
         initial="hidden"
         animate="show"
         variants={stagger}
-        className="mx-auto flex w-full max-w-5xl flex-col gap-14 pb-64 lg:pb-48"
+        className="mx-auto flex w-full max-w-5xl flex-col gap-14 pb-12 lg:pb-16"
       >
         {/* ─── Cinematic hero ─── */}
         <motion.header
@@ -458,8 +458,8 @@ function KesfetPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {filtered.map((a, i) => (
+            <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.slice(0, 6).map((a, i) => (
                 <AthleteCard key={a.id} a={a} index={i} />
               ))}
             </div>
@@ -478,29 +478,35 @@ function KesfetPage() {
                   Trend
                 </p>
                 <h2 className="font-display mt-0.5 text-2xl font-bold text-[color:var(--app-ink)]">
-                  Yeni yükselenler
+                  Yükselen yıldızlar
                 </h2>
               </div>
             </div>
-            <Link
-              to="/kesfet"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--app-ink-soft)] hover:text-coral"
-            >
-              Tümü <ArrowUpRight className="h-3 w-3" />
-            </Link>
           </div>
 
-          <div className="-mx-2 overflow-x-auto pb-2">
-            <div className="flex min-w-max gap-4 px-2">
-              {rising.map((a, i) => (
+          <div className="-mx-2 overflow-hidden pb-4">
+            <style>{`
+              @keyframes scroll-marquee {
+                from { transform: translateX(0); }
+                to { transform: translateX(calc(-50% - 0.5rem)); }
+              }
+              .animate-scroll-marquee {
+                animation: scroll-marquee 40s linear infinite;
+              }
+              .animate-scroll-marquee:hover {
+                animation-play-state: paused;
+              }
+            `}</style>
+            <div className="flex min-w-max gap-4 px-2 animate-scroll-marquee">
+              {[...rising, ...rising].map((a, i) => (
                 <Link
-                  key={a.id}
+                  key={`${a.id}-${i}`}
                   to="/sporcu/$slug"
                   params={{ slug: a.slug }}
                   className="soft-card group relative w-[240px] shrink-0 rounded-2xl p-4 transition-all hover:-translate-y-1 hover:shadow-md"
                 >
                   <span className="absolute right-3 top-3 font-mono text-[10px] font-bold text-[color:var(--app-ink-mute)]">
-                    #{String(i + 1).padStart(2, "0")}
+                    #{String((i % rising.length) + 1).padStart(2, "0")}
                   </span>
                   <div className="flex items-center gap-3">
                     <img

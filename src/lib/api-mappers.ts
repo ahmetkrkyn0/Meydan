@@ -2,6 +2,23 @@ import type { Athlete, DiaryEntry, Event, Match, Need } from "@/lib/mock-data";
 import { athletes, events, getSportImage, liveMatches, needs } from "@/lib/mock-data";
 import type { BackendEvent, BackendJournal, BackendNeed, BackendProfile } from "@/lib/api";
 
+import imgAtletizmErkek from "@/assets/athlete-atletizm-erkek.png";
+import imgBilardoErkek from "@/assets/athlete-bilardo-erkek.png";
+import imgBoksKadin from "@/assets/athlete-boks-kadin.png";
+import imgEskrimKadin from "@/assets/athlete-eskrim-kadin.png";
+import imgGuresErkek from "@/assets/athlete-gures-erkek.png";
+import imgOkculukKadin from "@/assets/athlete-okculuk-kadin.png";
+import imgSatrancErkek from "@/assets/athlete-satranc-erkek.png";
+import imgTenisKadin from "@/assets/athlete-tenis-kadin.png";
+import imgVoleybolKadin from "@/assets/athlete-voleybol-kadin.png";
+import imgYelkenKadin from "@/assets/athlete-yelken-kadin.png";
+
+// Gerçek sporcu fotoğrafları
+import imgMeteGazoz from "@/assets/metegazoz.png";
+import imgCemKaan from "@/assets/cem-kaan-gokerkan.png";
+import imgBusenaz from "@/assets/busenaz.png";
+import imgZeynepSonmez from "@/assets/zeynep-sonmez.png";
+
 const SPORT_EMOJI: Record<string, string> = {
   atletizm: "🏃",
   atıcılık: "🎯",
@@ -46,6 +63,37 @@ function pickFallbackByIndex(index: number) {
   return athletes[index % athletes.length] ?? athletes[0];
 }
 
+function guessGender(name: string): "kadin" | "erkek" {
+  const n = normalize(name).split(" ")[0];
+  const femaleNames = ["elif", "ada", "buse", "seda", "zeynep", "ayşe", "fatma", "merve", "busenaz", "süreyya", "lina", "aylin", "ilke", "gizem", "eda", "hande", "zehra", "melisa"];
+  if (femaleNames.includes(n)) return "kadin";
+  return "erkek";
+}
+
+function getDynamicAvatar(gender: "kadin" | "erkek", sport: string, fullName: string) {
+  const nameNormal = normalize(fullName);
+  
+  // Gerçek sporcu override'ları
+  if (nameNormal.includes("mete gazoz")) return imgMeteGazoz;
+  if (nameNormal.includes("cem kaan")) return imgCemKaan;
+  if (nameNormal.includes("buse naz") || nameNormal.includes("busenaz")) return imgBusenaz;
+  if (nameNormal.includes("zeynep sönmez") || nameNormal.includes("zeynep sonmez")) return imgZeynepSonmez;
+
+  const branch = normalize(sport);
+  if (branch === "atletizm") return imgAtletizmErkek; 
+  if (branch === "bilardo") return imgBilardoErkek; 
+  if (branch === "boks") return imgBoksKadin;
+  if (branch === "eskrim") return imgEskrimKadin;
+  if (branch === "güreş" || branch === "gures") return imgGuresErkek;
+  if (branch === "okçuluk" || branch === "okculuk") return imgOkculukKadin;
+  if (branch === "satranç" || branch === "satranc") return imgSatrancErkek;
+  if (branch === "tenis") return imgTenisKadin;
+  if (branch === "voleybol") return imgVoleybolKadin;
+  if (branch === "yelken") return imgYelkenKadin;
+  
+  return gender === "kadin" ? imgTenisKadin : imgGuresErkek;
+}
+
 function rankFromText(ranking?: string | null, fallback = 99) {
   const match = String(ranking ?? "").match(/\d+/);
   return match ? Number(match[0]) : fallback;
@@ -55,6 +103,9 @@ export function profileToAthlete(profile: BackendProfile, index = 0): Athlete {
   const fallback = pickFallbackByIndex(index);
   const branch = profile.branch || fallback.sport;
   const socialLinks = profile.social_links ?? {};
+
+  const gender = guessGender(profile.full_name);
+  const dynamicImg = getDynamicAvatar(gender, branch, profile.full_name);
 
   return {
     ...fallback,
@@ -70,7 +121,7 @@ export function profileToAthlete(profile: BackendProfile, index = 0): Athlete {
     },
     bio: profile.bio || fallback.bio,
     values: profile.value_tags?.length ? profile.value_tags : fallback.values,
-    img: profile.avatar_url || fallback.img,
+    img: profile.avatar_url || dynamicImg,
     socials: {
       instagram: socialLinks.instagram ?? fallback.socials.instagram,
       twitter: socialLinks.twitter ?? fallback.socials.twitter,
