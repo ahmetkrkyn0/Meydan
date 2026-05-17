@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ArrowRight, MapPin, Target, Wallet, Building2 } from "lucide-react";
+import { ArrowRight, MapPin, Target, Wallet, Building2, Search, X, Globe2, Check } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { CITY_OPTIONS } from "@/lib/form-options";
 
@@ -22,7 +22,8 @@ const VALUES = [
   "Erişim", "Eğitim", "Sürdürülebilirlik", "Macera", "Mühendislik",
 ];
 const GENDERS = ["Kadın", "Erkek", "Hepsi"];
-const CITIES = CITY_OPTIONS;
+const POPULAR_CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep"];
+const ALL_TR_CITY = "Tüm Türkiye";
 
 const STEPS = [
   { id: 1, label: "Temel", icon: Building2 },
@@ -41,9 +42,27 @@ function BrandProfileCreate() {
   const [gender, setGender] = useState<string[]>(["Hepsi"]);
   const [cities, setCities] = useState<string[]>(["İstanbul", "Ankara"]);
   const [budget, setBudget] = useState(250_000);
+  const [citySearch, setCitySearch] = useState("");
 
   const toggle = <T,>(arr: T[], set: (v: T[]) => void, v: T) =>
     arr.includes(v) ? set(arr.filter((x) => x !== v)) : set([...arr, v]);
+
+  const allTRSelected = cities.includes(ALL_TR_CITY);
+  const toggleAllTR = () => {
+    if (allTRSelected) setCities([]);
+    else setCities([ALL_TR_CITY]);
+  };
+  const toggleCity = (c: string) => {
+    const next = cities.includes(c)
+      ? cities.filter((x) => x !== c)
+      : [...cities.filter((x) => x !== ALL_TR_CITY), c];
+    setCities(next);
+  };
+  const citySearchResults = citySearch.trim()
+    ? CITY_OPTIONS.filter((c) =>
+        c.toLocaleLowerCase("tr-TR").includes(citySearch.toLocaleLowerCase("tr-TR")),
+      ).slice(0, 8)
+    : [];
 
   return (
     <AppShell role="brand" userName="Karaca" userCity="Pazarlama">
@@ -178,40 +197,83 @@ function BrandProfileCreate() {
                 {ageMin} – {ageMax}
               </p>
             </div>
-            <div className="relative mt-4 h-1.5 w-full rounded-full bg-[color:var(--app-line-soft)]">
+
+            {/* Çift thumb tek track */}
+            <div className="relative mt-5 h-6">
+              {/* Track */}
+              <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[color:var(--app-line-soft)]" />
+              {/* Active range */}
               <div
-                className="absolute top-0 h-1.5 rounded-full bg-sky"
+                className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-sky"
                 style={{
                   left: `${((ageMin - 18) / 47) * 100}%`,
                   right: `${100 - ((ageMax - 18) / 47) * 100}%`,
                 }}
               />
-              <div
-                className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-sky bg-white shadow-sm"
-                style={{ left: `${((ageMin - 18) / 47) * 100}%` }}
-              />
-              <div
-                className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-sky bg-white shadow-sm"
-                style={{ left: `${((ageMax - 18) / 47) * 100}%` }}
-              />
-            </div>
-            <div className="mt-4 flex gap-3">
+              {/* Min thumb input — overlay */}
               <input
                 type="range"
                 min={18}
                 max={65}
                 value={ageMin}
-                onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax - 1))}
-                className="flex-1 accent-sky"
+                onChange={(e) =>
+                  setAgeMin(Math.min(Number(e.target.value), ageMax - 1))
+                }
+                aria-label="Minimum yaş"
+                className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
+                style={{ zIndex: ageMin > 47 ? 4 : 3 }}
               />
+              {/* Max thumb input — overlay */}
               <input
                 type="range"
                 min={18}
                 max={65}
                 value={ageMax}
-                onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin + 1))}
-                className="flex-1 accent-sky"
+                onChange={(e) =>
+                  setAgeMax(Math.max(Number(e.target.value), ageMin + 1))
+                }
+                aria-label="Maksimum yaş"
+                className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
+                style={{ zIndex: 3 }}
               />
+            </div>
+
+            <div className="mt-4 flex items-end gap-3">
+              <label className="flex-1">
+                <span className="block text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                  Min
+                </span>
+                <input
+                  type="number"
+                  min={18}
+                  max={ageMax - 1}
+                  value={ageMin}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isFinite(v)) return;
+                    setAgeMin(Math.max(18, Math.min(v, ageMax - 1)));
+                  }}
+                  className="mt-1 w-full rounded-xl border border-[color:var(--app-line)] bg-white px-3 py-2 text-sm font-semibold text-[color:var(--app-ink)] outline-none transition-all focus:border-sky/40 focus:ring-2 focus:ring-sky/15"
+                />
+              </label>
+              <span className="pb-2.5 text-[color:var(--app-ink-mute)]">–</span>
+              <label className="flex-1">
+                <span className="block text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                  Max
+                </span>
+                <input
+                  type="number"
+                  min={ageMin + 1}
+                  max={65}
+                  value={ageMax}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isFinite(v)) return;
+                    setAgeMax(Math.min(65, Math.max(v, ageMin + 1)));
+                  }}
+                  className="mt-1 w-full rounded-xl border border-[color:var(--app-line)] bg-white px-3 py-2 text-sm font-semibold text-[color:var(--app-ink)] outline-none transition-all focus:border-sky/40 focus:ring-2 focus:ring-sky/15"
+                />
+              </label>
             </div>
           </div>
 
@@ -239,27 +301,148 @@ function BrandProfileCreate() {
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-semibold text-[color:var(--app-ink-soft)]">Hedef şehirler</p>
-            <div className="flex flex-wrap gap-2">
-              {CITIES.map((c) => {
-                const on = cities.includes(c);
-                return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => toggle(cities, setCities, c)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                      on
-                        ? "bg-sky/12 text-sky ring-2 ring-sky/40"
-                        : "border border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
-                    }`}
-                  >
-                    <MapPin className="mr-1 inline-block h-3 w-3" strokeWidth={1.9} />
-                    {c}
-                  </button>
-                );
-              })}
+            <div className="mb-2 flex items-baseline justify-between gap-3">
+              <p className="text-xs font-semibold text-[color:var(--app-ink-soft)]">Hedef şehirler</p>
+              <span className="text-[10px] text-[color:var(--app-ink-mute)]">
+                {allTRSelected
+                  ? "Tüm Türkiye"
+                  : cities.length === 0
+                    ? "Hiç seçim yok"
+                    : `${cities.length} seçili`}
+              </span>
             </div>
+
+            {/* Tüm Türkiye geniş kart */}
+            <button
+              type="button"
+              onClick={toggleAllTR}
+              aria-pressed={allTRSelected}
+              className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
+                allTRSelected
+                  ? "border-sky bg-sky/10"
+                  : "border-[color:var(--app-line)] bg-white hover:border-sky/30 hover:bg-sky/5"
+              }`}
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                  allTRSelected ? "bg-sky text-white" : "bg-sky/10 text-sky"
+                }`}
+              >
+                <Globe2 className="h-4 w-4" strokeWidth={2.2} />
+              </span>
+              <span className="flex-1">
+                <p className={`text-sm font-bold ${allTRSelected ? "text-sky" : "text-[color:var(--app-ink)]"}`}>
+                  Tüm Türkiye
+                </p>
+                <p className="text-[11px] text-[color:var(--app-ink-mute)]">
+                  Ülke genelinde tüm illeri kapsa
+                </p>
+              </span>
+              {allTRSelected && <Check className="h-4 w-4 text-sky" strokeWidth={2.4} />}
+            </button>
+
+            {/* Popüler iller */}
+            <div className="mt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                Popüler iller
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {POPULAR_CITIES.map((c) => {
+                  const active = cities.includes(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => toggleCity(c)}
+                      disabled={allTRSelected}
+                      aria-pressed={active}
+                      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                        active
+                          ? "border-sky bg-sky/12 text-sky"
+                          : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-sky/30 hover:text-[color:var(--app-ink)]"
+                      }`}
+                    >
+                      {active && <Check className="h-3 w-3" strokeWidth={2.4} />}
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Arama */}
+            <div className="mt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                Başka il ekle
+              </p>
+              <div className="relative mt-2">
+                <Search
+                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)]"
+                  strokeWidth={1.9}
+                />
+                <input
+                  type="text"
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  disabled={allTRSelected}
+                  placeholder="İl ara (örn. Trabzon)"
+                  className="w-full rounded-xl border border-[color:var(--app-line)] bg-white py-2.5 pl-10 pr-3 text-sm text-[color:var(--app-ink)] outline-none transition-all placeholder:text-[color:var(--app-ink-mute)] focus:border-sky/40 focus:ring-2 focus:ring-sky/15 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+              {citySearchResults.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {citySearchResults.map((c) => {
+                    const active = cities.includes(c);
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => toggleCity(c)}
+                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                          active
+                            ? "border-sky bg-sky/12 text-sky"
+                            : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-sky/30 hover:text-[color:var(--app-ink)]"
+                        }`}
+                      >
+                        {active ? (
+                          <Check className="h-3 w-3" strokeWidth={2.4} />
+                        ) : (
+                          <span className="text-sky">+</span>
+                        )}
+                        {c}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Seçili olanlar */}
+            {!allTRSelected && cities.length > 0 && (
+              <div className="mt-5 border-t border-[color:var(--app-line-soft)] pt-4">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                  Seçili iller ({cities.length})
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {cities.map((c) => (
+                    <span
+                      key={c}
+                      className="inline-flex items-center gap-1 rounded-full bg-sky/10 px-3 py-1.5 text-xs font-semibold text-sky"
+                    >
+                      <MapPin className="h-3 w-3" /> {c}
+                      <button
+                        type="button"
+                        onClick={() => toggleCity(c)}
+                        aria-label={`${c} kaldır`}
+                        className="ml-0.5 rounded-full p-0.5 hover:bg-sky/20"
+                      >
+                        <X className="h-3 w-3" strokeWidth={2.4} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </motion.section>
 

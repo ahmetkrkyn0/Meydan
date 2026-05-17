@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, type Variants } from "framer-motion";
 import { useState } from "react";
-import { Pencil, Building2, Tag, Users, MapPin, Wallet, Check, ArrowRight } from "lucide-react";
+import { Pencil, Building2, Tag, Users, MapPin, Wallet, Check, ArrowRight, X, Search, Globe2 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { brands } from "@/lib/mock-data";
 import { CITY_OPTIONS } from "@/lib/form-options";
@@ -20,16 +20,41 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 
 const ALL_VALUES = ["Aile", "Disiplin", "Türkiye", "Gençlik", "Tasarım", "Doğa", "Eğitim", "Macera", "Mühendislik", "Erişim", "Sürdürülebilirlik"];
 const ALL_AUDIENCE = ["18-24", "25-34", "35-44", "45-54", "55+"];
-const ALL_CITIES = ["Tüm Türkiye", ...CITY_OPTIONS] as const;
+const POPULAR_CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep"];
+const ALL_TR_CITY = "Tüm Türkiye";
 
 function BrandProfilePage() {
   const brand = brands[0];
   const [values, setValues] = useState<string[]>(brand.values);
   const [ages, setAges] = useState<string[]>(["25-34", "35-44"]);
   const [cities, setCities] = useState<string[]>(brand.targetCity);
+  const [citySearch, setCitySearch] = useState("");
 
   const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
     arr.includes(v) ? set(arr.filter((x) => x !== v)) : set([...arr, v]);
+
+  const allTRSelected = cities.includes(ALL_TR_CITY);
+  const toggleAllTR = () => {
+    if (allTRSelected) setCities([]);
+    else setCities([ALL_TR_CITY]);
+  };
+  const toggleCity = (c: string) => {
+    // "Tüm Türkiye" seçiliyken başka şehir seçilince Tüm Türkiye kalksın.
+    const next = cities.includes(c)
+      ? cities.filter((x) => x !== c)
+      : [...cities.filter((x) => x !== ALL_TR_CITY), c];
+    setCities(next);
+  };
+
+  const ageAllSelected = ages.length === ALL_AUDIENCE.length;
+  const toggleAgeAll = () =>
+    setAges(ageAllSelected ? [] : [...ALL_AUDIENCE]);
+
+  const searchResults = citySearch.trim()
+    ? CITY_OPTIONS.filter((c) =>
+        c.toLocaleLowerCase("tr-TR").includes(citySearch.toLocaleLowerCase("tr-TR")),
+      ).slice(0, 8)
+    : [];
 
   return (
     <AppShell role="brand" userName={brand.name} userCity="Pazarlama">
@@ -115,20 +140,35 @@ function BrandProfilePage() {
         </motion.section>
 
         {/* Audience */}
-        <motion.section variants={fadeUp} className="grid gap-6 lg:grid-cols-2">
+        <motion.section variants={fadeUp} className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+          {/* Yaş */}
           <div className="rounded-3xl border border-[color:var(--app-line)] bg-white p-6">
-            <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">Hedef yaş aralığı</p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                <Users className="h-3 w-3" /> Hedef yaş aralığı
+              </p>
+              <button
+                type="button"
+                onClick={toggleAgeAll}
+                className="text-[10px] font-semibold text-violet hover:underline"
+              >
+                {ageAllSelected ? "Temizle" : "Tümünü seç"}
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-2">
               {ALL_AUDIENCE.map((a) => {
                 const active = ages.includes(a);
                 return (
                   <button
                     key={a}
+                    type="button"
                     onClick={() => toggle(ages, setAges, a)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    aria-pressed={active}
+                    className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all ${
                       active
                         ? "border-violet bg-violet/12 text-violet"
-                        : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-violet/30"
+                        : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-violet/30 hover:text-[color:var(--app-ink)]"
                     }`}
                   >
                     {a}
@@ -136,28 +176,160 @@ function BrandProfilePage() {
                 );
               })}
             </div>
+
+            <p className="mt-4 text-[11px] leading-relaxed text-[color:var(--app-ink-mute)]">
+              {ages.length === 0
+                ? "Henüz aralık seçmedin. AI önerileri tüm yaşları kapsar."
+                : `Aktif: ${ages.join(", ")}`}
+            </p>
           </div>
 
+          {/* Şehirler */}
           <div className="rounded-3xl border border-[color:var(--app-line)] bg-white p-6">
-            <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">Hedef şehirler</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {ALL_CITIES.map((c) => {
-                const active = cities.includes(c);
-                return (
-                  <button
-                    key={c}
-                    onClick={() => toggle(cities, setCities, c)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
-                      active
-                        ? "border-violet bg-violet/12 text-violet"
-                        : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-violet/30"
-                    }`}
-                  >
-                    <MapPin className="h-3 w-3" /> {c}
-                  </button>
-                );
-              })}
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                <MapPin className="h-3 w-3" /> Hedef şehirler
+              </p>
+              <span className="text-[10px] text-[color:var(--app-ink-mute)]">
+                {allTRSelected
+                  ? "Tüm Türkiye"
+                  : cities.length === 0
+                    ? "Hiç seçim yok"
+                    : `${cities.length} seçili`}
+              </span>
             </div>
+
+            {/* Tüm Türkiye geniş kart */}
+            <button
+              type="button"
+              onClick={toggleAllTR}
+              aria-pressed={allTRSelected}
+              className={`mt-4 flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
+                allTRSelected
+                  ? "border-violet bg-violet/10"
+                  : "border-[color:var(--app-line)] bg-white hover:border-violet/30 hover:bg-violet/5"
+              }`}
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                  allTRSelected ? "bg-violet text-white" : "bg-violet/10 text-violet"
+                }`}
+              >
+                <Globe2 className="h-4 w-4" strokeWidth={2.2} />
+              </span>
+              <span className="flex-1">
+                <p className={`text-sm font-bold ${allTRSelected ? "text-violet" : "text-[color:var(--app-ink)]"}`}>
+                  Tüm Türkiye
+                </p>
+                <p className="text-[11px] text-[color:var(--app-ink-mute)]">
+                  Ülke genelinde tüm illeri kapsa
+                </p>
+              </span>
+              {allTRSelected && <Check className="h-4 w-4 text-violet" strokeWidth={2.4} />}
+            </button>
+
+            {/* Popüler iller */}
+            <div className="mt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                Popüler iller
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {POPULAR_CITIES.map((c) => {
+                  const active = cities.includes(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => toggleCity(c)}
+                      disabled={allTRSelected}
+                      aria-pressed={active}
+                      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                        active
+                          ? "border-violet bg-violet/12 text-violet"
+                          : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-violet/30 hover:text-[color:var(--app-ink)]"
+                      }`}
+                    >
+                      {active && <Check className="h-3 w-3" strokeWidth={2.4} />}
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Arama */}
+            <div className="mt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                Başka il ekle
+              </p>
+              <div className="relative mt-2">
+                <Search
+                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)]"
+                  strokeWidth={1.9}
+                />
+                <input
+                  type="text"
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  disabled={allTRSelected}
+                  placeholder="İl ara (örn. Trabzon)"
+                  className="w-full rounded-xl border border-[color:var(--app-line)] bg-white py-2.5 pl-10 pr-3 text-sm text-[color:var(--app-ink)] outline-none transition-all placeholder:text-[color:var(--app-ink-mute)] focus:border-violet/40 focus:ring-2 focus:ring-violet/15 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+              {searchResults.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {searchResults.map((c) => {
+                    const active = cities.includes(c);
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => toggleCity(c)}
+                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                          active
+                            ? "border-violet bg-violet/12 text-violet"
+                            : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:border-violet/30 hover:text-[color:var(--app-ink)]"
+                        }`}
+                      >
+                        {active ? (
+                          <Check className="h-3 w-3" strokeWidth={2.4} />
+                        ) : (
+                          <span className="text-violet">+</span>
+                        )}
+                        {c}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Seçili olanlar */}
+            {!allTRSelected && cities.length > 0 && (
+              <div className="mt-5 border-t border-[color:var(--app-line-soft)] pt-4">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                  Seçili iller ({cities.length})
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {cities.map((c) => (
+                    <span
+                      key={c}
+                      className="inline-flex items-center gap-1 rounded-full bg-violet/10 px-3 py-1.5 text-xs font-semibold text-violet"
+                    >
+                      <MapPin className="h-3 w-3" /> {c}
+                      <button
+                        type="button"
+                        onClick={() => toggleCity(c)}
+                        aria-label={`${c} kaldır`}
+                        className="ml-0.5 rounded-full p-0.5 hover:bg-violet/20"
+                      >
+                        <X className="h-3 w-3" strokeWidth={2.4} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </motion.section>
 
