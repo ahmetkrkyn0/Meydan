@@ -8,10 +8,13 @@ import {
   ChevronRight,
   Compass,
   MapPin,
+  MessageCircle,
   Play,
+  Radio,
   Sparkles,
   Trophy,
   Users,
+  Volume2,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { listFollowedAthletes, listNearbyEvents, listProfiles } from "@/lib/api";
@@ -19,6 +22,8 @@ import { backendEventsToEvents, profilesToAthletes, profileToAthlete } from "@/l
 import { useActiveFan } from "@/lib/active-athlete";
 import { useSession } from "@/lib/session";
 import { badges, liveMatches } from "@/lib/mock-data";
+import heroAthlete from "@/assets/athlete-kerem.jpg";
+import spotlightAthlete from "@/assets/athlete-mert.jpg";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
