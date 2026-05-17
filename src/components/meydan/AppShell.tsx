@@ -188,7 +188,7 @@ export function AppShell({
         </div>
 
         {/* User card */}
-        <div className="m-3 mt-0 flex items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2.5">
+        <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
           <img src={adaImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
