@@ -146,9 +146,9 @@ const SporcuPanelIhtiyacOlusturRoute =
     getParentRoute: () => rootRouteImport,
   } as any)
 const RozetlerimIlkAdimRoute = RozetlerimIlkAdimRouteImport.update({
-  id: '/ilk-adim',
-  path: '/ilk-adim',
-  getParentRoute: () => RozetlerimRoute,
+  id: '/rozetlerim/ilk-adim',
+  path: '/rozetlerim/ilk-adim',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MarkaPanelProfilOlusturRoute = MarkaPanelProfilOlusturRouteImport.update({
   id: '/marka-panel/profil-olustur',
@@ -166,9 +166,9 @@ const MarkaPanelEslesmeRoute = MarkaPanelEslesmeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const KesfetModRoute = KesfetModRouteImport.update({
-  id: '/mod',
-  path: '/mod',
-  getParentRoute: () => KesfetRoute,
+  id: '/kesfet/mod',
+  path: '/kesfet/mod',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FonSlugRoute = FonSlugRouteImport.update({
   id: '/fon/$slug',
@@ -511,9 +511,11 @@ export interface RootRouteChildren {
   DestekleSlugRoute: typeof DestekleSlugRoute
   EtkinlikIdRoute: typeof EtkinlikIdRoute
   FonSlugRoute: typeof FonSlugRoute
+  KesfetModRoute: typeof KesfetModRoute
   MarkaPanelEslesmeRoute: typeof MarkaPanelEslesmeRoute
   MarkaPanelProfilRoute: typeof MarkaPanelProfilRoute
   MarkaPanelProfilOlusturRoute: typeof MarkaPanelProfilOlusturRoute
+  RozetlerimIlkAdimRoute: typeof RozetlerimIlkAdimRoute
   SporcuPanelIhtiyacOlusturRoute: typeof SporcuPanelIhtiyacOlusturRoute
   SporcuPanelIhtiyaclarRoute: typeof SporcuPanelIhtiyaclarRoute
   SporcuPanelProfilRoute: typeof SporcuPanelProfilRoute
@@ -670,10 +672,10 @@ declare module '@tanstack/react-router' {
     }
     '/rozetlerim/ilk-adim': {
       id: '/rozetlerim/ilk-adim'
-      path: '/ilk-adim'
+      path: '/rozetlerim/ilk-adim'
       fullPath: '/rozetlerim/ilk-adim'
       preLoaderRoute: typeof RozetlerimIlkAdimRouteImport
-      parentRoute: typeof RozetlerimRoute
+      parentRoute: typeof rootRouteImport
     }
     '/marka-panel/profil-olustur': {
       id: '/marka-panel/profil-olustur'
@@ -698,10 +700,10 @@ declare module '@tanstack/react-router' {
     }
     '/kesfet/mod': {
       id: '/kesfet/mod'
-      path: '/mod'
+      path: '/kesfet/mod'
       fullPath: '/kesfet/mod'
       preLoaderRoute: typeof KesfetModRouteImport
-      parentRoute: typeof KesfetRoute
+      parentRoute: typeof rootRouteImport
     }
     '/fon/$slug': {
       id: '/fon/$slug'
@@ -842,9 +844,11 @@ const rootRouteChildren: RootRouteChildren = {
   DestekleSlugRoute: DestekleSlugRoute,
   EtkinlikIdRoute: EtkinlikIdRoute,
   FonSlugRoute: FonSlugRoute,
+  KesfetModRoute: KesfetModRoute,
   MarkaPanelEslesmeRoute: MarkaPanelEslesmeRoute,
   MarkaPanelProfilRoute: MarkaPanelProfilRoute,
   MarkaPanelProfilOlusturRoute: MarkaPanelProfilOlusturRoute,
+  RozetlerimIlkAdimRoute: RozetlerimIlkAdimRoute,
   SporcuPanelIhtiyacOlusturRoute: SporcuPanelIhtiyacOlusturRoute,
   SporcuPanelIhtiyaclarRoute: SporcuPanelIhtiyaclarRoute,
   SporcuPanelProfilRoute: SporcuPanelProfilRoute,
