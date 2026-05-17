@@ -448,7 +448,7 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Portrait towers: followed athletes ─── */}
-        <motion.section variants={fadeUp} aria-labelledby="senin-sporcular">
+        <motion.section variants={fadeUp} aria-labelledby="senin-sporcular" className="stage-bleed px-5 sm:px-8">
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
