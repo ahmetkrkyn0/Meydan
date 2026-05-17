@@ -8,11 +8,21 @@ import {
   Flame,
   MapPin,
   Search,
+  SlidersHorizontal,
   Sparkles,
   TrendingUp,
   Users,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { listProfiles } from "@/lib/api";
 import { profilesToAthletes } from "@/lib/api-mappers";
 import { sports, type Athlete } from "@/lib/mock-data";
