@@ -48,6 +48,7 @@ import { Route as SporcuSlugGunlukRouteImport } from './routes/sporcu/$slug/gunl
 import { Route as MarkaPanelTeklifSlugRouteImport } from './routes/marka-panel/teklif/$slug'
 import { Route as MarkaPanelKampanyalarIdRouteImport } from './routes/marka-panel/kampanyalar/$id'
 import { Route as KesfetBransIdRouteImport } from './routes/kesfet/brans/$id'
+import { Route as SporcuPanelIhtiyaclarIdEslesmeRouteImport } from './routes/sporcu-panel/ihtiyaclar_.$id.eslesme'
 
 const SporcuRoute = SporcuRouteImport.update({
   id: '/sporcu',
@@ -246,6 +247,12 @@ const KesfetBransIdRoute = KesfetBransIdRouteImport.update({
   path: '/kesfet/brans/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SporcuPanelIhtiyaclarIdEslesmeRoute =
+  SporcuPanelIhtiyaclarIdEslesmeRouteImport.update({
+    id: '/sporcu-panel/ihtiyaclar_/$id/eslesme',
+    path: '/sporcu-panel/ihtiyaclar/$id/eslesme',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/marka-panel/kampanyalar/': typeof MarkaPanelKampanyalarIndexRoute
   '/sporcu/$slug/': typeof SporcuSlugIndexRoute
   '/yetenek/eslesme/': typeof YetenekEslesmeIndexRoute
+  '/sporcu-panel/ihtiyaclar/$id/eslesme': typeof SporcuPanelIhtiyaclarIdEslesmeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -328,6 +336,7 @@ export interface FileRoutesByTo {
   '/marka-panel/kampanyalar': typeof MarkaPanelKampanyalarIndexRoute
   '/sporcu/$slug': typeof SporcuSlugIndexRoute
   '/yetenek/eslesme': typeof YetenekEslesmeIndexRoute
+  '/sporcu-panel/ihtiyaclar/$id/eslesme': typeof SporcuPanelIhtiyaclarIdEslesmeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -370,6 +379,7 @@ export interface FileRoutesById {
   '/marka-panel/kampanyalar/': typeof MarkaPanelKampanyalarIndexRoute
   '/sporcu/$slug/': typeof SporcuSlugIndexRoute
   '/yetenek/eslesme/': typeof YetenekEslesmeIndexRoute
+  '/sporcu-panel/ihtiyaclar_/$id/eslesme': typeof SporcuPanelIhtiyaclarIdEslesmeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -413,6 +423,7 @@ export interface FileRouteTypes {
     | '/marka-panel/kampanyalar/'
     | '/sporcu/$slug/'
     | '/yetenek/eslesme/'
+    | '/sporcu-panel/ihtiyaclar/$id/eslesme'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -454,6 +465,7 @@ export interface FileRouteTypes {
     | '/marka-panel/kampanyalar'
     | '/sporcu/$slug'
     | '/yetenek/eslesme'
+    | '/sporcu-panel/ihtiyaclar/$id/eslesme'
   id:
     | '__root__'
     | '/'
@@ -495,6 +507,7 @@ export interface FileRouteTypes {
     | '/marka-panel/kampanyalar/'
     | '/sporcu/$slug/'
     | '/yetenek/eslesme/'
+    | '/sporcu-panel/ihtiyaclar_/$id/eslesme'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -533,6 +546,7 @@ export interface RootRouteChildren {
   YetenekEslesmeIdRoute: typeof YetenekEslesmeIdRoute
   MarkaPanelKampanyalarIndexRoute: typeof MarkaPanelKampanyalarIndexRoute
   YetenekEslesmeIndexRoute: typeof YetenekEslesmeIndexRoute
+  SporcuPanelIhtiyaclarIdEslesmeRoute: typeof SporcuPanelIhtiyaclarIdEslesmeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -810,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KesfetBransIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sporcu-panel/ihtiyaclar_/$id/eslesme': {
+      id: '/sporcu-panel/ihtiyaclar_/$id/eslesme'
+      path: '/sporcu-panel/ihtiyaclar/$id/eslesme'
+      fullPath: '/sporcu-panel/ihtiyaclar/$id/eslesme'
+      preLoaderRoute: typeof SporcuPanelIhtiyaclarIdEslesmeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -866,6 +887,7 @@ const rootRouteChildren: RootRouteChildren = {
   YetenekEslesmeIdRoute: YetenekEslesmeIdRoute,
   MarkaPanelKampanyalarIndexRoute: MarkaPanelKampanyalarIndexRoute,
   YetenekEslesmeIndexRoute: YetenekEslesmeIndexRoute,
+  SporcuPanelIhtiyaclarIdEslesmeRoute: SporcuPanelIhtiyaclarIdEslesmeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

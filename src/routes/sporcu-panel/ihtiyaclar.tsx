@@ -1,9 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, type Variants } from "framer-motion";
-import { useState } from "react";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { useMemo, useState } from "react";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  Calendar,
+  Coins,
+  MapPin,
+  Plus,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
+  Wrench,
+} from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { needs, type Need } from "@/lib/mock-data";
+import { ActiveAthletePicker } from "@/components/meydan/ActiveAthletePicker";
+import { type Need } from "@/lib/mock-data";
+import { listNeeds } from "@/lib/api";
+import { backendNeedsToNeeds } from "@/lib/api-mappers";
+import { useActiveAthlete } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/sporcu-panel/ihtiyaclar")({
   component: NeedsPage,
@@ -12,284 +29,512 @@ export const Route = createFileRoute("/sporcu-panel/ihtiyaclar")({
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
-const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+};
 
 type Tab = "all" | "active" | "completed";
 
 function NeedsPage() {
-  const myNeeds: Need[] = needs.slice(0, 4).map((n, i) => ({
-    ...n,
-    athleteSlug: "mete-gazoz",
-    athleteName: "Mete Gazoz",
-    urgent: i === 0,
-  }));
+  const activeAthlete = useActiveAthlete();
+  const activeProfile = activeAthlete.profile;
+  const needsQuery = useQuery({
+    queryKey: ["needs", activeProfile?.id],
+    queryFn: () => listNeeds(activeProfile!.id),
+    enabled: Boolean(activeProfile?.id),
+    retry: 1,
+  });
 
   const [tab, setTab] = useState<Tab>("all");
 
-  const list = tab === "all" ? myNeeds : tab === "active" ? myNeeds.slice(0, 3) : myNeeds.slice(3);
+  const myNeeds: Need[] = useMemo(() => {
+    if (!activeAthlete.athlete || !needsQuery.data) return [];
+    return backendNeedsToNeeds(needsQuery.data.needs, activeAthlete.athlete);
+  }, [activeAthlete.athlete, needsQuery.data]);
 
+  const me = activeAthlete.athlete;
+
+  const list = useMemo(() => {
+    if (tab === "all") return myNeeds;
+    if (tab === "active") return myNeeds.filter((n) => n.urgent);
+    return myNeeds.filter((n) => !n.urgent);
+  }, [myNeeds, tab]);
+
+  // ─── Stats ───
   const totalCollected = myNeeds
     .filter((n) => n.type === "money")
     .reduce((s, n) => s + (n.collectedAmount ?? 0), 0);
   const totalTarget = myNeeds
     .filter((n) => n.type === "money")
     .reduce((s, n) => s + (n.targetAmount ?? 0), 0);
+  const moneyNeeds = myNeeds.filter((n) => n.type === "money").length;
+  const talentNeeds = myNeeds.filter((n) => n.type === "talent").length;
+  const urgentCount = myNeeds.filter((n) => n.urgent).length;
+  const overallPct =
+    totalTarget > 0 ? Math.min(100, Math.round((totalCollected / totalTarget) * 100)) : 0;
+
+  const counts = {
+    all: myNeeds.length,
+    active: myNeeds.filter((n) => n.urgent).length,
+    completed: myNeeds.filter((n) => !n.urgent).length,
+  };
+
+  // ─── Empty (no profile) ───
+  if (!me) {
+    return (
+      <AppShell role="athlete">
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 py-16">
+          <ActiveAthletePicker state={activeAthlete} />
+          <p className="text-sm text-[color:var(--app-ink-soft)]">
+            Sporcu paneli için aktif bir sporcu profili gerekli. Backend'de en az bir
+            <span className="font-semibold"> role=sporcu</span> kaydı oluştuktan sonra
+            yukarıdaki seçici dolacak.
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
-      {/* Swiss surface — pure white, hard rules, mono accents */}
-      <div className="-mx-5 -my-6 min-h-screen bg-white sm:-mx-8 sm:-my-8">
-        <motion.div
-          initial="hidden"
-          animate="show"
-          variants={stagger}
-          className="mx-auto w-full max-w-6xl px-6 py-12 sm:px-12 sm:py-16"
-          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+    <AppShell role="athlete" userName={me.name} userCity={me.city}>
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={stagger}
+        className="mx-auto flex w-full max-w-6xl flex-col gap-10 pb-16"
+      >
+        <ActiveAthletePicker state={activeAthlete} />
+
+        {/* ─── HERO ─── */}
+        <motion.header
+          variants={fadeUp}
+          className="relative overflow-hidden rounded-[2rem]"
         >
-          {/* ── Top meta bar ── */}
-          <motion.div
-            variants={fadeUp}
-            className="flex items-center justify-between border-b border-[color:var(--app-ink)] pb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[color:var(--app-ink)]"
-          >
-            <div className="flex items-center gap-4">
-              <span>İhtiyaç Kartları</span>
-              <span className="hidden text-[color:var(--app-ink-mute)] sm:inline">/ Sporcu Paneli</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-[color:var(--app-ink-mute)]">N° 04</span>
-              <span>2026.05</span>
-            </div>
-          </motion.div>
+          <div className="absolute inset-0 bg-aurora-light opacity-95" />
+          <div className="absolute -right-20 -top-16 h-72 w-72 rounded-full bg-violet/20 blur-3xl" />
+          <div className="absolute -left-12 bottom-0 h-64 w-64 rounded-full bg-coral/15 blur-3xl" />
 
-          {/* ── Headline grid: 12-col, asymmetric ── */}
-          <motion.section
-            variants={fadeUp}
-            className="mt-10 grid grid-cols-12 items-end gap-6"
-          >
-            <h1
-              className="col-span-12 text-[3.5rem] font-black leading-[0.92] tracking-[-0.02em] text-[color:var(--app-ink)] md:col-span-9 md:text-[5rem]"
-              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
-            >
-              Topluluğa neye<br />
-              ihtiyacın olduğunu<br />
-              <span className="italic font-light">söyle.</span>
-            </h1>
-            <div className="col-span-12 md:col-span-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                İlke
-              </div>
-              <p className="mt-2 text-[13px] leading-[1.5] text-[color:var(--app-ink-soft)]">
-                Para ya da yetenek. Açık olduğunda, yardım daha hızlı geliyor. Net ol, somut ol.
+          <div className="relative grid gap-6 px-6 py-10 sm:px-12 sm:py-14 lg:grid-cols-[1.5fr_1fr] lg:items-end">
+            <div className="flex flex-col gap-4">
+              <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-violet">
+                <Target className="h-3 w-3" /> Sporcu Paneli · İhtiyaçlarım
               </p>
+              <h1 className="font-display text-4xl font-bold leading-[1] tracking-tight text-[color:var(--app-ink)] sm:text-6xl">
+                Topluluğa neye
+                <br />
+                <span className="italic text-violet">ihtiyacın olduğunu</span> söyle.
+              </h1>
+              <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
+                Para ya da yetenek — açık olduğunda yardım daha hızlı geliyor. Her ihtiyaç
+                için <span className="font-semibold text-[color:var(--app-ink)]">AI Eşleşme</span>{" "}
+                ile sana uygun taraftarları görebilirsin.
+              </p>
+
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <Link
+                  to="/sporcu-panel/ihtiyac-olustur"
+                  className="btn-primary-light inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold"
+                >
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  Yeni İhtiyaç Ekle
+                </Link>
+                <Link
+                  to="/sporcu-panel"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--app-line)] bg-white/70 px-4 py-2 text-xs font-semibold text-[color:var(--app-ink-soft)] backdrop-blur transition-colors hover:text-[color:var(--app-ink)]"
+                >
+                  ← Panele dön
+                </Link>
+              </div>
+            </div>
+
+            {/* Quick stats panel (sağ) */}
+            <div className="relative grid grid-cols-2 gap-3 rounded-3xl border border-[color:var(--app-line-soft)] bg-white/80 p-5 backdrop-blur-xl">
+              <QuickStat
+                icon={Target}
+                label="Aktif kart"
+                value={myNeeds.length.toString()}
+                tone="violet"
+              />
+              <QuickStat
+                icon={AlertCircle}
+                label="Acil"
+                value={urgentCount.toString()}
+                tone="coral"
+              />
+              <QuickStat
+                icon={Coins}
+                label="Para"
+                value={moneyNeeds.toString()}
+                tone="violet"
+              />
+              <QuickStat
+                icon={Wrench}
+                label="Yetenek"
+                value={talentNeeds.toString()}
+                tone="emerald"
+              />
+            </div>
+          </div>
+        </motion.header>
+
+        {/* ─── Progress (sadece para ihtiyaçları varsa) ─── */}
+        {moneyNeeds > 0 && (
+          <motion.section
+            variants={fadeUp}
+            className="soft-card-strong relative overflow-hidden rounded-3xl p-6 sm:p-7"
+          >
+            <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet/10 blur-3xl" />
+            <div className="relative grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
+              <div className="flex flex-col gap-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                  Toplam destek ilerlemesi
+                </p>
+                <div className="flex items-baseline gap-2">
+                  <p className="font-display text-4xl font-bold tabular-nums text-[color:var(--app-ink)] sm:text-5xl">
+                    ₺{totalCollected.toLocaleString("tr-TR")}
+                  </p>
+                  <p className="font-mono text-sm text-[color:var(--app-ink-mute)]">
+                    / ₺{totalTarget.toLocaleString("tr-TR")}
+                  </p>
+                </div>
+                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-[color:var(--app-line-soft)]">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${overallPct}%` }}
+                    transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet via-sky to-emerald-500"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 rounded-2xl bg-violet/10 px-5 py-4 text-violet">
+                <TrendingUp className="h-4 w-4" />
+                <div>
+                  <p className="font-display text-2xl font-bold leading-none tabular-nums">
+                    %{overallPct}
+                  </p>
+                  <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                    tamamlandı
+                  </p>
+                </div>
+              </div>
             </div>
           </motion.section>
+        )}
 
-          {/* ── Stat row: hard rule above, mono labels, numeric data ── */}
-          <motion.section
-            variants={fadeUp}
-            className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-[color:var(--app-ink)] pt-8 sm:grid-cols-4"
-          >
-            {[
-              { n: "01", k: "Aktif kart",       v: String(myNeeds.length).padStart(2, "0"), unit: "kart" },
-              { n: "02", k: "Toplanan",         v: totalCollected.toLocaleString("tr-TR"),  unit: "₺" },
-              { n: "03", k: "Hedef",            v: totalTarget.toLocaleString("tr-TR"),     unit: "₺" },
-              { n: "04", k: "Yetenek başvuru",  v: "07",                                     unit: "kişi" },
-            ].map((s) => (
-              <div key={s.k} className="flex flex-col">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-mono text-[10px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                    {s.n} —
-                  </span>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                    {s.unit}
-                  </span>
-                </div>
-                <p
-                  className="mt-3 text-[2.5rem] font-black leading-none tracking-[-0.02em] text-[color:var(--app-ink)]"
-                  style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+        {/* ─── Toolbar (Filter tabs + Add) ─── */}
+        <motion.section variants={fadeUp} className="flex flex-wrap items-center justify-between gap-4">
+          <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white p-1">
+            {(["all", "active", "completed"] as Tab[]).map((t) => {
+              const active = tab === t;
+              const label = t === "all" ? "Hepsi" : t === "active" ? "Acil" : "Diğer";
+              return (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
+                    active
+                      ? "text-white"
+                      : "text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
+                  }`}
                 >
-                  {s.v}
-                </p>
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)]">
-                  {s.k}
-                </p>
-              </div>
-            ))}
-          </motion.section>
-
-          {/* ── Toolbar: filter pills (rectangular, no chrome) + primary action ── */}
-          <motion.section
-            variants={fadeUp}
-            className="mt-20 flex items-center justify-between border-b border-[color:var(--app-ink)] pb-3"
-          >
-            <div className="flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.22em]">
-              <span className="text-[color:var(--app-ink-mute)]">Filtre</span>
-              {(["all", "active", "completed"] as Tab[]).map((t) => {
-                const active = tab === t;
-                return (
-                  <button
-                    key={t}
-                    onClick={() => setTab(t)}
-                    className={`relative pb-1 transition-colors ${
-                      active ? "text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                  {active && (
+                    <motion.span
+                      layoutId="needs-tab-pill"
+                      className="absolute inset-0 rounded-full bg-[color:var(--app-ink)]"
+                      transition={{ type: "spring", duration: 0.4 }}
+                    />
+                  )}
+                  <span className="relative">{label}</span>
+                  <span
+                    className={`relative text-[10px] tabular-nums ${
+                      active ? "text-white/70" : "text-[color:var(--app-ink-mute)]"
                     }`}
                   >
-                    {active && (
-                      <motion.span
-                        layoutId="swiss-tab"
-                        className="absolute -bottom-[14px] left-0 right-0 h-[3px] bg-violet"
-                      />
-                    )}
-                    {t === "all" ? "Hepsi" : t === "active" ? "Aktif" : "Tamamlanan"}
-                  </button>
-                );
-              })}
-            </div>
-            <Link
-              to="/sporcu-panel/ihtiyac-olustur"
-              className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet"
-            >
-              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-              Yeni İhtiyaç Ekle
-              <span className="inline-block h-[1px] w-6 bg-current transition-all group-hover:w-10" />
-            </Link>
-          </motion.section>
+                    {counts[t]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-          {/* ── Needs list: rule-separated rows (no cards) ── */}
-          <motion.section variants={fadeUp} className="mt-0">
-            {list.map((n, i) => (
-              <NeedRow key={n.id} n={n} index={i} />
-            ))}
-            {list.length === 0 && (
-              <div className="py-20 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                  Bu sekmede ihtiyaç yok
-                </p>
-              </div>
-            )}
-          </motion.section>
-
-          {/* ── Footer rule ── */}
-          <motion.footer
-            variants={fadeUp}
-            className="mt-20 flex items-center justify-between border-t border-[color:var(--app-ink)] pt-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[color:var(--app-ink-mute)]"
+          <Link
+            to="/sporcu-panel/ihtiyac-olustur"
+            className="btn-primary-light inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold"
           >
-            <span>Meydan / İhtiyaç Kartları</span>
-            <span>{list.length} / {myNeeds.length}</span>
-          </motion.footer>
-        </motion.div>
-      </div>
+            <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+            Yeni İhtiyaç
+          </Link>
+        </motion.section>
+
+        {/* ─── List ─── */}
+        <AnimatePresence mode="wait">
+          {needsQuery.isLoading ? (
+            <motion.section key="loading" variants={fadeUp} className="grid gap-4 sm:grid-cols-2">
+              {[0, 1, 2, 3].map((i) => (
+                <NeedSkeleton key={i} />
+              ))}
+            </motion.section>
+          ) : list.length === 0 ? (
+            <motion.section key="empty" variants={fadeUp}>
+              <EmptyState
+                hasAny={myNeeds.length > 0}
+                tab={tab}
+                onClearFilter={() => setTab("all")}
+              />
+            </motion.section>
+          ) : (
+            <motion.section
+              key="list"
+              variants={stagger}
+              initial="hidden"
+              animate="show"
+              className="grid gap-5 sm:grid-cols-2"
+            >
+              {list.map((n, i) => (
+                <NeedCard key={n.id} need={n} index={i} />
+              ))}
+            </motion.section>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </AppShell>
   );
 }
 
-function NeedRow({ n, index }: { n: Need; index: number }) {
-  const pct = n.targetAmount && n.collectedAmount
-    ? Math.round((n.collectedAmount / n.targetAmount) * 100)
-    : 0;
-  const num = String(index + 1).padStart(2, "0");
+// ─────────────────────────────────────────────────────────────────────
+// Sub-components
+// ─────────────────────────────────────────────────────────────────────
+
+function QuickStat({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: typeof Target;
+  label: string;
+  value: string;
+  tone: "violet" | "coral" | "emerald";
+}) {
+  const cls =
+    tone === "coral"
+      ? "bg-coral/12 text-coral"
+      : tone === "emerald"
+        ? "bg-emerald-500/12 text-emerald-700"
+        : "bg-violet/12 text-violet";
+  return (
+    <div className="flex items-center gap-3">
+      <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${cls}`}>
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="font-display text-xl font-bold leading-none text-[color:var(--app-ink)]">
+          {value}
+        </p>
+        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function NeedCard({ need, index }: { need: Need; index: number }) {
+  const isMoney = need.type === "money";
+  const pct =
+    isMoney && need.targetAmount
+      ? Math.min(100, Math.round(((need.collectedAmount ?? 0) / need.targetAmount) * 100))
+      : 0;
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.45 }}
-      className="grid grid-cols-12 items-start gap-x-6 border-b border-[color:var(--app-line)] py-8 sm:py-10"
+      variants={fadeUp}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.3, ease: EASE }}
+      className="soft-card-strong group relative flex flex-col overflow-hidden rounded-[1.75rem]"
     >
-      {/* Index number — large, mono, fades */}
-      <div className="col-span-12 sm:col-span-1">
-        <p className="font-mono text-[11px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-          № {num}
-        </p>
-      </div>
+      {/* Tone glow */}
+      <div
+        className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-3xl ${
+          isMoney ? "bg-violet/15" : "bg-emerald-500/15"
+        }`}
+      />
 
-      {/* Title + description */}
-      <div className="col-span-12 sm:col-span-6">
+      {/* Header */}
+      <div className="relative flex items-start justify-between gap-3 px-6 pt-6">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-violet">
-            {n.type === "money" ? "Para" : "Yetenek"}
+          <span className={isMoney ? "chip chip-violet" : "chip chip-emerald"}>
+            {isMoney ? (
+              <>
+                <Coins className="h-3 w-3" /> Para
+              </>
+            ) : (
+              <>
+                <Wrench className="h-3 w-3" /> Yetenek
+              </>
+            )}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-            / {n.category}
-          </span>
-          {n.urgent && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-coral">
-              / Acil
+          <span className="chip">{need.category}</span>
+          {need.urgent && (
+            <span className="chip chip-coral">
+              <AlertCircle className="h-3 w-3" /> Acil
             </span>
           )}
         </div>
-        <h3
-          className="mt-2 text-[1.625rem] font-bold leading-[1.1] tracking-[-0.01em] text-[color:var(--app-ink)] sm:text-[2rem]"
-          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
-        >
-          {n.title}
+        <span className="font-mono text-[10px] tabular-nums text-[color:var(--app-ink-mute)]">
+          № {String(index + 1).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* Title + description */}
+      <div className="relative flex flex-col gap-2 px-6 pt-4">
+        <h3 className="font-display text-xl font-bold leading-snug text-[color:var(--app-ink)]">
+          {need.title}
         </h3>
-        <p className="mt-3 max-w-lg text-sm leading-[1.55] text-[color:var(--app-ink-soft)]">
-          {n.description}
+        <p className="line-clamp-2 text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
+          {need.description}
         </p>
       </div>
 
-      {/* Metric / progress */}
-      <div className="col-span-12 sm:col-span-3">
-        {n.type === "money" && n.targetAmount ? (
-          <>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-              Toplanan
-            </p>
-            <p
-              className="mt-2 text-[1.75rem] font-black leading-none tracking-[-0.02em] text-[color:var(--app-ink)]"
-              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
-            >
-              ₺ {n.collectedAmount?.toLocaleString("tr-TR")}
-            </p>
-            <p className="mt-1 font-mono text-[10px] tracking-[0.15em] text-[color:var(--app-ink-mute)]">
-              / ₺ {n.targetAmount?.toLocaleString("tr-TR")}
-            </p>
-            <div className="mt-3 h-[3px] w-full bg-[color:var(--app-line)]">
-              <motion.div
+      {/* Body (progress veya talent) */}
+      <div className="relative flex-1 px-6 pt-5">
+        {isMoney && need.targetAmount ? (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="font-display text-2xl font-bold tabular-nums text-[color:var(--app-ink)]">
+                ₺{(need.collectedAmount ?? 0).toLocaleString("tr-TR")}
+                <span className="ml-1 font-mono text-xs font-normal text-[color:var(--app-ink-mute)]">
+                  / ₺{need.targetAmount.toLocaleString("tr-TR")}
+                </span>
+              </p>
+              <span className="font-mono text-xs font-bold text-violet">%{pct}</span>
+            </div>
+            <div className="relative h-2 w-full overflow-hidden rounded-full bg-[color:var(--app-line-soft)]">
+              <motion.span
                 initial={{ width: 0 }}
                 whileInView={{ width: `${pct}%` }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full bg-violet"
+                transition={{ duration: 1, delay: 0.2, ease: EASE }}
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet to-sky"
               />
             </div>
-            <p className="mt-2 font-mono text-[10px] tracking-[0.22em] text-violet">
-              %{pct} TAMAMLANDI
-            </p>
-          </>
+          </div>
         ) : (
-          <>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+          <div className="rounded-2xl bg-emerald-500/8 px-4 py-3">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
               Aranan
             </p>
-            <p
-              className="mt-2 text-[1.25rem] font-bold leading-tight text-[color:var(--app-ink)]"
-              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
-            >
-              {n.talentNeeded}
+            <p className="mt-1 font-display text-lg font-bold leading-tight text-[color:var(--app-ink)]">
+              {need.talentNeeded ?? need.title}
             </p>
-            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-700">
-              Yetenek bağışı
-            </p>
-          </>
+          </div>
         )}
       </div>
 
-      {/* Meta + action */}
-      <div className="col-span-12 flex flex-col items-start gap-3 sm:col-span-2 sm:items-end">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)] sm:text-right">
-          <p>{n.city}</p>
-          <p className="mt-1 text-[color:var(--app-ink)]">Son: {n.deadline}</p>
-        </div>
-        <button className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet">
-          Detay
-          <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
-        </button>
+      {/* Meta row */}
+      <div className="relative mt-5 flex items-center gap-4 px-6 text-[11px] text-[color:var(--app-ink-mute)]">
+        <span className="inline-flex items-center gap-1.5">
+          <MapPin className="h-3 w-3" /> {need.city}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Calendar className="h-3 w-3" /> Son: {need.deadline}
+        </span>
+      </div>
+
+      {/* Footer action: AI Eşleşme */}
+      <div className="relative mt-5 border-t border-[color:var(--app-line-soft)] bg-white/40 px-6 py-3.5">
+        <Link
+          to="/sporcu-panel/ihtiyaclar/$id/eslesme"
+          params={{ id: need.id }}
+          className="group/btn flex w-full items-center justify-between gap-2 text-xs font-bold text-emerald-700 transition-colors hover:text-emerald-800"
+        >
+          <span className="inline-flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/15">
+              <Sparkles className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </span>
+            AI ile Eşleşme Bul
+          </span>
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+        </Link>
       </div>
     </motion.article>
+  );
+}
+
+function NeedSkeleton() {
+  return (
+    <div className="soft-card flex flex-col gap-3 rounded-[1.75rem] p-6">
+      <div className="flex gap-2">
+        <div className="h-5 w-16 animate-pulse rounded-full bg-[color:var(--app-line-soft)]" />
+        <div className="h-5 w-20 animate-pulse rounded-full bg-[color:var(--app-line-soft)]" />
+      </div>
+      <div className="h-5 w-2/3 animate-pulse rounded bg-[color:var(--app-line-soft)]" />
+      <div className="space-y-1.5">
+        <div className="h-3 w-full animate-pulse rounded bg-[color:var(--app-line-soft)]" />
+        <div className="h-3 w-4/5 animate-pulse rounded bg-[color:var(--app-line-soft)]" />
+      </div>
+      <div className="mt-2 h-2 w-full animate-pulse rounded-full bg-[color:var(--app-line-soft)]" />
+    </div>
+  );
+}
+
+function EmptyState({
+  hasAny,
+  tab,
+  onClearFilter,
+}: {
+  hasAny: boolean;
+  tab: Tab;
+  onClearFilter: () => void;
+}) {
+  if (!hasAny) {
+    return (
+      <div className="relative overflow-hidden rounded-3xl border border-dashed border-violet/30 bg-violet/5 px-6 py-16 text-center">
+        <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-violet/10 blur-3xl" />
+        <div className="relative mx-auto flex max-w-md flex-col items-center gap-4">
+          <div className="relative">
+            <div className="absolute inset-0 animate-ping rounded-full bg-violet/20" />
+            <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-violet/15 text-violet">
+              <Sparkles className="h-5 w-5" />
+            </span>
+          </div>
+          <div>
+            <p className="font-display text-xl font-bold text-[color:var(--app-ink)]">
+              Henüz ihtiyaç oluşturmadın
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
+              İlk ihtiyacını ekle. Topluluğa açıkça söylediğinde AI seni uygun taraftarlarla
+              eşleştirir.
+            </p>
+          </div>
+          <Link
+            to="/sporcu-panel/ihtiyac-olustur"
+            className="btn-primary-light mt-2 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold"
+          >
+            <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+            İlk İhtiyacımı Ekle
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-[color:var(--app-line)] bg-white/50 px-6 py-14 text-center">
+      <Users className="h-5 w-5 text-[color:var(--app-ink-mute)]" />
+      <p className="max-w-sm text-sm text-[color:var(--app-ink-soft)]">
+        Bu sekmede ihtiyaç yok ({tab === "active" ? "Acil" : "Diğer"}).
+      </p>
+      <button
+        onClick={onClearFilter}
+        className="text-xs font-semibold text-violet underline-offset-4 hover:underline"
+      >
+        Tüm ihtiyaçları göster
+      </button>
+    </div>
   );
 }

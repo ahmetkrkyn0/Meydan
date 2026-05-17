@@ -73,6 +73,32 @@ function MatchListPage() {
           </Link>
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-wrap items-center gap-3 rounded-2xl border border-amber-300/40 bg-amber-50 px-5 py-4"
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-200/50 text-amber-700">
+            <Sparkles className="h-4 w-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-[color:var(--app-ink)]">
+              Önizleme — bu sayfa eski mock akışını gösterir
+            </p>
+            <p className="text-[11px] text-[color:var(--app-ink-soft)]">
+              Gerçek AI eşleşmesi artık sporcu tarafından tetikleniyor. Yeteneklerini kaydet,
+              sporcular ihtiyaç oluşturduğunda listede yer al.
+            </p>
+          </div>
+          <Link
+            to="/yetenek"
+            className="btn-primary-light inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold"
+          >
+            Profilime git
+          </Link>
+        </motion.div>
+
         <motion.header variants={fade} initial="hidden" animate="show" custom={1} className="flex flex-col gap-3">
           <p className="inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-emerald-700">
             <Sparkles className="h-3 w-3" /> AI Eşleştirme

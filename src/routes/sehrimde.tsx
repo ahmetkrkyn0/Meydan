@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import {
@@ -8,6 +9,9 @@ import {
   Filter,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { listNearbyEvents } from "@/lib/api";
+import { backendEventToEvent as backendEventToEventLocal } from "@/lib/api-mappers";
+import { CITY_OPTIONS } from "@/lib/form-options";
 import { events, sports, type Event } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/sehrimde")({
@@ -15,7 +19,11 @@ export const Route = createFileRoute("/sehrimde")({
   head: () => ({ meta: [{ title: "Şehrimde Ne Var? — Meydan" }] }),
 });
 
-const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Eskişehir", "Bodrum"];
+const ALL_CITIES = "Tüm şehirler";
+// Hızlı erişim için chip olarak gösterilecek popüler şehirler.
+const FEATURED_CITIES = [ALL_CITIES, "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Eskişehir"];
+
+type Range = "all" | "week" | "month";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp: Variants = {
@@ -25,24 +33,59 @@ const fadeUp: Variants = {
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
 
 function SehrimdePage() {
-  const [city, setCity] = useState("İstanbul");
+  const [city, setCity] = useState<string>(ALL_CITIES);
   const [sportFilter, setSportFilter] = useState<string | null>(null);
   const [freeOnly, setFreeOnly] = useState(false);
-  const [range, setRange] = useState<"week" | "month">("week");
+  const [range, setRange] = useState<Range>("all");
   const [activeId, setActiveId] = useState<string | null>(events[0]?.id ?? null);
+  const cityParam = city === ALL_CITIES ? null : city;
+  const rangeParam = range === "all" ? null : range;
+  const eventsQuery = useQuery({
+    queryKey: ["events", "nearby", cityParam, sportFilter, freeOnly, rangeParam],
+    queryFn: () =>
+      listNearbyEvents({
+        city: cityParam,
+        branch: sportFilter,
+        is_free: freeOnly ? true : null,
+        range: rangeParam,
+      }),
+    retry: 1,
+  });
 
+  // Backend response geldi mi? İçi boş bile olsa "geldi" sayılır — mock fallback'e
+  // düşmek sadece backend gerçekten hata verdiğinde olmalı, "şehirde etkinlik yok"
+  // durumunda değil.
+  const backendResponded = !eventsQuery.isLoading && !eventsQuery.isError;
+  const backendEvents = eventsQuery.data?.events ?? [];
+
+  const eventList = useMemo(() => {
+    if (backendResponded) {
+      return backendEvents.length
+        ? backendEvents.map((event, index) => backendEventToEventLocal(event, index))
+        : [];
+    }
+    return events;
+  }, [backendResponded, backendEvents]);
+
+  // Backend cevabı geldiyse filtreleme zaten serverda yapıldı, client filtre yok.
+  // Backend hata verirse mock fallback üzerinde client filtre uygula.
   const filtered = useMemo(() => {
-    return events.filter((e) => {
+    if (backendResponded) return eventList;
+    return eventList.filter((e) => {
+      if (cityParam && e.city !== cityParam) return false;
       if (sportFilter && e.sport !== sportFilter) return false;
       if (freeOnly && !e.free) return false;
       return true;
     });
-  }, [sportFilter, freeOnly]);
+  }, [cityParam, eventList, backendResponded, sportFilter, freeOnly]);
 
   const sportsInCity = useMemo(() => {
-    const set = new Set(events.map((e) => e.sport));
+    const source = backendResponded || !cityParam
+      ? eventList
+      : eventList.filter((e) => e.city === cityParam);
+    const set = new Set(source.map((e) => e.sport));
     return Array.from(set);
-  }, []);
+  }, [cityParam, eventList, backendResponded]);
 
   const active = filtered.find((e) => e.id === activeId) ?? filtered[0];
 
@@ -59,14 +102,33 @@ function SehrimdePage() {
             Şehrimde Ne Var?
           </p>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
-            Bu hafta <span className="italic text-violet">{city}'da</span>
+            {range === "week" ? "Bu hafta" : range === "month" ? "Bu ay" : "Yaklaşan etkinlikler"}{" "}
+            <span className="italic text-violet">
+              {city === ALL_CITIES ? "Türkiye'de" : `${city}'da`}
+            </span>
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
             Yakınında olan tek bir maç bile tribünün başlangıcıdır. {filtered.length} etkinlik bulundu.
           </p>
 
+          {(eventsQuery.isLoading || eventsQuery.isError) && (
+            <p className="text-xs text-[color:var(--app-ink-mute)]">
+              {eventsQuery.isLoading
+                ? "Yaklaşan etkinlikler backend'den yükleniyor..."
+                : "Backend'e ulaşılamadı; demo etkinlikleri gösteriliyor."}
+            </p>
+          )}
+          {backendResponded && backendEvents.length === 0 && (
+            <p className="text-xs text-[color:var(--app-ink-mute)]">
+              {city === ALL_CITIES ? "Türkiye genelinde " : `${city} için `}
+              {range === "week" ? "bu hafta " : range === "month" ? "bu ay " : ""}
+              {sportFilter ? `${sportFilter} branşında ` : ""}
+              henüz etkinlik yok.
+            </p>
+          )}
+
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            {cities.map((c) => {
+            {FEATURED_CITIES.map((c) => {
               const on = c === city;
               return (
                 <button
@@ -78,6 +140,22 @@ function SehrimdePage() {
                 </button>
               );
             })}
+            {/* Diğer iller için dropdown */}
+            <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white px-2.5 py-1 text-xs">
+              <MapPin className="h-3 w-3 text-[color:var(--app-ink-mute)]" />
+              <select
+                value={FEATURED_CITIES.includes(city) ? "" : city}
+                onChange={(e) => {
+                  if (e.target.value) setCity(e.target.value);
+                }}
+                className="bg-transparent text-xs font-medium text-[color:var(--app-ink)] focus:outline-none"
+              >
+                <option value="">Diğer il...</option>
+                {CITY_OPTIONS.filter((c) => !FEATURED_CITIES.includes(c)).map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </motion.header>
 
@@ -119,6 +197,7 @@ function SehrimdePage() {
 
             <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white p-0.5">
               {([
+                ["all", "Hepsi"],
                 ["week", "Bu hafta"],
                 ["month", "Bu ay"],
               ] as const).map(([k, l]) => (

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   Award,
@@ -10,6 +11,9 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athletes, badges } from "@/lib/mock-data";
+import { listDonationsBySupporter, listProfiles, type BackendDonation } from "@/lib/api";
+import { profileToAthlete } from "@/lib/api-mappers";
+import { useActiveFan } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/desteklerim")({
   component: SupportsPage,
@@ -34,18 +38,76 @@ const SUPPORTS = [
   { slug: athletes[3].slug, monthly: 200, months: 2, trend: "+12%", status: "done" as const },
 ];
 
+type SupportRow = {
+  slug: string;
+  monthly: number;
+  months: number;
+  trend: string;
+  status: "active" | "done" | "cancelled";
+};
+
 function SupportsPage() {
   const [tab, setTab] = useState<Tab>("active");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const activeFan = useActiveFan();
+
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+
+  const donationsQuery = useQuery({
+    queryKey: ["donations", "supporter", activeFan.profile?.id],
+    queryFn: () => listDonationsBySupporter(activeFan.profile!.id),
+    enabled: Boolean(activeFan.profile?.id),
+    retry: 1,
+  });
+
+  // Backend bağışlarını sporcu bazında grupla.
+  const backendSupports: SupportRow[] = useMemo(() => {
+    const donations = donationsQuery.data?.donations ?? [];
+    const profiles = profilesQuery.data?.profiles ?? [];
+    if (!donations.length) return [];
+
+    const byAthlete = new Map<string, BackendDonation[]>();
+    for (const d of donations) {
+      const arr = byAthlete.get(d.athlete_profile_id) ?? [];
+      arr.push(d);
+      byAthlete.set(d.athlete_profile_id, arr);
+    }
+
+    const rows: SupportRow[] = [];
+    byAthlete.forEach((rowDonations, athleteId) => {
+      const profile = profiles.find((p) => p.id === athleteId);
+      if (!profile) return;
+      const athlete = profileToAthlete(profile, 0);
+      const monthly = Math.max(...rowDonations.map((d) => d.amount));
+      const months = rowDonations.length;
+      rows.push({
+        slug: athlete.slug,
+        monthly,
+        months,
+        trend: "+0%",
+        status: "active",
+      });
+    });
+    return rows;
+  }, [donationsQuery.data, profilesQuery.data]);
+
+  const hasBackend = backendSupports.length > 0;
+  const supports = hasBackend ? backendSupports : SUPPORTS;
 
   const supportBadges = badges.filter((b) => b.earned).slice(0, 3);
 
-  const filtered = SUPPORTS.filter((s) =>
+  const filtered = supports.filter((s) =>
     tab === "active" ? s.status === "active" : tab === "done" ? s.status === "done" : false
   );
 
-  const total = SUPPORTS.filter((s) => s.status === "active").reduce((sum, s) => sum + s.monthly * s.months, 0);
-  const activeCount = SUPPORTS.filter((s) => s.status === "active").length;
+  const total = supports
+    .filter((s) => s.status === "active")
+    .reduce((sum, s) => sum + s.monthly * s.months, 0);
+  const activeCount = supports.filter((s) => s.status === "active").length;
 
   return (
     <AppShell role="fan">
@@ -112,7 +174,15 @@ function SupportsPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {filtered.map((s) => {
-                const a = athletes.find((x) => x.slug === s.slug)!;
+                const profiles = profilesQuery.data?.profiles ?? [];
+                const backendProfile = profiles.find((p) => {
+                  const athlete = profileToAthlete(p, 0);
+                  return athlete.slug === s.slug;
+                });
+                const a = backendProfile
+                  ? profileToAthlete(backendProfile, 0)
+                  : athletes.find((x) => x.slug === s.slug);
+                if (!a) return null;
                 return (
                   <div
                     key={s.slug}

@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, Mail, Lock, Eye, EyeOff, Sparkles, Trophy, ShieldCheck, Heart } from "lucide-react";
+import { ArrowRight, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useLogin, defaultRouteForRole } from "@/lib/session";
 
 export const Route = createFileRoute("/giris")({
   component: LoginPage,
@@ -13,21 +14,35 @@ export const Route = createFileRoute("/giris")({
   }),
 });
 
-const quickDemos = [
-  { role: "fan",     label: "Taraftar",  desc: "Keşfet & destekle",   icon: Heart,        to: "/dashboard",     iconBg: "bg-violet/12 text-violet" },
-  { role: "athlete", label: "Sporcu",    desc: "Kartın & teklifler",  icon: Trophy,       to: "/sporcu-panel",  iconBg: "bg-coral/12 text-coral"   },
-  { role: "brand",   label: "Marka",     desc: "AI eşleştirme",       icon: ShieldCheck,  to: "/marka-panel",   iconBg: "bg-sky/12 text-sky"       },
-] as const;
-
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const login = useLogin();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!email.trim()) {
+      setError("Email zorunlu");
+      return;
+    }
+    if (!password) {
+      setError("Şifre zorunlu");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => navigate({ to: "/dashboard" }), 700);
+    try {
+      const result = await login(email.trim(), password);
+      navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Giriş başarısız.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,12 +91,21 @@ function LoginPage() {
           onSubmit={handleSubmit}
           className="mt-8 w-full space-y-3"
         >
-          <Field icon={Mail} type="email" placeholder="E-posta adresin" required />
+          <Field
+            icon={Mail}
+            type="email"
+            placeholder="E-posta adresin"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Field
             icon={Lock}
             type={showPw ? "text" : "password"}
             placeholder="Şifren"
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             suffix={
               <button
                 type="button"
@@ -94,15 +118,9 @@ function LoginPage() {
             }
           />
 
-          <div className="flex items-center justify-between pt-1 text-xs">
-            <label className="inline-flex items-center gap-2 text-[color:var(--app-ink-soft)]">
-              <input type="checkbox" className="h-3.5 w-3.5 rounded border-[color:var(--app-line)] accent-[color:var(--violet)]" />
-              Beni hatırla
-            </label>
-            <button type="button" className="text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]">
-              Şifremi unuttum
-            </button>
-          </div>
+          {error && (
+            <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>
+          )}
 
           <button
             type="submit"
@@ -123,67 +141,11 @@ function LoginPage() {
           </button>
         </motion.form>
 
-        {/* Social */}
-        <div className="my-6 flex w-full items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
-          <span className="h-px flex-1 bg-[color:var(--app-line)]" />
-          veya
-          <span className="h-px flex-1 bg-[color:var(--app-line)]" />
-        </div>
-        <button
-          type="button"
-          className="btn-ghost-light inline-flex w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-sm font-medium transition-colors"
-        >
-          <span className="h-4 w-4 rounded-full bg-gradient-to-br from-[var(--sky)] via-[var(--violet)] to-[var(--coral)]" />
-          Google ile devam et
-        </button>
-
-        {/* ── QUICK DEMO ACCESS ── */}
-        <motion.section
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="mt-12 w-full"
-        >
-          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
-            <Sparkles className="h-3 w-3 text-[color:var(--violet)]" />
-            Quick Demo Access
-            <span className="h-px flex-1 bg-[color:var(--app-line)]" />
-          </div>
-          <p className="mt-2 text-xs text-[color:var(--app-ink-soft)]">
-            Şifre yok — bir rol seç, Meydan'ı keşfet.
-          </p>
-
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            {quickDemos.map((d, i) => (
-              <motion.div
-                key={d.role}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 + i * 0.06 }}
-              >
-                <Link
-                  to={d.to}
-                  className="group relative flex flex-col items-start gap-2 rounded-2xl border border-[color:var(--app-line)] bg-white p-3.5 transition-all hover:border-[color:oklch(0.60_0.22_252/0.35)] hover:bg-[color:oklch(0.60_0.22_252/0.04)]"
-                >
-                  <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${d.iconBg}`}>
-                    <d.icon className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-[color:var(--app-ink)]">{d.label}</p>
-                    <p className="mt-0.5 text-[11px] text-[color:var(--app-ink-mute)]">{d.desc}</p>
-                  </div>
-                  <ArrowRight className="absolute right-3 top-3 h-3.5 w-3.5 text-[color:var(--app-ink-mute)] transition-all group-hover:right-2.5 group-hover:text-[color:var(--violet)]" />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
         <p className="mt-10 text-center text-[11px] text-[color:var(--app-ink-mute)]">
-          Devam ederek Meydan{" "}
-          <a className="underline-offset-4 hover:underline" href="#">Kullanım Şartları</a>{" "}
-          ve{" "}
-          <a className="underline-offset-4 hover:underline" href="#">Gizlilik Politikası</a>'nı kabul etmiş olursun.
+          Yeni misin?{" "}
+          <Link to="/kayit" className="font-semibold text-[color:var(--app-ink)] underline-offset-4 hover:underline">
+            Kayıt ol
+          </Link>
         </p>
       </main>
     </div>

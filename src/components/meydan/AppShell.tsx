@@ -1,12 +1,14 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   Home, Compass, MapPin, Radio, Heart, User, Bell, Search,
-  Trophy, HeartHandshake, Wrench, Award, Settings, LogOut, ChevronDown,
-  Mail, Sparkles,
+  Trophy, Wrench, Award, Settings, LogOut, ChevronDown,
+  Mail, Sparkles, LogIn,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import adaImg from "@/assets/athlete-ada.jpg";
+import { useDemoLogin, useLogout, useSession } from "@/lib/session";
+import type { ProfileRole } from "@/lib/api";
 
 type NavItem = {
   to: string;
@@ -47,8 +49,8 @@ const navFor = (r: AppRole) =>
 export function AppShell({
   children,
   role = "fan",
-  userName = "Mehmet Kaya",
-  userCity = "İstanbul",
+  userName,
+  userCity,
   hideSearch = false,
 }: {
   children: ReactNode;
@@ -60,6 +62,46 @@ export function AppShell({
   const loc = useLocation();
   const nav = navFor(role);
   const [menuOpen, setMenuOpen] = useState(false);
+  const session = useSession();
+  const logout = useLogout();
+  const demoLogin = useDemoLogin();
+  const navigate = useNavigate();
+  const [demoLoading, setDemoLoading] = useState<AppRole | null>(null);
+  const [demoError, setDemoError] = useState<string | null>(null);
+
+  const ROLE_TO_PROFILE: Record<AppRole, ProfileRole> = {
+    fan: "taraftar",
+    athlete: "sporcu",
+    brand: "marka",
+  };
+  const ROLE_TO_DEST: Record<AppRole, string> = {
+    fan: "/dashboard",
+    athlete: "/sporcu-panel",
+    brand: "/marka-panel",
+  };
+
+  async function handleRoleSwitch(target: AppRole) {
+    if (demoLoading) return;
+    setDemoError(null);
+    setDemoLoading(target);
+    try {
+      await demoLogin(ROLE_TO_PROFILE[target]);
+      navigate({ to: ROLE_TO_DEST[target] }).catch(() => undefined);
+    } catch (err) {
+      setDemoError(err instanceof Error ? err.message : "Demo giriş başarısız");
+    } finally {
+      setDemoLoading(null);
+    }
+  }
+
+  // Override: oturum açıldıysa session bilgisi tercih edilir.
+  const effectiveName = session.profile?.full_name ?? userName ?? "Misafir";
+  const effectiveCity = session.profile?.city ?? userCity ?? "";
+
+  async function handleLogout() {
+    await logout();
+    navigate({ to: "/giris" }).catch(() => undefined);
+  }
 
   return (
     <div className="app-surface app-ambient relative flex min-h-screen w-full">
@@ -108,36 +150,49 @@ export function AppShell({
           })}
         </nav>
 
-        {/* Mode switcher */}
+        {/* Mode switcher — demo: ilgili roldeki ilk profile login yapar */}
         <div className="mx-3 mb-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2">
-          <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">Rol</p>
+          <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+            Demo rol
+          </p>
           <div className="mt-1.5 grid grid-cols-3 gap-1">
             {(["fan", "athlete", "brand"] as AppRole[]).map((r) => {
               const isActive = role === r;
-              const dest = r === "athlete" ? "/sporcu-panel" : r === "brand" ? "/marka-panel" : "/dashboard";
+              const isLoading = demoLoading === r;
               return (
-                <Link
+                <button
                   key={r}
-                  to={dest}
-                  className={`rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all ${
+                  type="button"
+                  onClick={() => void handleRoleSwitch(r)}
+                  disabled={Boolean(demoLoading)}
+                  className={`rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                     isActive
                       ? "bg-[color:var(--app-ink)] text-white"
                       : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]"
                   }`}
                 >
-                  {r === "fan" ? "Taraftar" : r === "athlete" ? "Sporcu" : "Marka"}
-                </Link>
+                  {isLoading
+                    ? "…"
+                    : r === "fan"
+                      ? "Taraftar"
+                      : r === "athlete"
+                        ? "Sporcu"
+                        : "Marka"}
+                </button>
               );
             })}
           </div>
+          {demoError && (
+            <p className="mt-1.5 px-2 text-[10px] font-semibold text-coral">{demoError}</p>
+          )}
         </div>
 
         {/* User card */}
         <div className="m-3 mt-0 flex items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2.5">
           <img src={adaImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{userName}</p>
-            <p className="text-[10px] text-[color:var(--app-ink-mute)]">{userCity}</p>
+            <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
+            <p className="text-[10px] text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
           </div>
           <button className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]">
             <ChevronDown className="h-3.5 w-3.5" />
@@ -184,19 +239,38 @@ export function AppShell({
             >
               <img src={adaImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
               <div className="hidden text-left sm:block">
-                <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">{userName}</p>
-                <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">{userCity}</p>
+                <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">{effectiveName}</p>
+                <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-[color:var(--app-ink-mute)]" />
             </button>
             {menuOpen && (
               <div className="absolute right-5 top-14 w-48 rounded-2xl border border-[color:var(--app-line)] bg-white p-1.5 shadow-lg sm:right-8">
-                <Link to="/sporcu-panel/profil" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]">
-                  <Settings className="h-3.5 w-3.5" /> Ayarlar
-                </Link>
-                <Link to="/" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]">
-                  <LogOut className="h-3.5 w-3.5" /> Çıkış
-                </Link>
+                {session.isAuthenticated ? (
+                  <>
+                    <Link to="/sporcu-panel/profil" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]">
+                      <Settings className="h-3.5 w-3.5" /> Ayarlar
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        void handleLogout();
+                      }}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs text-coral hover:bg-coral/10"
+                    >
+                      <LogOut className="h-3.5 w-3.5" /> Çıkış
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/giris"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <LogIn className="h-3.5 w-3.5" /> Giriş yap
+                  </Link>
+                )}
               </div>
             )}
           </div>

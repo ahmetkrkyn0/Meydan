@@ -1,9 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Flame, MapPin, Search, Sparkles, TrendingUp, Users } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { athletes, sports, type Athlete } from "@/lib/mock-data";
+import { listProfiles } from "@/lib/api";
+import { profilesToAthletes } from "@/lib/api-mappers";
+import { sports, type Athlete } from "@/lib/mock-data";
+import { CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/kesfet/")({
   component: KesfetPage,
@@ -17,7 +21,7 @@ const fadeUp: Variants = {
 };
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 
-const CITIES = ["Tüm Türkiye", "İstanbul", "Ankara", "İzmir", "Bursa", "İzmit", "Eskişehir"];
+const CITIES = ["Tüm Türkiye", ...CITY_OPTIONS] as const;
 
 function trendValue(a: Athlete) {
   const n = parseFloat(a.trend.replace("%", "").replace("+", ""));
@@ -28,19 +32,29 @@ function KesfetPage() {
   const [activeSport, setActiveSport] = useState<string | null>(null);
   const [city, setCity] = useState<string>("Tüm Türkiye");
   const [onlyRising, setOnlyRising] = useState(false);
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+
+  const athleteList = useMemo(
+    () => profilesToAthletes(profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles],
+  );
 
   const filtered = useMemo(() => {
-    return athletes.filter((a) => {
+    return athleteList.filter((a) => {
       if (activeSport && a.sport !== activeSport) return false;
       if (city !== "Tüm Türkiye" && a.city !== city) return false;
       if (onlyRising && trendValue(a) < 15) return false;
       return true;
     });
-  }, [activeSport, city, onlyRising]);
+  }, [activeSport, athleteList, city, onlyRising]);
 
   const rising = useMemo(
-    () => [...athletes].sort((a, b) => trendValue(b) - trendValue(a)).slice(0, 5),
-    [],
+    () => [...athleteList].sort((a, b) => trendValue(b) - trendValue(a)).slice(0, 5),
+    [athleteList],
   );
 
   const activeFilters: string[] = [];
@@ -132,6 +146,14 @@ function KesfetPage() {
               <span className="font-mono">{filtered.length} sporcu</span>
             </div>
           </div>
+
+          {(profilesQuery.isLoading || profilesQuery.isError) && (
+            <p className="mt-3 text-[11px] text-[color:var(--app-ink-mute)]">
+              {profilesQuery.isLoading
+                ? "Sporcular backend'den yükleniyor..."
+                : "Backend'e ulaşılamadı; demo verisi gösteriliyor."}
+            </p>
+          )}
 
           {activeFilters.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5">

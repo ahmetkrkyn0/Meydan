@@ -280,6 +280,8 @@ export type Event = {
   attending: number;
   description: string;
   coords: { x: number; y: number }; // map mock position 0-100
+  latitude?: number; // gerçek coğrafi konum (backend'den gelir)
+  longitude?: number;
 };
 
 export const events: Event[] = [

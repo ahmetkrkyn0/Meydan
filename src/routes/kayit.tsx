@@ -1,45 +1,83 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ArrowLeft, Mail, Lock, User, Eye, EyeOff, Trophy, Heart, ShieldCheck, Wrench, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check, Lock, Eye, EyeOff, MapPin } from "lucide-react";
+import { useRegister } from "@/lib/session";
+import { defaultRouteForRole } from "@/lib/session";
+import { BRANCH_OPTIONS, CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/kayit")({
   component: RegisterPage,
   head: () => ({
     meta: [
       { title: "Kayıt Ol — Meydan" },
-      { name: "description", content: "Meydan'a katıl: sporcu, taraftar, marka veya yetenek sahibi olarak." },
+      { name: "description", content: "Meydan'a katıl: sporcu, taraftar veya marka olarak." },
     ],
   }),
 });
 
-type Role = "fan" | "athlete" | "brand" | "talent";
+type Role = "taraftar" | "sporcu" | "marka";
 
 const roles: { id: Role; label: string; desc: string; icon: typeof Heart; iconBg: string; }[] = [
-  { id: "fan",     label: "Taraftar",        desc: "Keşfet, destekle, sessiz tezahürat yap.",            icon: Heart,        iconBg: "bg-violet/12 text-violet" },
-  { id: "athlete", label: "Sporcu",          desc: "Kartını oluştur, hikâyeni paylaş.",                  icon: Trophy,       iconBg: "bg-coral/12 text-coral" },
-  { id: "brand",   label: "Marka",           desc: "AI eşleştirmeyle değer uyumlu sporcu bul.",          icon: ShieldCheck,  iconBg: "bg-sky/12 text-sky" },
-  { id: "talent",  label: "Yetenek Sahibi",  desc: "Para değil, beceri bağışla. Doğru sporcuyla eşleş.", icon: Wrench,       iconBg: "bg-emerald-500/12 text-emerald-600" },
+  { id: "taraftar", label: "Taraftar", desc: "Keşfet, destekle, sessiz tezahürat yap.",          icon: Heart,       iconBg: "bg-violet/12 text-violet" },
+  { id: "sporcu",   label: "Sporcu",   desc: "Kartını oluştur, hikâyeni paylaş.",                icon: Trophy,      iconBg: "bg-coral/12 text-coral" },
+  { id: "marka",    label: "Marka",    desc: "AI eşleştirmeyle değer uyumlu sporcu bul.",        icon: ShieldCheck, iconBg: "bg-sky/12 text-sky" },
 ];
 
 function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
-  const [role, setRole] = useState<Role>("fan");
+  const [role, setRole] = useState<Role>("taraftar");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPw, setShowPw] = useState(false);
+  const [city, setCity] = useState("");
+  const [branch, setBranch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const register = useRegister();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!fullName.trim() || !email.trim()) {
+      setError("Ad ve email zorunlu");
+      return;
+    }
+    if (!city) {
+      setError("Şehir seç");
+      return;
+    }
+    if (role === "sporcu" && !branch) {
+      setError("Branş seç");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Şifre en az 6 karakter olmalı");
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError("Şifreler eşleşmiyor");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      const dest =
-        role === "athlete" ? "/sporcu-panel" :
-        role === "brand"   ? "/marka-panel"  :
-        role === "talent"  ? "/yetenek"      :
-                              "/dashboard";
-      navigate({ to: dest });
-    }, 800);
+    try {
+      const result = await register({
+        email: email.trim(),
+        password,
+        full_name: fullName.trim(),
+        role,
+        city,
+        branch: role === "sporcu" ? branch : undefined,
+      });
+      navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kayıt başarısız.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,7 +141,7 @@ function RegisterPage() {
               </p>
             </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {roles.map((r, i) => {
                 const active = role === r.id;
                 return (
@@ -167,27 +205,70 @@ function RegisterPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md space-y-3">
-              <Field icon={User}  type="text"  placeholder={role === "brand" ? "Marka adı" : "Ad Soyad"} required />
-              <Field icon={Mail}  type="email" placeholder="E-posta adresi" required />
+              <Field
+                icon={User}
+                type="text"
+                placeholder={role === "marka" ? "Marka adı" : "Ad Soyad"}
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+              <Field
+                icon={Mail}
+                type="email"
+                placeholder="E-posta adresi"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <Field
                 icon={Lock}
                 type={showPw ? "text" : "password"}
-                placeholder="Şifre (en az 8 karakter)"
+                placeholder="Şifre (en az 6 karakter)"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 suffix={
-                  <button type="button" onClick={() => setShowPw((v) => !v)} className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((v) => !v)}
+                    className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                    aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                  >
                     {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 }
               />
+              <Field
+                icon={Lock}
+                type={showPw ? "text" : "password"}
+                placeholder="Şifre tekrar"
+                required
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+              <SelectField
+                icon={MapPin}
+                placeholder="Şehir seç"
+                options={CITY_OPTIONS}
+                value={city}
+                onChange={setCity}
+                required
+              />
+              {role === "sporcu" && (
+                <SelectField
+                  icon={Trophy}
+                  placeholder="Branş seç"
+                  options={BRANCH_OPTIONS}
+                  value={branch}
+                  onChange={setBranch}
+                  required
+                />
+              )}
 
-              <label className="flex items-start gap-2 pt-2 text-xs text-[color:var(--app-ink-soft)]">
-                <input type="checkbox" required className="mt-0.5 h-3.5 w-3.5 rounded border-[color:var(--app-line)] accent-[color:var(--violet)]" />
-                <span>
-                  <a className="underline-offset-4 hover:underline" href="#">Kullanım Şartları</a>'nı ve{" "}
-                  <a className="underline-offset-4 hover:underline" href="#">Gizlilik Politikası</a>'nı okudum, kabul ediyorum.
-                </span>
-              </label>
+              {error && (
+                <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>
+              )}
 
               <div className="flex items-center gap-2 pt-4">
                 <button
@@ -233,6 +314,50 @@ function Field({
         className="h-12 w-full rounded-2xl border border-[color:var(--app-line)] bg-white pl-11 pr-12 text-sm text-[color:var(--app-ink)] placeholder:text-[color:var(--app-ink-mute)] transition-colors focus:border-[color:var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color:oklch(0.60_0.22_252/0.20)]"
       />
       {suffix && <span className="absolute right-4 top-1/2 -translate-y-1/2">{suffix}</span>}
+    </label>
+  );
+}
+
+function SelectField({
+  icon: Icon,
+  placeholder,
+  options,
+  value,
+  onChange,
+  required,
+}: {
+  icon: typeof Mail;
+  placeholder: string;
+  options: readonly (string | { value: string; emoji?: string })[];
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <label className="group relative block">
+      <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)] transition-colors group-focus-within:text-[color:var(--violet)]" />
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+        className="h-12 w-full appearance-none rounded-2xl border border-[color:var(--app-line)] bg-white pl-11 pr-10 text-sm text-[color:var(--app-ink)] transition-colors focus:border-[color:var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color:oklch(0.60_0.22_252/0.20)]"
+      >
+        <option value="" disabled>
+          {placeholder}
+        </option>
+        {options.map((opt) => {
+          const v = typeof opt === "string" ? opt : opt.value;
+          const label = typeof opt === "string" ? opt : `${opt.emoji ?? ""} ${opt.value}`.trim();
+          return (
+            <option key={v} value={v}>
+              {label}
+            </option>
+          );
+        })}
+      </select>
+      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[color:var(--app-ink-mute)]">
+        ▾
+      </span>
     </label>
   );
 }

@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ArrowLeft, Eye, Send, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { createCheer, listProfiles } from "@/lib/api";
+import { findProfileBySlug } from "@/lib/api-mappers";
+import { useSession } from "@/lib/session";
 import { liveMatches, recentCheers, cheerTemplates, type Cheer } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/canli/$id")({
@@ -31,6 +35,32 @@ const mockIncoming: Omit<Cheer, "id">[] = [
 function LiveMatchPage() {
   const { id } = Route.useParams();
   const match = liveMatches.find((m) => m.id === id) ?? liveMatches[0];
+  const session = useSession();
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const athleteProfile = useMemo(
+    () => findProfileBySlug(match.athleteSlug, profilesQuery.data?.profiles),
+    [match.athleteSlug, profilesQuery.data?.profiles],
+  );
+  const createCheerMutation = useMutation({
+    mutationFn: (message: string) => {
+      if (!athleteProfile?.id) {
+        throw new Error("Backend'de bu mac icin sporcu profili bulunamadi.");
+      }
+      if (!session.profile?.id) {
+        throw new Error("Tezahürat için giriş yapman gerekli.");
+      }
+      return createCheer({
+        athlete_id: athleteProfile.id,
+        fan_id: session.profile.id,
+        message,
+        match_date: new Date().toISOString().slice(0, 10),
+      });
+    },
+  });
 
   const [present, setPresent] = useState(true);
   const [floats, setFloats] = useState<Float[]>([]);
@@ -75,9 +105,23 @@ function LiveMatchPage() {
       { id: `c-${Date.now()}`, from: "Sen", message, time: "şimdi" },
       ...f,
     ].slice(0, 12));
+    if (athleteProfile?.id && session.profile?.id) {
+      createCheerMutation.mutate(message);
+    }
     setDraft("");
     setSent((s) => s + 1);
   }
+
+  const backendReady = Boolean(athleteProfile?.id);
+  const backendStatusMessage = profilesQuery.isLoading
+    ? "Sporcu profili yükleniyor..."
+    : profilesQuery.isError
+      ? "Backend'e ulaşılamadı; tezahürat backend'e iletilmiyor."
+      : !backendReady
+        ? `Bu sporcu (${match.athleteName}) backend'de bulunamadı; tezahürat backend'e iletilmiyor.`
+        : !session.profile?.id
+          ? "Tezahüratın backend'e gönderilmesi için giriş yap."
+          : null;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -353,6 +397,11 @@ function LiveMatchPage() {
                 <span>Sporcu maç bittikten sonra özetini görür.</span>
                 <span className="tabular-nums">{draft.length}/140</span>
               </p>
+              {backendStatusMessage && (
+                <p className="mt-1.5 rounded-lg bg-coral/8 px-2 py-1 text-[9px] leading-relaxed text-coral">
+                  {backendStatusMessage}
+                </p>
+              )}
             </div>
           </aside>
         </motion.section>

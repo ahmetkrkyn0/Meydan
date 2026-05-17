@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
+import { useMemo } from "react";
 import {
   ArrowUpRight,
   Calendar,
@@ -12,12 +14,11 @@ import {
   Users,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import {
-  athletes,
-  badges,
-  events,
-  liveMatches,
-} from "@/lib/mock-data";
+import { listFollowedAthletes, listNearbyEvents, listProfiles } from "@/lib/api";
+import { backendEventsToEvents, profilesToAthletes, profileToAthlete } from "@/lib/api-mappers";
+import { useActiveFan } from "@/lib/active-athlete";
+import { useSession } from "@/lib/session";
+import { badges, liveMatches } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -31,8 +32,6 @@ const fadeUp: Variants = {
 };
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
-const followedSlugs = ["mete-gazoz", "zeynep-sonmez", "sureyya-demir", "yusuf-dikec"];
-
 function formatTodayTR() {
   const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
   const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -41,9 +40,48 @@ function formatTodayTR() {
 }
 
 function DashboardPage() {
+  const session = useSession();
+  const activeFan = useActiveFan();
+  const firstName = session.profile?.full_name?.split(" ")[0] ?? "Misafir";
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const eventsQuery = useQuery({
+    queryKey: ["events", "nearby", "dashboard"],
+    queryFn: () => listNearbyEvents(),
+    retry: 1,
+  });
+  const followsQuery = useQuery({
+    queryKey: ["follows", activeFan.profile?.id],
+    queryFn: () => listFollowedAthletes(activeFan.profile!.id),
+    enabled: Boolean(activeFan.profile?.id),
+    retry: 1,
+  });
+  const athleteList = useMemo(
+    () => profilesToAthletes(profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles],
+  );
+  const eventList = useMemo(
+    () => backendEventsToEvents(eventsQuery.data?.events),
+    [eventsQuery.data?.events],
+  );
   const featuredPair = liveMatches.slice(0, 2);
-  const followed = athletes.filter((a) => followedSlugs.includes(a.slug)).slice(0, 4);
-  const upcoming = events.slice(0, 3);
+
+  // Sadece backend'den gelen veriler — mock fallback yok.
+  const followed = useMemo(() => {
+    const followedProfiles = followsQuery.data?.athletes ?? [];
+    if (followedProfiles.length) {
+      return followedProfiles.map((p, i) => profileToAthlete(p, i)).slice(0, 4);
+    }
+    // Taraftar henüz kimseyi takip etmiyorsa: backend'deki ilk sporcuları
+    // "öneri" olarak göster.
+    return athleteList.slice(0, 4);
+  }, [followsQuery.data, athleteList]);
+
+  const followsAreReal = Boolean(followsQuery.data?.athletes?.length);
+  const upcoming = eventList.slice(0, 3);
   const earnedCount = badges.filter((b) => b.earned).length;
   const totalBadges = badges.length;
   const badgePct = Math.round((earnedCount / totalBadges) * 100);
@@ -62,7 +100,7 @@ function DashboardPage() {
             {formatTodayTR()}
           </p>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
-            Hoş geldin <span className="italic text-violet">Mehmet</span>.
+            Hoş geldin <span className="italic text-violet">{firstName}</span>.
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
             Bugün takip ettiğin 2 sporcunun maçı var. Sahne biraz sonra senin.
@@ -168,7 +206,7 @@ function DashboardPage() {
         <motion.section variants={fadeUp} aria-labelledby="senin-sporcular">
           <div className="mb-4 flex items-baseline justify-between">
             <h2 id="senin-sporcular" className="font-display text-xl font-bold text-[color:var(--app-ink)]">
-              Senin sporcuların
+              {followsAreReal ? "Senin sporcuların" : "Önerilen sporcular"}
             </h2>
             <Link
               to="/kesfet"
@@ -177,6 +215,13 @@ function DashboardPage() {
               Daha fazla keşfet <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
+          {!followsAreReal && (
+            <p className="mb-3 text-[11px] text-[color:var(--app-ink-mute)]">
+              {activeFan.profile
+                ? "Henüz hiç sporcu takip etmedin. Sporcu sayfasından 'Takip Et' diyebilirsin."
+                : "Takip listeni görmek için backend'de bir taraftar profili gerekli (auth eklenmeden geçici)."}
+            </p>
+          )}
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {followed.map((a) => (
