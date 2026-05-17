@@ -301,6 +301,12 @@
   .stage-dark-veil   { background: var(--stage-dark-veil); }
   .stage-dark-glow   { background: var(--stage-dark-glow); }
 
+  /* Stage tipografi — koyu sahne üstünde tutarlı kontrast */
+  .stage-text        { color: #fff; }
+  .stage-text-soft   { color: oklch(1 0 0 / 0.78); }
+  .stage-text-mute   { color: oklch(1 0 0 / 0.62); }
+  .stage-label       { color: oklch(1 0 0 / 0.70); font-family: var(--font-mono, ui-monospace, monospace); letter-spacing: 0.22em; text-transform: uppercase; }
+
   /* Full-bleed: sidebar → sağ ekran kenarına uzanır */
   .stage-bleed {
     margin-left: -1.25rem;
