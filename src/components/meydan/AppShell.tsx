@@ -201,7 +201,7 @@ export function AppShell({
       </aside>
 
       {/* ── Main column ── */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:ml-64">
         {/* Topbar */}
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[color:var(--app-line-soft)] bg-white/75 px-5 backdrop-blur-xl sm:px-8">
           {/* Mobile logo */}
