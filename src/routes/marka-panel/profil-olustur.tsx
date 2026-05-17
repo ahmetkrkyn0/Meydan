@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { ArrowRight, MapPin, Target, Wallet, Building2 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/marka-panel/profil-olustur")({
   component: BrandProfileCreate,
@@ -21,7 +22,7 @@ const VALUES = [
   "Erişim", "Eğitim", "Sürdürülebilirlik", "Macera", "Mühendislik",
 ];
 const GENDERS = ["Kadın", "Erkek", "Hepsi"];
-const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Eskişehir", "Konya", "Trabzon"];
+const CITIES = CITY_OPTIONS;
 
 const STEPS = [
   { id: 1, label: "Temel", icon: Building2 },

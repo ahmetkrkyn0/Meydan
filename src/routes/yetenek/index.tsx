@@ -13,6 +13,7 @@ import {
 import { AppShell } from "@/components/meydan/AppShell";
 import { listNeeds, listProfiles } from "@/lib/api";
 import { backendNeedsToNeedsWithProfiles } from "@/lib/api-mappers";
+import { CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/yetenek/")({
   component: TalentPage,
@@ -43,7 +44,7 @@ const TALENTS = [
   "Muhasebe",
 ];
 
-const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Eskişehir", "İzmit", "Adana"];
+const CITIES = CITY_OPTIONS;
 const AVAILABILITY = ["Hafta içi akşam", "Hafta sonu", "Esnek"];
 
 function TalentPage() {

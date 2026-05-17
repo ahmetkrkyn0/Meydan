@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pencil, Building2, Tag, Users, MapPin, Wallet, Check, ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { brands } from "@/lib/mock-data";
+import { CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/marka-panel/profil")({
   component: BrandProfilePage,
@@ -19,7 +20,7 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 
 const ALL_VALUES = ["Aile", "Disiplin", "Türkiye", "Gençlik", "Tasarım", "Doğa", "Eğitim", "Macera", "Mühendislik", "Erişim", "Sürdürülebilirlik"];
 const ALL_AUDIENCE = ["18-24", "25-34", "35-44", "45-54", "55+"];
-const ALL_CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Tüm Türkiye"];
+const ALL_CITIES = ["Tüm Türkiye", ...CITY_OPTIONS] as const;
 
 function BrandProfilePage() {
   const brand = brands[0];
