@@ -282,11 +282,12 @@ function DashboardPage() {
                       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
                         {m.emoji} {m.sport} · Set {m.setScore}
                       </p>
-                      <h3 className="mt-2 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl">
-                        {m.athleteName}
+                      <h3 className="mt-2 flex items-center gap-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl">
+                        {m.athleteName} 
+                        {m.athleteFlag && <img src={`https://flagcdn.com/w40/${m.athleteFlag}.png`} alt={m.athleteFlag} className="inline-block h-[0.7em] w-auto rounded-sm object-cover shadow-sm" />}
                       </h3>
-                      <p className="mt-1 text-sm text-white/70">
-                        vs. {m.opponent} {m.opponentFlag}
+                      <p className="mt-1 flex items-center gap-1.5 text-sm text-white/70">
+                        vs. {m.opponent} <img src={`https://flagcdn.com/w20/${m.opponentFlag}.png`} alt={m.opponentFlag} className="inline-block h-3 w-4 rounded-[2px] object-cover opacity-90" />
                       </p>
 
                       {/* Score + momentum bar */}
@@ -364,11 +365,12 @@ function DashboardPage() {
                         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
                           {m.emoji} {m.sport} · {m.setScore}
                         </p>
-                        <h3 className="mt-1 font-display text-xl font-bold leading-tight text-[color:var(--app-ink)]">
-                          {m.athleteName}
+                        <h3 className="mt-1 flex items-center gap-2 font-display text-xl font-bold leading-tight text-[color:var(--app-ink)]">
+                          {m.athleteName} 
+                          {m.athleteFlag && <img src={`https://flagcdn.com/w40/${m.athleteFlag}.png`} alt={m.athleteFlag} className="inline-block h-[0.8em] w-auto rounded-[2px] object-cover shadow-sm" />}
                         </h3>
-                        <p className="mt-0.5 text-xs text-[color:var(--app-ink-soft)]">
-                          vs. {m.opponent} {m.opponentFlag}
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-[color:var(--app-ink-soft)]">
+                          vs. {m.opponent} <img src={`https://flagcdn.com/w20/${m.opponentFlag}.png`} alt={m.opponentFlag} className="inline-block h-2.5 w-3.5 rounded-[2px] object-cover opacity-80" />
                         </p>
                       </div>
 

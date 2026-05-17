@@ -8,6 +8,10 @@ import yelkenImg from "@/assets/athlete-yelken-kadin.png";
 import satrancImg from "@/assets/athlete-satranc-erkek.png";
 import voleybolImg from "@/assets/athlete-voleybol-kadin.png";
 import eskrimImg from "@/assets/athlete-eskrim-kadin.png";
+import meteGazozImg from "@/assets/metegazoz.png";
+import buseNazImg from "@/assets/busenaz.png";
+import sureyyaDemirImg from "@/assets/athlete-lina.jpg";
+import yusufDikecImg from "@/assets/athlete-kerem.jpg";
 import archeryPng from "@/assets/sport-archery-nobg.png";
 import basketballPng from "@/assets/sport-basketball-nobg.png";
 import billiardsPng from "@/assets/sport-billiards-nobg.png";
@@ -393,6 +397,7 @@ export type Match = {
   athleteSlug: string;
   athleteName: string;
   athleteImg: string;
+  athleteFlag?: string;
   opponent: string;
   opponentFlag: string;
   sport: string;
@@ -408,21 +413,21 @@ export type Match = {
 
 export const liveMatches: Match[] = [
   /* ── Canlı (5) ── */
-  { id: "m1", athleteSlug: "zeynep-sonmez",        athleteName: "Zeynep Sönmez",        athleteImg: tenisImg,    opponent: "Maria Sakkari",   opponentFlag: "🇬🇷", sport: "Tenis",    emoji: "🎾", status: "live", startsAt: "Şimdi", score: "1-0",  setScore: "5-3", viewers: 1_240, cheers: 320,  momentum: 72 },
-  { id: "m2", athleteSlug: "buse-naz-cakiroglu",   athleteName: "Buse Naz Çakıroğlu",   athleteImg: boksImg,     opponent: "Buse Philon",     opponentFlag: "🇫🇷", sport: "Boks",     emoji: "🥊", status: "live", startsAt: "Şimdi", score: "2-1",  setScore: "R3",  viewers: 2_180, cheers: 540,  momentum: 64 },
-  { id: "m3", athleteSlug: "mete-gazoz",            athleteName: "Mete Gazoz",            athleteImg: okculukImg,  opponent: "Kim Woo-jin",     opponentFlag: "🇰🇷", sport: "Okçuluk",  emoji: "🏹", status: "live", startsAt: "Şimdi", score: "5-4",  setScore: "1/4", viewers: 3_460, cheers: 1_120,momentum: 81 },
-  { id: "m4", athleteSlug: "necati-er",             athleteName: "Necati Er",             athleteImg: atletizmImg, opponent: "Pedro Pichardo",  opponentFlag: "🇵🇹", sport: "Atletizm", emoji: "🏃", status: "live", startsAt: "Şimdi", score: "17.42m", setScore: "5/6", viewers: 612,   cheers: 142,  momentum: 48 },
-  { id: "m5", athleteSlug: "sureyya-demir",         athleteName: "Süreyya Demir",         athleteImg: bilardoImg,  opponent: "Eddy Merckx",     opponentFlag: "🇧🇪", sport: "Bilardo",  emoji: "🎱", status: "live", startsAt: "Şimdi", score: "23-19", setScore: "1/3", viewers: 480,   cheers: 96,   momentum: 55 },
+  { id: "m1", athleteSlug: "zeynep-sonmez",        athleteName: "Zeynep Sönmez",        athleteImg: tenisImg,       athleteFlag: "tr", opponent: "Maria Sakkari",   opponentFlag: "gr", sport: "Tenis",    emoji: "🎾", status: "live", startsAt: "Şimdi", score: "1-0",  setScore: "5-3", viewers: 1_240, cheers: 320,  momentum: 72 },
+  { id: "m2", athleteSlug: "buse-naz-cakiroglu",   athleteName: "Buse Naz Çakıroğlu",   athleteImg: buseNazImg,     athleteFlag: "tr", opponent: "Buse Philon",     opponentFlag: "fr", sport: "Boks",     emoji: "🥊", status: "live", startsAt: "Şimdi", score: "2-1",  setScore: "R3",  viewers: 2_180, cheers: 540,  momentum: 64 },
+  { id: "m3", athleteSlug: "mete-gazoz",            athleteName: "Mete Gazoz",            athleteImg: meteGazozImg,   athleteFlag: "tr", opponent: "Kim Woo-jin",     opponentFlag: "kr", sport: "Okçuluk",  emoji: "🏹", status: "live", startsAt: "Şimdi", score: "5-4",  setScore: "1/4", viewers: 3_460, cheers: 1_120,momentum: 81 },
+  { id: "m4", athleteSlug: "necati-er",             athleteName: "Necati Er",             athleteImg: atletizmImg,    athleteFlag: "tr", opponent: "Pedro Pichardo",  opponentFlag: "pt", sport: "Atletizm", emoji: "🏃", status: "live", startsAt: "Şimdi", score: "17.42m", setScore: "5/6", viewers: 612,   cheers: 142,  momentum: 48 },
+  { id: "m5", athleteSlug: "sureyya-demir",         athleteName: "Süreyya Demir",         athleteImg: sureyyaDemirImg,athleteFlag: "tr", opponent: "Eddy Merckx",     opponentFlag: "be", sport: "Bilardo",  emoji: "🎱", status: "live", startsAt: "Şimdi", score: "23-19", setScore: "1/3", viewers: 480,   cheers: 96,   momentum: 55 },
 
   /* ── Yakında (3) ── */
-  { id: "m6", athleteSlug: "mete-gazoz",            athleteName: "Mete Gazoz",            athleteImg: okculukImg,  opponent: "Brady Ellison",   opponentFlag: "🇺🇸", sport: "Okçuluk",  emoji: "🏹", status: "soon", startsAt: "Bugün 19:30", viewers: 870,  cheers: 220, momentum: 0 },
-  { id: "m7", athleteSlug: "sureyya-demir",         athleteName: "Süreyya Demir",         athleteImg: bilardoImg,  opponent: "Dani Sánchez",    opponentFlag: "🇪🇸", sport: "Bilardo",  emoji: "🎱", status: "soon", startsAt: "Bugün 21:15", viewers: 410,  cheers: 88,  momentum: 0 },
-  { id: "m8", athleteSlug: "zeynep-sonmez",         athleteName: "Zeynep Sönmez",         athleteImg: tenisImg,    opponent: "Iga Świątek",     opponentFlag: "🇵🇱", sport: "Tenis",    emoji: "🎾", status: "soon", startsAt: "Yarın 14:00", viewers: 1_980, cheers: 420, momentum: 0 },
+  { id: "m6", athleteSlug: "mete-gazoz",            athleteName: "Mete Gazoz",            athleteImg: meteGazozImg,   athleteFlag: "tr", opponent: "Brady Ellison",   opponentFlag: "us", sport: "Okçuluk",  emoji: "🏹", status: "soon", startsAt: "Bugün 19:30", viewers: 870,  cheers: 220, momentum: 0 },
+  { id: "m7", athleteSlug: "sureyya-demir",         athleteName: "Süreyya Demir",         athleteImg: sureyyaDemirImg,athleteFlag: "tr", opponent: "Dani Sánchez",    opponentFlag: "es", sport: "Bilardo",  emoji: "🎱", status: "soon", startsAt: "Bugün 21:15", viewers: 410,  cheers: 88,  momentum: 0 },
+  { id: "m8", athleteSlug: "zeynep-sonmez",         athleteName: "Zeynep Sönmez",         athleteImg: tenisImg,       athleteFlag: "tr", opponent: "Iga Świątek",     opponentFlag: "pl", sport: "Tenis",    emoji: "🎾", status: "soon", startsAt: "Yarın 14:00", viewers: 1_980, cheers: 420, momentum: 0 },
 
   /* ── Bitti (3) ── */
-  { id: "m9",  athleteSlug: "yusuf-dikec",          athleteName: "Yusuf Dikeç",          athleteImg: okculukImg,  opponent: "Serhiy Kulish",  opponentFlag: "🇺🇦", sport: "Atıcılık", emoji: "🎯", status: "ended", startsAt: "Bitti", score: "10-8",  viewers: 980,  cheers: 612, momentum: 100 },
-  { id: "m10", athleteSlug: "buse-naz-cakiroglu",   athleteName: "Buse Naz Çakıroğlu",   athleteImg: boksImg,     opponent: "Nazym Kyzaibay", opponentFlag: "🇰🇿", sport: "Boks",     emoji: "🥊", status: "ended", startsAt: "Bitti", score: "5-0",   viewers: 1_540, cheers: 410, momentum: 100 },
-  { id: "m11", athleteSlug: "necati-er",            athleteName: "Necati Er",             athleteImg: atletizmImg, opponent: "Hugues Zango",   opponentFlag: "🇧🇫", sport: "Atletizm", emoji: "🏃", status: "ended", startsAt: "Bitti", score: "17.18m", viewers: 380,  cheers: 92,  momentum: 100 },
+  { id: "m9",  athleteSlug: "yusuf-dikec",          athleteName: "Yusuf Dikeç",          athleteImg: yusufDikecImg,  athleteFlag: "tr", opponent: "Serhiy Kulish",  opponentFlag: "ua", sport: "Atıcılık", emoji: "🎯", status: "ended", startsAt: "Bitti", score: "10-8",  viewers: 980,  cheers: 612, momentum: 100 },
+  { id: "m10", athleteSlug: "buse-naz-cakiroglu",   athleteName: "Buse Naz Çakıroğlu",   athleteImg: buseNazImg,     athleteFlag: "tr", opponent: "Nazym Kyzaibay", opponentFlag: "kz", sport: "Boks",     emoji: "🥊", status: "ended", startsAt: "Bitti", score: "5-0",   viewers: 1_540, cheers: 410, momentum: 100 },
+  { id: "m11", athleteSlug: "necati-er",            athleteName: "Necati Er",             athleteImg: atletizmImg,    athleteFlag: "tr", opponent: "Hugues Zango",   opponentFlag: "bf", sport: "Atletizm", emoji: "🏃", status: "ended", startsAt: "Bitti", score: "17.18m", viewers: 380,  cheers: 92,  momentum: 100 },
 ];
 
 /* ============================================================

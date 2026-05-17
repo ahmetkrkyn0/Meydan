@@ -224,12 +224,13 @@ function FeaturedCard({ match }: { match: Match }) {
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
               {match.emoji} {match.sport} · Şimdi
             </p>
-            <h3 className="mt-2 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
-              {match.athleteName}
+            <h3 className="mt-2 flex items-center gap-3 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
+              {match.athleteName} 
+              {match.athleteFlag && <img src={`https://flagcdn.com/w40/${match.athleteFlag}.png`} alt={match.athleteFlag} className="inline-block h-[0.7em] w-auto rounded-sm object-cover shadow-sm" />}
             </h3>
-            <p className="mt-1.5 text-base text-[color:var(--app-ink-soft)]">
-              vs <span className="font-semibold text-[color:var(--app-ink)]">{match.opponent}</span>{" "}
-              <span className="text-lg">{match.opponentFlag}</span>
+            <p className="mt-1.5 flex items-center gap-1.5 text-base text-[color:var(--app-ink-soft)]">
+              vs <span className="font-semibold text-[color:var(--app-ink)]">{match.opponent}</span>
+              <img src={`https://flagcdn.com/w20/${match.opponentFlag}.png`} alt={match.opponentFlag} className="inline-block h-3 w-4 rounded-[2px] object-cover opacity-90" />
             </p>
           </div>
 
@@ -341,12 +342,13 @@ function MatchCard({ match }: { match: Match }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="truncate font-display text-base font-bold leading-tight text-[color:var(--app-ink)]">
-                {match.athleteName}
+              <p className="flex items-center gap-2 truncate font-display text-base font-bold leading-tight text-[color:var(--app-ink)]">
+                {match.athleteName} 
+                {match.athleteFlag && <img src={`https://flagcdn.com/w20/${match.athleteFlag}.png`} alt={match.athleteFlag} className="inline-block h-[0.8em] w-auto rounded-[2px] object-cover shadow-sm" />}
               </p>
-              <p className="mt-0.5 truncate text-[12px] text-[color:var(--app-ink-soft)]">
-                vs <span className="font-semibold">{match.opponent}</span>{" "}
-                <span>{match.opponentFlag}</span>
+              <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-[color:var(--app-ink-soft)]">
+                vs <span className="font-semibold">{match.opponent}</span>
+                <img src={`https://flagcdn.com/w20/${match.opponentFlag}.png`} alt={match.opponentFlag} className="inline-block h-2.5 w-3.5 rounded-[2px] object-cover opacity-80" />
               </p>
             </div>
             <span className="shrink-0 rounded-full bg-[color:var(--app-line-soft)] px-2 py-0.5 text-[10px] font-semibold text-[color:var(--app-ink-soft)]">
@@ -434,11 +436,13 @@ function EndedCard({ match }: { match: Match }) {
               {match.emoji} {match.sport}
             </span>
           </div>
-          <p className="mt-1 truncate text-[13px] font-semibold leading-tight text-[color:var(--app-ink)]">
-            {match.athleteName}
+          <p className="mt-1 flex items-center gap-2 truncate text-[13px] font-semibold leading-tight text-[color:var(--app-ink)]">
+            {match.athleteName} 
+            {match.athleteFlag && <img src={`https://flagcdn.com/w20/${match.athleteFlag}.png`} alt={match.athleteFlag} className="inline-block h-[0.8em] w-auto rounded-[2px] object-cover opacity-90" />}
           </p>
-          <p className="truncate text-[11px] text-[color:var(--app-ink-soft)]">
-            vs {match.opponent} {match.opponentFlag}
+          <p className="flex items-center gap-1 truncate text-[11px] text-[color:var(--app-ink-soft)]">
+            vs {match.opponent} 
+            <img src={`https://flagcdn.com/w20/${match.opponentFlag}.png`} alt={match.opponentFlag} className="inline-block h-2 w-3 rounded-[2px] object-cover opacity-80" />
           </p>
         </div>
         {match.score && (

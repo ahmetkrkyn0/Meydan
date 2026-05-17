@@ -64,25 +64,25 @@ function randomTribuneCheer(recent: { from: string; message: string }[]): Omit<C
   return { from, message, time };
 }
 
-/* ── Bayrak emojisinden ülke adı ── */
+/* ── Bayrak kodundan ülke adı ── */
 const FLAG_TO_COUNTRY: Record<string, string> = {
-  "🇹🇷": "Türkiye",
-  "🇬🇷": "Yunanistan",
-  "🇫🇷": "Fransa",
-  "🇰🇷": "G. Kore",
-  "🇵🇹": "Portekiz",
-  "🇧🇪": "Belçika",
-  "🇺🇸": "ABD",
-  "🇪🇸": "İspanya",
-  "🇵🇱": "Polonya",
-  "🇺🇦": "Ukrayna",
-  "🇰🇿": "Kazakistan",
-  "🇧🇫": "Burkina Faso",
-  "🇮🇹": "İtalya",
-  "🇩🇪": "Almanya",
-  "🇬🇧": "İngiltere",
-  "🇧🇷": "Brezilya",
-  "🇯🇵": "Japonya",
+  "us": "ABD",
+  "kr": "Güney Kore",
+  "fr": "Fransa",
+  "gr": "Yunanistan",
+  "pt": "Portekiz",
+  "be": "Belçika",
+  "es": "İspanya",
+  "pl": "Polonya",
+  "ua": "Ukrayna",
+  "kz": "Kazakistan",
+  "bf": "Burkina Faso",
+  "it": "İtalya",
+  "de": "Almanya",
+  "gb": "İngiltere",
+  "br": "Brezilya",
+  "jp": "Japonya",
+  "tr": "Türkiye",
 };
 function countryFromFlag(flag: string): string {
   return FLAG_TO_COUNTRY[flag] ?? flag;
@@ -501,7 +501,7 @@ function LiveMatchPage() {
                   {/* Bizim sporcu */}
                   <FighterCard
                     name={match.athleteName}
-                    flag="🇹🇷"
+                    flag={match.athleteFlag ?? "tr"}
                     country="Türkiye"
                     imgSrc={match.athleteImg}
                     side="home"
@@ -845,12 +845,12 @@ function FighterCard({
         )}
         {/* Büyük bayrak rozeti — avatarın altında, beyaz daire içinde */}
         <span
-          className={`absolute -bottom-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl shadow-md ring-2 ring-white ${
+          className={`absolute -bottom-2 inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-md ring-2 ring-white ${
             side === "home" ? "right-0 translate-x-1/3" : "left-0 -translate-x-1/3"
           }`}
           title={country ?? flag}
         >
-          {flag}
+          <img src={`https://flagcdn.com/w40/${flag}.png`} alt={flag} className="h-full w-full object-cover" />
         </span>
       </div>
       <div className="flex flex-col gap-0.5 pt-1">
@@ -858,8 +858,8 @@ function FighterCard({
           {name}
         </p>
         {country && (
-          <div className={`flex items-center gap-1 ${flagOrder}`}>
-            <span className="text-sm leading-none">{flag}</span>
+          <div className={`flex items-center gap-1.5 ${flagOrder}`}>
+            <img src={`https://flagcdn.com/w20/${flag}.png`} alt={flag} className="h-2.5 w-3.5 rounded-[2px] object-cover" />
             <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
               {country}
             </span>
