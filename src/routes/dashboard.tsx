@@ -16,6 +16,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { Skeleton } from "@/components/ui/skeleton";
 import { listFollowedAthletes, listNearbyEvents, listProfiles } from "@/lib/api";
 import { backendEventsToEvents, profilesToAthletes, profileToAthlete } from "@/lib/api-mappers";
 import { useActiveFan } from "@/lib/active-athlete";
@@ -152,7 +153,9 @@ function DashboardPage() {
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
                 </span>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-coral">Şu an canlı</span>
-                <span className="text-xs text-[color:var(--app-ink-soft)]">Defne · Seda</span>
+                <span className="text-xs text-[color:var(--app-ink-soft)]">
+                  {featuredPair.map((m) => m.athleteName.split(" ")[0]).join(" · ")}
+                </span>
               </div>
 
               <div className="flex items-center gap-4">
@@ -264,7 +267,7 @@ function DashboardPage() {
                       <div className="inline-flex items-center gap-2 rounded-full border border-coral/40 bg-coral/10 px-3 py-1 backdrop-blur">
                         <Radio className="h-3 w-3 text-coral" />
                         <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-coral">
-                          Canlı · Featured
+                          Canlı · Öne Çıkan
                         </span>
                       </div>
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] text-white/80 backdrop-blur">
@@ -426,7 +429,11 @@ function DashboardPage() {
           )}
 
           <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-            {followed.slice(0, 3).map((a, i) => (
+            {profilesQuery.isLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="aspect-[3/4] rounded-3xl" />
+                ))
+              : followed.slice(0, 3).map((a, i) => (
               <Link
                 key={a.slug}
                 to="/sporcu/$slug"
@@ -473,7 +480,7 @@ function DashboardPage() {
               </Link>
             ))}
 
-            {/* "+N more" tile */}
+            {/* "+N more" tile — sadece yükleme bitmişse göster */}
             <Link
               to="/kesfet"
               className="group relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-3xl border border-dashed border-[color:var(--app-line)] bg-gradient-to-br from-violet/5 via-white to-sky/5 p-5 transition-all hover:border-violet/40 hover:shadow-lg"
@@ -518,7 +525,11 @@ function DashboardPage() {
             <div className="absolute bottom-2 left-2 top-2 w-px bg-gradient-to-b from-violet/40 via-[color:var(--app-line)] to-transparent sm:left-3" />
 
             <div className="flex flex-col gap-5">
-              {upcoming.map((e, i) => (
+              {eventsQuery.isLoading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-20 rounded-2xl" />
+                  ))
+                : upcoming.map((e, i) => (
                 <motion.div
                   key={e.id}
                   initial={{ opacity: 0, x: -12 }}

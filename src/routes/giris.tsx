@@ -20,26 +20,30 @@ function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
   const navigate = useNavigate();
   const login = useLogin();
 
+  const emailError = emailTouched && !email.trim() ? "E-posta adresi zorunlu." : null;
+  const passwordError = passwordTouched && !password ? "Şifre zorunlu." : null;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setEmailTouched(true);
+    setPasswordTouched(true);
     setError(null);
-    if (!email.trim()) {
-      setError("Email zorunlu");
-      return;
-    }
-    if (!password) {
-      setError("Şifre zorunlu");
-      return;
-    }
+    if (!email.trim() || !password) return;
     setLoading(true);
     try {
       const result = await login(email.trim(), password);
       navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Giriş başarısız.");
+      setError(
+        err instanceof Error && err.message
+          ? `E-posta veya şifre hatalı. Şifreni unuttuysan → `
+          : "Giriş başarısız. Lütfen tekrar dene."
+      );
     } finally {
       setLoading(false);
     }
@@ -91,35 +95,50 @@ function LoginPage() {
           onSubmit={handleSubmit}
           className="mt-8 w-full space-y-3"
         >
-          <Field
-            icon={Mail}
-            type="email"
-            placeholder="E-posta adresin"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Field
-            icon={Lock}
-            type={showPw ? "text" : "password"}
-            placeholder="Şifren"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            suffix={
-              <button
-                type="button"
-                onClick={() => setShowPw((v) => !v)}
-                className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
-                aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
-              >
-                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            }
-          />
+          <div>
+            <Field
+              icon={Mail}
+              type="email"
+              placeholder="E-posta adresin"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => setEmailTouched(true)}
+              aria-invalid={!!emailError}
+            />
+            {emailError && <p className="mt-1 px-1 text-xs text-coral">{emailError}</p>}
+          </div>
+          <div>
+            <Field
+              icon={Lock}
+              type={showPw ? "text" : "password"}
+              placeholder="Şifren"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => setPasswordTouched(true)}
+              aria-invalid={!!passwordError}
+              suffix={
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                  aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                >
+                  {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              }
+            />
+            {passwordError && <p className="mt-1 px-1 text-xs text-coral">{passwordError}</p>}
+          </div>
 
           {error && (
-            <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>
+            <p role="alert" className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">
+              {error}
+              {error.includes("hatalı") && (
+                <Link to="/kayit" className="ml-1 font-semibold underline underline-offset-2">
+                  Şifreni sıfırla
+                </Link>
+              )}
+            </p>
           )}
 
           <button
