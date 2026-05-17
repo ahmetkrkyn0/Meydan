@@ -258,6 +258,19 @@ export function createCheer(data: {
   });
 }
 
+export type CheerSummary = {
+  total: number;
+  safe_count: number;
+  summary: string;
+  top_messages: string[];
+};
+
+export function getCheerSummary(athleteId: string, matchDate: string) {
+  return apiRequest<CheerSummary>(
+    `/cheers/summary/${athleteId}/${matchDate}`,
+  );
+}
+
 export function listJournals(athleteId: string) {
   return apiRequest<{ journals: BackendJournal[] }>(`/journals/${athleteId}`);
 }
@@ -275,6 +288,28 @@ export function listNearbyEvents(params: {
 
 export function getEvent(eventId: string) {
   return apiRequest<BackendEvent>(`/events/${eventId}`);
+}
+
+// --- Geo (ORS isochrone proxy) ---
+
+export type IsochroneMode = "foot-walking" | "cycling-regular" | "driving-car";
+export type IsochroneMinutes = 15 | 30 | 45;
+
+export type IsochroneResponse = {
+  center: [number, number]; // [lat, lng]
+  polygon: GeoJSON.Feature<GeoJSON.Polygon>;
+  cached: boolean;
+};
+
+export function getIsochrone(params: {
+  city: string;
+  mode: IsochroneMode;
+  minutes: IsochroneMinutes;
+}) {
+  return apiRequest<IsochroneResponse>("/geo/isochrone", {
+    query: params,
+    skipAuth: true,
+  });
 }
 
 // --- AI Talent Match ---

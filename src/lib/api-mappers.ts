@@ -1,5 +1,5 @@
 import type { Athlete, DiaryEntry, Event, Need } from "@/lib/mock-data";
-import { athletes, events, needs } from "@/lib/mock-data";
+import { athletes, events, getSportImage, needs } from "@/lib/mock-data";
 import type { BackendEvent, BackendJournal, BackendNeed, BackendProfile } from "@/lib/api";
 
 const SPORT_EMOJI: Record<string, string> = {
@@ -144,6 +144,9 @@ export function backendEventToEvent(event: BackendEvent, index = 0): Event {
     coords: mapCoords(event.latitude, event.longitude),
     latitude: event.latitude ?? undefined,
     longitude: event.longitude ?? undefined,
+    // Backend henüz fiyat alanı taşımıyor — is_free=true ise 0, değilse fallback.
+    priceTL: event.is_free ? 0 : fallback.priceTL,
+    image: getSportImage(branch),
   };
 }
 
