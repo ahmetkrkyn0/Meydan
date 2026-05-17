@@ -67,7 +67,7 @@ export function FinalCta() {
             className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
           >
             <motion.a
-              href="#top"
+              href="/dashboard"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-3 rounded-full bg-violet py-2.5 pl-2.5 pr-7 text-sm font-semibold text-white shadow-lg shadow-violet/30 transition-shadow hover:shadow-xl hover:shadow-violet/35"

@@ -43,7 +43,7 @@ export function Navbar() {
           </nav>
           <div className="flex items-center gap-2">
             <a
-              href="#cta"
+              href="/dashboard"
               className="hidden rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/85 transition-all hover:bg-white/10 sm:inline-flex"
             >
               Giriş Yap
