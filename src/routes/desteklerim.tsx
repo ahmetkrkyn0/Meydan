@@ -5,9 +5,12 @@ import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   Award,
+  CalendarClock,
   Heart,
   MoreVertical,
   TrendingUp,
+  Users,
+  Wallet,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athletes, badges } from "@/lib/mock-data";
@@ -111,15 +114,15 @@ function SupportsPage() {
 
   return (
     <AppShell role="fan">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
-        <motion.header variants={fade} initial="hidden" animate="show" custom={0} className="flex flex-col gap-2">
-          <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-violet">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+        <motion.header variants={fade} initial="hidden" animate="show" custom={0} className="flex flex-col gap-1.5">
+          <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-violet">
             Tribün hesabı
           </p>
-          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
+          <h1 className="font-display text-3xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
             Desteklediklerim
           </h1>
-          <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
+          <p className="max-w-xl text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
             Her ay yanlarında oldukların. Tek tıkla yönet, istediğinde iptal et.
           </p>
         </motion.header>
@@ -129,12 +132,17 @@ function SupportsPage() {
           initial="hidden"
           animate="show"
           custom={1}
-          className="soft-card-strong grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl px-6 py-5 sm:grid-cols-4 sm:gap-x-10"
+          className="soft-card-strong grid grid-cols-2 divide-y divide-[color:var(--app-line-soft)] overflow-hidden rounded-2xl sm:grid-cols-4 sm:divide-y-0 sm:divide-x"
         >
-          <Stat label="Toplam katkı" value={`₺${total.toLocaleString("tr-TR")}`} tone="violet" />
-          <Stat label="Sporcu" value={String(activeCount)} tone="sky" />
-          <Stat label="Aktif süre" value="5 ay" tone="coral" />
-          <Stat label="Bu ayki büyüme" value="+12%" tone="emerald" />
+          <Stat
+            icon={Wallet}
+            label="Toplam katkı"
+            value={`₺${total.toLocaleString("tr-TR")}`}
+            tone="violet"
+          />
+          <Stat icon={Users} label="Sporcu" value={String(activeCount)} tone="sky" />
+          <Stat icon={CalendarClock} label="Aktif süre" value="5 ay" tone="coral" />
+          <Stat icon={TrendingUp} label="Bu ayki büyüme" value="+12%" tone="emerald" />
         </motion.section>
 
         <motion.div variants={fade} initial="hidden" animate="show" custom={2} className="flex items-center gap-1 self-start rounded-full border border-[color:var(--app-line-soft)] bg-white/70 p-1.5">
@@ -172,7 +180,7 @@ function SupportsPage() {
               <p className="text-sm text-[color:var(--app-ink-soft)]">Bu sekmede henüz bir destek yok.</p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((s) => {
                 const profiles = profilesQuery.data?.profiles ?? [];
                 const backendProfile = profiles.find((p) => {
@@ -183,15 +191,18 @@ function SupportsPage() {
                   ? profileToAthlete(backendProfile, 0)
                   : athletes.find((x) => x.slug === s.slug);
                 if (!a) return null;
+                const isMenuOpen = openMenu === s.slug;
                 return (
                   <div
                     key={s.slug}
-                    className="soft-card relative flex items-center gap-4 rounded-2xl p-4 sm:p-5"
+                    className={`soft-card relative flex items-center gap-3 rounded-2xl p-3 ${
+                      isMenuOpen ? "z-20" : ""
+                    }`}
                   >
                     <img
                       src={a.img}
                       alt={a.name}
-                      className="h-14 w-14 shrink-0 rounded-2xl object-cover object-top"
+                      className="h-11 w-11 shrink-0 rounded-full object-cover object-top"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">{a.name}</p>
@@ -199,28 +210,29 @@ function SupportsPage() {
                         {a.sportEmoji} {a.sport} · {a.city}
                       </p>
                     </div>
-                    <div className="flex shrink-0 flex-col items-end">
+                    <div className="flex shrink-0 flex-col items-end leading-tight">
                       <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
                         ₺{s.monthly}
-                        <span className="ml-0.5 text-xs font-medium text-[color:var(--app-ink-soft)]">/ay</span>
+                        <span className="ml-0.5 text-[10px] font-medium text-[color:var(--app-ink-soft)]">/ay</span>
                       </p>
-                      <p className="text-[10px] text-[color:var(--app-ink-mute)]">{s.months} ay aktif</p>
+                      <p className="mt-0.5 text-[10px] text-[color:var(--app-ink-mute)]">{s.months} ay aktif</p>
                     </div>
-                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/12 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/12 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                       <TrendingUp className="h-3 w-3" />
                       {s.trend}
                     </span>
 
-                    <div className="relative">
+                    <div className="relative shrink-0">
                       <button
-                        onClick={() => setOpenMenu(openMenu === s.slug ? null : s.slug)}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+                        onClick={() => setOpenMenu(isMenuOpen ? null : s.slug)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
                         aria-label="Seçenekler"
+                        aria-expanded={isMenuOpen}
                       >
                         <MoreVertical className="h-4 w-4" />
                       </button>
-                      {openMenu === s.slug && (
-                        <div className="absolute right-0 top-10 z-10 w-36 overflow-hidden rounded-2xl border border-[color:var(--app-line)] bg-white p-1 shadow-lg">
+                      {isMenuOpen && (
+                        <div className="absolute right-0 top-9 z-30 w-36 overflow-hidden rounded-2xl border border-[color:var(--app-line)] bg-white p-1 shadow-xl">
                           <Link
                             to="/sporcu/$slug"
                             params={{ slug: a.slug }}
@@ -255,17 +267,21 @@ function SupportsPage() {
               Tüm rozetler <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
             {supportBadges.map((b) => (
-              <div key={b.id} className="soft-card flex items-center gap-3 rounded-2xl p-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet/12 text-2xl">
+              <div key={b.id} className="soft-card flex items-center gap-2.5 rounded-2xl p-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet/12 text-lg">
                   {b.emoji}
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">{b.name}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-[color:var(--app-ink-soft)]">{b.description}</p>
+                  <p className="truncate text-xs font-bold text-[color:var(--app-ink)]">{b.name}</p>
+                  <p className="mt-0.5 truncate text-[10px] text-[color:var(--app-ink-soft)]">{b.description}</p>
                 </div>
-                <Award className="ml-auto h-4 w-4 text-[color:var(--app-ink-mute)]" />
+                <Award
+                  className="ml-auto h-4 w-4 shrink-0 text-amber-500"
+                  fill="currentColor"
+                  strokeWidth={1.5}
+                />
               </div>
             ))}
           </div>
@@ -275,16 +291,46 @@ function SupportsPage() {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone: "violet" | "sky" | "coral" | "emerald" }) {
+function Stat({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: typeof Heart;
+  label: string;
+  value: string;
+  tone: "violet" | "sky" | "coral" | "emerald";
+}) {
   const toneClass =
-    tone === "violet" ? "text-violet"
-    : tone === "sky" ? "text-sky"
-    : tone === "coral" ? "text-coral"
-    : "text-emerald-700";
+    tone === "violet"
+      ? "text-violet"
+      : tone === "sky"
+        ? "text-sky"
+        : tone === "coral"
+          ? "text-coral"
+          : "text-emerald-700";
+  const iconBg =
+    tone === "violet"
+      ? "bg-violet/10 text-violet"
+      : tone === "sky"
+        ? "bg-sky/10 text-sky"
+        : tone === "coral"
+          ? "bg-coral/10 text-coral"
+          : "bg-emerald-500/10 text-emerald-700";
   return (
-    <div className="flex flex-col">
-      <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">{label}</p>
-      <p className={`mt-2 font-display text-3xl font-bold leading-none ${toneClass}`}>{value}</p>
+    <div className="flex items-center gap-3 px-4 py-3.5 sm:px-5">
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${iconBg}`}>
+        <Icon className="h-4 w-4" strokeWidth={2} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
+          {label}
+        </p>
+        <p className={`mt-0.5 font-display text-xl font-bold leading-none ${toneClass}`}>
+          {value}
+        </p>
+      </div>
     </div>
   );
 }

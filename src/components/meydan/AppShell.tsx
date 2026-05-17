@@ -79,6 +79,12 @@ export function AppShell({
     athlete: "/sporcu-panel",
     brand: "/marka-panel",
   };
+  const ROLE_TO_SETTINGS: Record<AppRole, string> = {
+    fan: "/desteklerim",
+    athlete: "/sporcu-panel/profil",
+    brand: "/marka-panel/profil",
+  };
+  const settingsTarget = ROLE_TO_SETTINGS[role];
 
   async function handleRoleSwitch(target: AppRole) {
     if (demoLoading) return;
@@ -248,7 +254,11 @@ export function AppShell({
               <div className="absolute right-5 top-14 w-48 rounded-2xl border border-[color:var(--app-line)] bg-white p-1.5 shadow-lg sm:right-8">
                 {session.isAuthenticated ? (
                   <>
-                    <Link to="/sporcu-panel/profil" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]">
+                    <Link
+                      to={settingsTarget}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+                    >
                       <Settings className="h-3.5 w-3.5" /> Ayarlar
                     </Link>
                     <button
