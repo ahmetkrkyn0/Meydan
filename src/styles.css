@@ -295,6 +295,14 @@
   .app-ambient > *:not(aside):not(.app-ambient-fixed) { position: relative; z-index: 1; }
   .app-ambient > aside, .app-ambient > .app-ambient-fixed { z-index: 30; }
 
+  /* ── Stage veil utilities (hero + spotlight akış) ── */
+  .stage-veil-light  { background: var(--stage-veil-light); }
+  .stage-veil-tint   { background: var(--stage-veil-tint); }
+  .stage-merge-down  { background: var(--stage-merge-down); }
+  .stage-merge-glow  { background: var(--stage-merge-glow); }
+  .stage-dark-veil   { background: var(--stage-dark-veil); }
+  .stage-dark-glow   { background: var(--stage-dark-glow); }
+
   /* ─────────────────────────────────────────────────────
    * SIDEBAR GLASS — sticky sidebar with depth + aurora veil
    * ───────────────────────────────────────────────────── */
