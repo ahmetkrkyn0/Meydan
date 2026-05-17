@@ -245,91 +245,21 @@ function KesfetPage() {
           </motion.section>
         )}
 
-        {/* ─── Filter bar ─── */}
+        {/* ─── Filter bar (desktop) ─── */}
         <motion.section
           variants={fadeUp}
-          className="sticky top-16 z-10 rounded-3xl border border-[color:var(--app-line)] bg-white/85 px-4 py-4 shadow-sm backdrop-blur-xl"
+          className="sticky top-16 z-10 hidden rounded-3xl border border-[color:var(--app-line)] bg-white/85 px-4 py-4 shadow-sm backdrop-blur-xl md:block"
         >
-          <div className="mb-3 flex items-baseline justify-between">
-            <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
-              <h2 className="font-display text-lg font-bold tracking-tight text-[color:var(--app-ink)]">
-                Filtrele
-              </h2>
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-xs text-[color:var(--app-ink-mute)]">
-              <Search className="h-3.5 w-3.5" />
-              <span className="font-mono tabular-nums">{filtered.length} sporcu</span>
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setActiveSport(null)}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                activeSport === null
-                  ? "bg-[color:var(--app-ink)] text-white"
-                  : "chip"
-              }`}
-            >
-              Tümü
-            </button>
-            {sports.map((s) => {
-              const active = activeSport === s.name;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setActiveSport(active ? null : s.name)}
-                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    active ? "bg-[color:var(--app-ink)] text-white" : "chip"
-                  }`}
-                >
-                  <span className="mr-1">{s.emoji}</span> {s.name}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-[color:var(--app-line-soft)] pt-3">
-            <label className="flex items-center gap-2">
-              <MapPin className="h-3.5 w-3.5 text-[color:var(--app-ink-soft)]" />
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="rounded-lg border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 text-xs font-medium text-[color:var(--app-ink)] focus:border-violet/40 focus:outline-none focus:ring-2 focus:ring-violet/15"
-              >
-                {CITIES.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-
-            <button
-              onClick={() => setOnlyRising((v) => !v)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
-                onlyRising
-                  ? "bg-coral/15 text-coral"
-                  : "border border-[color:var(--app-line)] text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
-              }`}
-            >
-              <Flame className="h-3.5 w-3.5" />
-              Yeni yükselen
-            </button>
-
-            {activeFilters.length > 0 && (
-              <div className="ml-auto flex flex-wrap items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-                  Filtre:
-                </span>
-                {activeFilters.map((f) => (
-                  <span key={f} className="chip chip-violet">
-                    {f}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
+          <FiltersHeader count={filtered.length} />
+          <FiltersBody
+            activeSport={activeSport}
+            setActiveSport={setActiveSport}
+            city={city}
+            setCity={setCity}
+            onlyRising={onlyRising}
+            setOnlyRising={setOnlyRising}
+            activeFilters={activeFilters}
+          />
           {(profilesQuery.isLoading || profilesQuery.isError) && (
             <p className="mt-3 text-[11px] text-[color:var(--app-ink-mute)]">
               {profilesQuery.isLoading
@@ -337,6 +267,67 @@ function KesfetPage() {
                 : "Backend'e ulaşılamadı; demo verisi gösteriliyor."}
             </p>
           )}
+        </motion.section>
+
+        {/* ─── Filter trigger (mobile) ─── */}
+        <motion.section
+          variants={fadeUp}
+          className="sticky top-16 z-10 flex items-center justify-between gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/90 px-4 py-3 shadow-sm backdrop-blur-xl md:hidden"
+        >
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
+            <span className="font-display text-sm font-bold text-[color:var(--app-ink)]">Filtrele</span>
+            <span className="font-mono text-[11px] tabular-nums text-[color:var(--app-ink-mute)]">
+              · {filtered.length}
+            </span>
+          </div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--app-ink)] px-3.5 py-1.5 text-xs font-bold text-white">
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                {activeFilters.length > 0 ? `${activeFilters.length} filtre` : "Aç"}
+              </button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl border-[color:var(--app-line)] bg-[color:var(--app-bg)]">
+              <SheetHeader className="text-left">
+                <SheetTitle className="font-display text-xl font-bold text-[color:var(--app-ink)]">
+                  Filtrele
+                </SheetTitle>
+                <SheetDescription className="text-xs text-[color:var(--app-ink-soft)]">
+                  Branş, şehir ve trend filtrelerini buradan seç.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-4">
+                <FiltersBody
+                  activeSport={activeSport}
+                  setActiveSport={setActiveSport}
+                  city={city}
+                  setCity={setCity}
+                  onlyRising={onlyRising}
+                  setOnlyRising={setOnlyRising}
+                  activeFilters={activeFilters}
+                />
+              </div>
+              <div className="mt-5 flex items-center gap-2 border-t border-[color:var(--app-line-soft)] pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSport(null);
+                    setCity("Tüm Türkiye");
+                    setOnlyRising(false);
+                  }}
+                  className="rounded-full border border-[color:var(--app-line)] px-4 py-2 text-xs font-semibold text-[color:var(--app-ink-soft)]"
+                >
+                  Sıfırla
+                </button>
+                <SheetClose asChild>
+                  <button className="ml-auto rounded-full bg-[color:var(--app-ink)] px-5 py-2 text-xs font-bold text-white">
+                    {filtered.length} sporcu göster
+                  </button>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
         </motion.section>
 
         {/* ─── Athlete grid ─── */}
