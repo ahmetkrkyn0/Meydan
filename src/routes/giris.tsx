@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useLogin, defaultRouteForRole } from "@/lib/session";
 
 export const Route = createFileRoute("/giris")({
@@ -16,6 +16,8 @@ export const Route = createFileRoute("/giris")({
 
 function LoginPage() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -28,9 +30,13 @@ function LoginPage() {
       setError("Email zorunlu");
       return;
     }
+    if (!password) {
+      setError("Şifre zorunlu");
+      return;
+    }
     setLoading(true);
     try {
-      const result = await login(email.trim());
+      const result = await login(email.trim(), password);
       navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Giriş başarısız.");
@@ -93,10 +99,24 @@ function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-
-          <p className="pt-1 text-[11px] leading-relaxed text-[color:var(--app-ink-mute)]">
-            Demo: şifre yok. Daha önce kayıt olduğun email ile giriş yap.
-          </p>
+          <Field
+            icon={Lock}
+            type={showPw ? "text" : "password"}
+            placeholder="Şifren"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            suffix={
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+              >
+                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            }
+          />
 
           {error && (
             <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>

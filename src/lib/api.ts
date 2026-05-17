@@ -144,6 +144,7 @@ export type AuthResponse = {
 
 export function registerUser(data: {
   email: string;
+  password: string;
   full_name: string;
   role: ProfileRole;
   branch?: string;
@@ -157,7 +158,7 @@ export function registerUser(data: {
   });
 }
 
-export function loginUser(data: { email: string }) {
+export function loginUser(data: { email: string; password: string }) {
   return apiRequest<AuthResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify(data),

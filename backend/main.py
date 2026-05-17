@@ -2,6 +2,7 @@
 
 import re
 import secrets
+import bcrypt
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -12,6 +13,7 @@ import supabase_service
 
 
 _EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+MIN_PASSWORD_LEN = 6
 
 
 def _normalize_email(raw: str) -> str:
@@ -20,6 +22,32 @@ def _normalize_email(raw: str) -> str:
     if not _EMAIL_RE.match(email):
         raise HTTPException(status_code=400, detail="Geçersiz email biçimi")
     return email
+
+
+def _validate_password(raw: str) -> str:
+    """Şifre minimum uzunluk kontrolü."""
+    pw = raw or ""
+    if len(pw) < MIN_PASSWORD_LEN:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Şifre en az {MIN_PASSWORD_LEN} karakter olmalı",
+        )
+    return pw
+
+
+def _hash_password(plain: str) -> str:
+    """bcrypt ile şifreyi hashler."""
+    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def _verify_password(plain: str, hashed: str | None) -> bool:
+    """bcrypt ile şifreyi doğrular. hashed yoksa False."""
+    if not hashed:
+        return False
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except (ValueError, TypeError):
+        return False
 
 
 def _generate_token() -> str:
@@ -91,6 +119,7 @@ class ProfileCreateRequest(BaseModel):
 
 class RegisterRequest(BaseModel):
     email: str
+    password: str
     full_name: str
     role: Literal["sporcu", "taraftar", "marka"]
     branch: str | None = None
@@ -100,6 +129,7 @@ class RegisterRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     email: str
+    password: str
 
 
 class NeedCreateRequest(BaseModel):
@@ -204,9 +234,10 @@ class EventUpdateRequest(BaseModel):
 
 @app.post("/auth/register")
 def auth_register(body: RegisterRequest):
-    """Yeni profil oluşturur ve token döner. Email unique."""
+    """Yeni profil oluşturur (email + şifre) ve token döner. Email unique."""
     try:
         email = _normalize_email(body.email)
+        password = _validate_password(body.password)
         existing = supabase_service.get_profile_by_email(email)
         if existing is not None:
             raise HTTPException(
@@ -220,6 +251,7 @@ def auth_register(body: RegisterRequest):
             "full_name": body.full_name,
             "email": email,
             "auth_token": token,
+            "password_hash": _hash_password(password),
         }
         if body.branch is not None:
             data["branch"] = body.branch
@@ -243,21 +275,29 @@ def auth_register(body: RegisterRequest):
 
 @app.post("/auth/login")
 def auth_login(body: LoginRequest):
-    """Email ile giriş yapar, yeni token üretip döner. Şifre yok."""
+    """Email + şifre ile giriş yapar, yeni token üretip döner."""
     try:
         email = _normalize_email(body.email)
-        profile = supabase_service.get_profile_by_email(email)
-        if profile is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Bu email ile kayıtlı kullanıcı bulunamadı. Önce kayıt ol.",
-            )
+        password = (body.password or "").strip()
+        if not password:
+            raise HTTPException(status_code=400, detail="Şifre gerekli")
+
+        # Şifre hash'ini görmek için raw kaydı istiyoruz — by_email helper
+        # _embedding_kolonlarini_cikar'dan geçtiği için password_hash görünmez.
+        # Bu yüzden burada doğrudan tabloyu sorgulamak yerine helper'ı
+        # değiştireceğiz: get_profile_with_secrets_by_email kullan.
+        secret = supabase_service.get_profile_with_secrets_by_email(email)
+        if secret is None:
+            # Email bulunamasa bile aynı generic mesaj — enumeration sızıntısı yok.
+            raise HTTPException(status_code=401, detail="Email veya şifre hatalı")
+        if not _verify_password(password, secret.get("password_hash")):
+            raise HTTPException(status_code=401, detail="Email veya şifre hatalı")
 
         token = _generate_token()
-        updated = supabase_service.update_profile(profile["id"], {"auth_token": token})
+        updated = supabase_service.update_profile(secret["id"], {"auth_token": token})
         return {
             "token": token,
-            "profile": updated or profile,
+            "profile": updated,
         }
     except HTTPException:
         raise

@@ -104,7 +104,8 @@ def get_profile(profile_id: str) -> dict | None:
 
 
 def get_profile_by_email(email: str) -> dict | None:
-    """Email ile profil bulur (lowercase normalize edilmiş email beklenir)."""
+    """Email ile profil bulur (lowercase normalize edilmiş email beklenir).
+    Hassas alanları (password_hash, auth_token) gizler."""
     try:
         response = (
             supabase.table("profiles")
@@ -118,6 +119,31 @@ def get_profile_by_email(email: str) -> dict | None:
         return _embedding_kolonlarini_cikar(response.data[0])
     except Exception as e:
         print(f"Email ile profil getirme hatası: {e}")
+        raise
+
+
+def get_profile_with_secrets_by_email(email: str) -> dict | None:
+    """Email ile profil bulur, password_hash gibi hassas alanları DA döner.
+    Sadece backend içi auth doğrulaması için kullanılmalı; response'a dökme!"""
+    try:
+        response = (
+            supabase.table("profiles")
+            .select("*")
+            .ilike("email", email)
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            return None
+        # Embedding'leri ayıkla ama password_hash ve auth_token kalsın.
+        raw = response.data[0]
+        return {
+            anahtar: deger
+            for anahtar, deger in raw.items()
+            if not anahtar.endswith("_embedding") and anahtar != "embedding"
+        }
+    except Exception as e:
+        print(f"Email ile (secrets) profil getirme hatası: {e}")
         raise
 
 
