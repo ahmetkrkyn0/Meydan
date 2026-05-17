@@ -4,9 +4,11 @@ import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { athleteBySlug, needs, type Need } from "@/lib/mock-data";
-import { listNeeds, listProfiles } from "@/lib/api";
-import { backendNeedsToNeeds, profileToAthlete } from "@/lib/api-mappers";
+import { ActiveAthletePicker } from "@/components/meydan/ActiveAthletePicker";
+import { type Need } from "@/lib/mock-data";
+import { listNeeds } from "@/lib/api";
+import { backendNeedsToNeeds } from "@/lib/api-mappers";
+import { useActiveAthlete } from "@/lib/active-athlete";
 
 export const Route = createFileRoute("/sporcu-panel/ihtiyaclar")({
   component: NeedsPage,
@@ -23,16 +25,8 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 type Tab = "all" | "active" | "completed";
 
 function NeedsPage() {
-  const profilesQuery = useQuery({
-    queryKey: ["profiles", "sporcu"],
-    queryFn: () => listProfiles({ role: "sporcu" }),
-    retry: 1,
-  });
-  const activeProfile = profilesQuery.data?.profiles?.[0] ?? null;
-  const me = useMemo(
-    () => (activeProfile ? profileToAthlete(activeProfile, 0) : athleteBySlug("mete-gazoz")),
-    [activeProfile],
-  );
+  const activeAthlete = useActiveAthlete();
+  const activeProfile = activeAthlete.profile;
   const needsQuery = useQuery({
     queryKey: ["needs", activeProfile?.id],
     queryFn: () => listNeeds(activeProfile!.id),
@@ -43,16 +37,11 @@ function NeedsPage() {
   const [tab, setTab] = useState<Tab>("all");
 
   const myNeeds: Need[] = useMemo(() => {
-    if (needsQuery.data) return backendNeedsToNeeds(needsQuery.data.needs, me);
-    return needs.slice(0, 4).map((n, i) => ({
-      ...n,
-      athleteSlug: me.slug,
-      athleteName: me.name,
-      athleteImg: me.img,
-      city: me.city,
-      urgent: i === 0,
-    }));
-  }, [me, needsQuery.data]);
+    if (!activeAthlete.athlete || !needsQuery.data) return [];
+    return backendNeedsToNeeds(needsQuery.data.needs, activeAthlete.athlete);
+  }, [activeAthlete.athlete, needsQuery.data]);
+
+  const me = activeAthlete.athlete;
 
   const list = tab === "all"
     ? myNeeds
@@ -67,6 +56,21 @@ function NeedsPage() {
     .filter((n) => n.type === "money")
     .reduce((s, n) => s + (n.targetAmount ?? 0), 0);
 
+  if (!me) {
+    return (
+      <AppShell role="athlete">
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 py-16">
+          <ActiveAthletePicker state={activeAthlete} />
+          <p className="text-sm text-[color:var(--app-ink-soft)]">
+            Sporcu paneli için aktif bir sporcu profili gerekli. Backend'de en az bir
+            <span className="font-semibold"> role=sporcu</span> kaydı oluştuktan sonra
+            yukarıdaki seçici dolacak.
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell role="athlete" userName={me.name} userCity={me.city}>
       {/* Swiss surface — pure white, hard rules, mono accents */}
@@ -78,6 +82,9 @@ function NeedsPage() {
           className="mx-auto w-full max-w-6xl px-6 py-12 sm:px-12 sm:py-16"
           style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
+          <div className="mb-6">
+            <ActiveAthletePicker state={activeAthlete} />
+          </div>
           {/* ── Top meta bar ── */}
           <motion.div
             variants={fadeUp}

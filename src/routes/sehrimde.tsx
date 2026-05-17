@@ -34,29 +34,40 @@ function SehrimdePage() {
   const [range, setRange] = useState<"week" | "month">("week");
   const [activeId, setActiveId] = useState<string | null>(events[0]?.id ?? null);
   const eventsQuery = useQuery({
-    queryKey: ["events", "nearby", city, sportFilter],
-    queryFn: () => listNearbyEvents({ city, branch: sportFilter }),
+    queryKey: ["events", "nearby", city, sportFilter, freeOnly, range],
+    queryFn: () =>
+      listNearbyEvents({
+        city,
+        branch: sportFilter,
+        is_free: freeOnly ? true : null,
+        range,
+      }),
     retry: 1,
   });
 
+  const hasBackendEvents = Boolean(eventsQuery.data?.events?.length);
   const eventList = useMemo(
     () => backendEventsToEvents(eventsQuery.data?.events),
     [eventsQuery.data?.events],
   );
 
+  // Backend dolu döndüyse filtreleme zaten serverda yapıldı — sadece şehri olmayanları
+  // (frontend mock fallback) ayıkla. Aksi halde mock fallback üzerinde client filtre uygula.
   const filtered = useMemo(() => {
+    if (hasBackendEvents) return eventList;
     return eventList.filter((e) => {
       if (city && e.city !== city) return false;
       if (sportFilter && e.sport !== sportFilter) return false;
       if (freeOnly && !e.free) return false;
       return true;
     });
-  }, [city, eventList, sportFilter, freeOnly]);
+  }, [city, eventList, hasBackendEvents, sportFilter, freeOnly]);
 
   const sportsInCity = useMemo(() => {
-    const set = new Set(eventList.filter((e) => e.city === city).map((e) => e.sport));
+    const source = hasBackendEvents ? eventList : eventList.filter((e) => e.city === city);
+    const set = new Set(source.map((e) => e.sport));
     return Array.from(set);
-  }, [city, eventList]);
+  }, [city, eventList, hasBackendEvents]);
 
   const active = filtered.find((e) => e.id === activeId) ?? filtered[0];
 

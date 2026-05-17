@@ -28,6 +28,14 @@ export type BackendNeed = {
   is_fulfilled?: boolean | null;
   fulfilled_by?: string | null;
   created_at?: string | null;
+  need_type?: "money" | "talent" | null;
+  category?: string | null;
+  target_amount?: number | null;
+  collected_amount?: number | null;
+  deadline?: string | null;
+  talent_needed?: string | null;
+  availability?: "local" | "online" | null;
+  is_urgent?: boolean | null;
 };
 
 export type BackendJournal = {
@@ -113,6 +121,13 @@ export function createNeed(data: {
   athlete_id: string;
   title: string;
   description: string;
+  need_type?: "money" | "talent";
+  category?: string;
+  target_amount?: number;
+  deadline?: string;
+  talent_needed?: string;
+  availability?: "local" | "online";
+  is_urgent?: boolean;
 }) {
   return apiRequest<{ id: string; status: "created" }>("/needs", {
     method: "POST",
@@ -139,6 +154,8 @@ export function listJournals(athleteId: string) {
 export function listNearbyEvents(params: {
   city?: string | null;
   branch?: string | null;
+  is_free?: boolean | null;
+  range?: "week" | "month" | null;
 } = {}) {
   return apiRequest<{ events: BackendEvent[] }>("/events/nearby", {
     query: params,
@@ -147,4 +164,99 @@ export function listNearbyEvents(params: {
 
 export function getEvent(eventId: string) {
   return apiRequest<BackendEvent>(`/events/${eventId}`);
+}
+
+// --- Donations ---
+
+export type BackendDonation = {
+  id: string;
+  supporter_profile_id: string;
+  athlete_profile_id: string;
+  need_id?: string | null;
+  amount: number;
+  message?: string | null;
+  is_recurring?: boolean | null;
+  status: "pending" | "completed" | "failed";
+  external_ref?: string | null;
+  created_at?: string | null;
+};
+
+export type DonationSummary = {
+  total_amount: number;
+  supporter_count: number;
+  donation_count: number;
+};
+
+export function createDonation(data: {
+  supporter_profile_id: string;
+  athlete_profile_id: string;
+  amount: number;
+  need_id?: string;
+  message?: string;
+  is_recurring?: boolean;
+}) {
+  return apiRequest<{ id: string; status: "created"; donation: BackendDonation }>(
+    "/donations",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    },
+  );
+}
+
+export function listDonationsBySupporter(supporterProfileId: string) {
+  return apiRequest<{ donations: BackendDonation[] }>("/donations", {
+    query: { supporter_profile_id: supporterProfileId },
+  });
+}
+
+export function listDonationsByAthlete(athleteProfileId: string) {
+  return apiRequest<{ donations: BackendDonation[] }>(
+    `/donations/athlete/${athleteProfileId}`,
+  );
+}
+
+export function getDonationSummary(athleteProfileId: string) {
+  return apiRequest<DonationSummary>(`/donations/summary/${athleteProfileId}`);
+}
+
+// --- Follows ---
+
+export function listFollowedAthletes(followerProfileId: string) {
+  return apiRequest<{ athletes: BackendProfile[] }>("/follows", {
+    query: { follower_profile_id: followerProfileId },
+  });
+}
+
+export function followAthlete(data: {
+  follower_profile_id: string;
+  athlete_profile_id: string;
+}) {
+  return apiRequest<{ id: string; status: "followed" }>("/follows", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function unfollowAthlete(data: {
+  follower_profile_id: string;
+  athlete_profile_id: string;
+}) {
+  return apiRequest<{ status: "unfollowed" }>("/follows", {
+    method: "DELETE",
+    query: data,
+  });
+}
+
+export function checkFollow(data: {
+  follower_profile_id: string;
+  athlete_profile_id: string;
+}) {
+  return apiRequest<{ is_following: boolean }>("/follows/check", {
+    query: data,
+  });
+}
+
+export function getFollowerCount(athleteProfileId: string) {
+  return apiRequest<{ followers: number }>(`/follows/count/${athleteProfileId}`);
 }

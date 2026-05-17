@@ -226,9 +226,11 @@ function EventDetailPage() {
                     fill="none"
                   />
                 </svg>
-                <div className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-mono text-[color:var(--app-ink-soft)]">
-                  {event.coords.x}°E · {event.coords.y}°N
-                </div>
+                {event.latitude != null && event.longitude != null && (
+                  <div className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-mono text-[color:var(--app-ink-soft)]">
+                    {event.longitude.toFixed(3)}°E · {event.latitude.toFixed(3)}°N
+                  </div>
+                )}
               </div>
               <div className="p-4">
                 <button className="btn-ghost-light w-full rounded-xl py-2 text-xs font-semibold">
