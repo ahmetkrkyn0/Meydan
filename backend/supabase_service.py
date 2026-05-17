@@ -1,6 +1,7 @@
 """Supabase veritabanı işlemleri."""
 
 import os
+from datetime import datetime, timezone
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -278,6 +279,23 @@ def list_events(city=None, branch=None, is_free=None) -> list[dict]:
         return response.data
     except Exception as e:
         print(f"Etkinlik listeleme hatası: {e}")
+        raise
+
+
+def list_nearby_events(city=None, branch=None) -> list[dict]:
+    """Yaklaşan etkinlikleri şehir ve branş filtresiyle listeler."""
+    try:
+        now = datetime.now(timezone.utc).isoformat()
+        query = supabase.table("events").select("*").gte("event_date", now)
+        if city:
+            query = query.eq("city", city)
+        if branch:
+            query = query.eq("branch", branch)
+
+        response = query.order("event_date", desc=False).execute()
+        return response.data
+    except Exception as e:
+        print(f"Yakındaki etkinlik listeleme hatası: {e}")
         raise
 
 
