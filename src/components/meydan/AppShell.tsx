@@ -281,7 +281,7 @@ export function AppShell({
           className={`${
             topbarOverlay
               ? "absolute left-0 right-0 top-0 border-transparent bg-transparent"
-              : "sticky top-0 border-[color:var(--app-line-soft)] bg-white/75 backdrop-blur-xl"
+              : "sticky top-0 border-[color:var(--app-line-soft)] bg-[oklch(0.985_0.005_90/0.85)] backdrop-blur-xl"
           } z-20 flex h-16 items-center gap-4 border-b px-5 sm:px-8`}
         >
           {/* Mobile logo */}
