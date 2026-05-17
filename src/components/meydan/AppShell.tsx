@@ -13,18 +13,19 @@ import type { ProfileRole } from "@/lib/api";
 type NavItem = {
   to: string;
   label: string;
+  tooltip?: string;
   icon: typeof Home;
   badge?: string;
 };
 
 const fanNav: NavItem[] = [
-  { to: "/dashboard",    label: "Ana Sahne",       icon: Home },
-  { to: "/kesfet",       label: "Keşfet",          icon: Compass },
-  { to: "/sehrimde",     label: "Şehrimde",        icon: MapPin },
-  { to: "/canli",        label: "Canlı Maçlar",    icon: Radio, badge: "2" },
-  { to: "/desteklerim",  label: "Desteklerim",     icon: Heart },
-  { to: "/yetenek",      label: "Yetenek Bağışı",  icon: Wrench },
-  { to: "/rozetlerim",   label: "Rozetlerim",      icon: Award },
+  { to: "/dashboard",    label: "Ana Sahne",       icon: Home,    tooltip: "Takip ettiğin sporcuların canlı sahnesi" },
+  { to: "/kesfet",       label: "Keşfet",          icon: Compass, tooltip: "Yeni sporcular bul, branşları keşfet" },
+  { to: "/sehrimde",     label: "Şehrimde",        icon: MapPin,  tooltip: "Şehrindeki etkinlikler ve sporcular" },
+  { to: "/canli",        label: "Canlı Maçlar",    icon: Radio,   badge: "2", tooltip: "Şu an devam eden maçları izle" },
+  { to: "/desteklerim",  label: "Desteklerim",     icon: Heart,   tooltip: "Aylık desteklediğin sporcular" },
+  { to: "/yetenek",      label: "Yetenek Bağışı",  icon: Wrench,  tooltip: "Sporculara para yerine yetenek bağışla" },
+  { to: "/rozetlerim",   label: "Rozetlerim",      icon: Award,   tooltip: "Kazandığın rozet ve başarılar" },
 ];
 
 export type AppRole = "fan" | "athlete" | "brand";
@@ -126,6 +127,7 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
+                title={item.tooltip}
                 className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
                   active
                     ? "bg-[color:oklch(0.60_0.22_252/0.10)] text-[color:oklch(0.45_0.22_252)]"

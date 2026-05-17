@@ -221,24 +221,50 @@ function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <Field
-                icon={Lock}
-                type={showPw ? "text" : "password"}
-                placeholder="Şifre (en az 6 karakter)"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                suffix={
-                  <button
-                    type="button"
-                    onClick={() => setShowPw((v) => !v)}
-                    className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
-                    aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
-                  >
-                    {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                }
-              />
+              <div>
+                <Field
+                  icon={Lock}
+                  type={showPw ? "text" : "password"}
+                  placeholder="Şifre (en az 6 karakter)"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  suffix={
+                    <button
+                      type="button"
+                      onClick={() => setShowPw((v) => !v)}
+                      className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                      aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                    >
+                      {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  }
+                />
+                {password.length > 0 && (
+                  <div className="mt-2 flex items-center gap-2 px-1">
+                    <div className="flex flex-1 gap-1">
+                      {[1, 2, 3].map((level) => {
+                        const strength = password.length < 6 ? 1 : password.length < 10 || !/[^a-zA-Z0-9]/.test(password) ? 2 : 3;
+                        return (
+                          <div
+                            key={level}
+                            className={`h-1 flex-1 rounded-full transition-colors ${
+                              level <= strength
+                                ? strength === 1 ? "bg-coral" : strength === 2 ? "bg-amber-400" : "bg-emerald-500"
+                                : "bg-[color:var(--app-line)]"
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
+                    <span className={`text-[10px] font-semibold ${
+                      password.length < 6 ? "text-coral" : password.length < 10 || !/[^a-zA-Z0-9]/.test(password) ? "text-amber-500" : "text-emerald-600"
+                    }`}>
+                      {password.length < 6 ? "Zayıf" : password.length < 10 || !/[^a-zA-Z0-9]/.test(password) ? "Orta" : "Güçlü"}
+                    </span>
+                  </div>
+                )}
+              </div>
               <Field
                 icon={Lock}
                 type={showPw ? "text" : "password"}
