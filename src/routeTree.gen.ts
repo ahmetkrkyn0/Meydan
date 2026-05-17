@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SporcuRouteImport } from './routes/sporcu'
+import { Route as SohbetRouteImport } from './routes/sohbet'
 import { Route as SehrimdeRouteImport } from './routes/sehrimde'
 import { Route as MesajlarRouteImport } from './routes/mesajlar'
 import { Route as KayitRouteImport } from './routes/kayit'
@@ -17,6 +18,7 @@ import { Route as GirisRouteImport } from './routes/giris'
 import { Route as DesteklerimRouteImport } from './routes/desteklerim'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BildirimlerRouteImport } from './routes/bildirimler'
+import { Route as AiEslesmeRouteImport } from './routes/ai-eslesme'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YetenekIndexRouteImport } from './routes/yetenek/index'
 import { Route as SporcuPanelIndexRouteImport } from './routes/sporcu-panel/index'
@@ -55,6 +57,11 @@ const SporcuRoute = SporcuRouteImport.update({
   path: '/sporcu',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SohbetRoute = SohbetRouteImport.update({
+  id: '/sohbet',
+  path: '/sohbet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SehrimdeRoute = SehrimdeRouteImport.update({
   id: '/sehrimde',
   path: '/sehrimde',
@@ -88,6 +95,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const BildirimlerRoute = BildirimlerRouteImport.update({
   id: '/bildirimler',
   path: '/bildirimler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiEslesmeRoute = AiEslesmeRouteImport.update({
+  id: '/ai-eslesme',
+  path: '/ai-eslesme',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -256,6 +268,7 @@ const SporcuPanelIhtiyaclarIdEslesmeRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-eslesme': typeof AiEslesmeRoute
   '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
   '/desteklerim': typeof DesteklerimRoute
@@ -263,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/kayit': typeof KayitRoute
   '/mesajlar': typeof MesajlarRoute
   '/sehrimde': typeof SehrimdeRoute
+  '/sohbet': typeof SohbetRoute
   '/sporcu': typeof SporcuRouteWithChildren
   '/canli/$id': typeof CanliIdRoute
   '/destekle/$slug': typeof DestekleSlugRoute
@@ -298,6 +312,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-eslesme': typeof AiEslesmeRoute
   '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
   '/desteklerim': typeof DesteklerimRoute
@@ -305,6 +320,7 @@ export interface FileRoutesByTo {
   '/kayit': typeof KayitRoute
   '/mesajlar': typeof MesajlarRoute
   '/sehrimde': typeof SehrimdeRoute
+  '/sohbet': typeof SohbetRoute
   '/sporcu': typeof SporcuRouteWithChildren
   '/canli/$id': typeof CanliIdRoute
   '/destekle/$slug': typeof DestekleSlugRoute
@@ -341,6 +357,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-eslesme': typeof AiEslesmeRoute
   '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
   '/desteklerim': typeof DesteklerimRoute
@@ -348,6 +365,7 @@ export interface FileRoutesById {
   '/kayit': typeof KayitRoute
   '/mesajlar': typeof MesajlarRoute
   '/sehrimde': typeof SehrimdeRoute
+  '/sohbet': typeof SohbetRoute
   '/sporcu': typeof SporcuRouteWithChildren
   '/canli/$id': typeof CanliIdRoute
   '/destekle/$slug': typeof DestekleSlugRoute
@@ -385,6 +403,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-eslesme'
     | '/bildirimler'
     | '/dashboard'
     | '/desteklerim'
@@ -392,6 +411,7 @@ export interface FileRouteTypes {
     | '/kayit'
     | '/mesajlar'
     | '/sehrimde'
+    | '/sohbet'
     | '/sporcu'
     | '/canli/$id'
     | '/destekle/$slug'
@@ -427,6 +447,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-eslesme'
     | '/bildirimler'
     | '/dashboard'
     | '/desteklerim'
@@ -434,6 +455,7 @@ export interface FileRouteTypes {
     | '/kayit'
     | '/mesajlar'
     | '/sehrimde'
+    | '/sohbet'
     | '/sporcu'
     | '/canli/$id'
     | '/destekle/$slug'
@@ -469,6 +491,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai-eslesme'
     | '/bildirimler'
     | '/dashboard'
     | '/desteklerim'
@@ -476,6 +499,7 @@ export interface FileRouteTypes {
     | '/kayit'
     | '/mesajlar'
     | '/sehrimde'
+    | '/sohbet'
     | '/sporcu'
     | '/canli/$id'
     | '/destekle/$slug'
@@ -512,6 +536,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiEslesmeRoute: typeof AiEslesmeRoute
   BildirimlerRoute: typeof BildirimlerRoute
   DashboardRoute: typeof DashboardRoute
   DesteklerimRoute: typeof DesteklerimRoute
@@ -519,6 +544,7 @@ export interface RootRouteChildren {
   KayitRoute: typeof KayitRoute
   MesajlarRoute: typeof MesajlarRoute
   SehrimdeRoute: typeof SehrimdeRoute
+  SohbetRoute: typeof SohbetRoute
   SporcuRoute: typeof SporcuRouteWithChildren
   CanliIdRoute: typeof CanliIdRoute
   DestekleSlugRoute: typeof DestekleSlugRoute
@@ -556,6 +582,13 @@ declare module '@tanstack/react-router' {
       path: '/sporcu'
       fullPath: '/sporcu'
       preLoaderRoute: typeof SporcuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sohbet': {
+      id: '/sohbet'
+      path: '/sohbet'
+      fullPath: '/sohbet'
+      preLoaderRoute: typeof SohbetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sehrimde': {
@@ -605,6 +638,13 @@ declare module '@tanstack/react-router' {
       path: '/bildirimler'
       fullPath: '/bildirimler'
       preLoaderRoute: typeof BildirimlerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-eslesme': {
+      id: '/ai-eslesme'
+      path: '/ai-eslesme'
+      fullPath: '/ai-eslesme'
+      preLoaderRoute: typeof AiEslesmeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -853,6 +893,7 @@ const SporcuRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiEslesmeRoute: AiEslesmeRoute,
   BildirimlerRoute: BildirimlerRoute,
   DashboardRoute: DashboardRoute,
   DesteklerimRoute: DesteklerimRoute,
@@ -860,6 +901,7 @@ const rootRouteChildren: RootRouteChildren = {
   KayitRoute: KayitRoute,
   MesajlarRoute: MesajlarRoute,
   SehrimdeRoute: SehrimdeRoute,
+  SohbetRoute: SohbetRoute,
   SporcuRoute: SporcuRouteWithChildren,
   CanliIdRoute: CanliIdRoute,
   DestekleSlugRoute: DestekleSlugRoute,

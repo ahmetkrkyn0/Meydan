@@ -297,14 +297,12 @@ function MatchCard({ match, index }: { match: TalentMatchResult; index: number }
 
           {/* Aksiyon */}
           <div className="mt-4 flex items-center gap-2">
-            <button
-              type="button"
-              disabled
-              title="Mesajlaşma yakında"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--app-ink)] px-4 py-1.5 text-xs font-bold text-white opacity-60"
+            <a
+              href="/sohbet"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--app-ink)] px-4 py-1.5 text-xs font-bold text-white transition-transform hover:opacity-90 hover:scale-105"
             >
               İletişime geç
-            </button>
+            </a>
           </div>
         </div>
       </div>
