@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
+import { useMemo } from "react";
 import {
   ArrowUpRight,
   Calendar,
@@ -12,6 +14,8 @@ import {
   Users,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { listNearbyEvents, listProfiles } from "@/lib/api";
+import { backendEventsToEvents, profilesToAthletes } from "@/lib/api-mappers";
 import {
   athletes,
   badges,
@@ -41,9 +45,29 @@ function formatTodayTR() {
 }
 
 function DashboardPage() {
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const eventsQuery = useQuery({
+    queryKey: ["events", "nearby", "dashboard"],
+    queryFn: () => listNearbyEvents(),
+    retry: 1,
+  });
+  const athleteList = useMemo(
+    () => profilesToAthletes(profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles],
+  );
+  const eventList = useMemo(
+    () => backendEventsToEvents(eventsQuery.data?.events),
+    [eventsQuery.data?.events],
+  );
   const featuredPair = liveMatches.slice(0, 2);
-  const followed = athletes.filter((a) => followedSlugs.includes(a.slug)).slice(0, 4);
-  const upcoming = events.slice(0, 3);
+  const followed = profilesQuery.data?.profiles?.length
+    ? athleteList.slice(0, 4)
+    : athletes.filter((a) => followedSlugs.includes(a.slug)).slice(0, 4);
+  const upcoming = eventsQuery.data?.events?.length ? eventList.slice(0, 3) : events.slice(0, 3);
   const earnedCount = badges.filter((b) => b.earned).length;
   const totalBadges = badges.length;
   const badgePct = Math.round((earnedCount / totalBadges) * 100);

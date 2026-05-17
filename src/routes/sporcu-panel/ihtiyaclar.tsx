@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { needs, type Need } from "@/lib/mock-data";
+import { athleteBySlug, needs, type Need } from "@/lib/mock-data";
+import { listNeeds, listProfiles } from "@/lib/api";
+import { backendNeedsToNeeds, profileToAthlete } from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/sporcu-panel/ihtiyaclar")({
   component: NeedsPage,
@@ -20,16 +23,42 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 type Tab = "all" | "active" | "completed";
 
 function NeedsPage() {
-  const myNeeds: Need[] = needs.slice(0, 4).map((n, i) => ({
-    ...n,
-    athleteSlug: "mete-gazoz",
-    athleteName: "Mete Gazoz",
-    urgent: i === 0,
-  }));
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const activeProfile = profilesQuery.data?.profiles?.[0] ?? null;
+  const me = useMemo(
+    () => (activeProfile ? profileToAthlete(activeProfile, 0) : athleteBySlug("mete-gazoz")),
+    [activeProfile],
+  );
+  const needsQuery = useQuery({
+    queryKey: ["needs", activeProfile?.id],
+    queryFn: () => listNeeds(activeProfile!.id),
+    enabled: Boolean(activeProfile?.id),
+    retry: 1,
+  });
 
   const [tab, setTab] = useState<Tab>("all");
 
-  const list = tab === "all" ? myNeeds : tab === "active" ? myNeeds.slice(0, 3) : myNeeds.slice(3);
+  const myNeeds: Need[] = useMemo(() => {
+    if (needsQuery.data) return backendNeedsToNeeds(needsQuery.data.needs, me);
+    return needs.slice(0, 4).map((n, i) => ({
+      ...n,
+      athleteSlug: me.slug,
+      athleteName: me.name,
+      athleteImg: me.img,
+      city: me.city,
+      urgent: i === 0,
+    }));
+  }, [me, needsQuery.data]);
+
+  const list = tab === "all"
+    ? myNeeds
+    : tab === "active"
+      ? myNeeds.filter((n) => n.urgent)
+      : myNeeds.filter((n) => !n.urgent);
 
   const totalCollected = myNeeds
     .filter((n) => n.type === "money")
@@ -39,7 +68,7 @@ function NeedsPage() {
     .reduce((s, n) => s + (n.targetAmount ?? 0), 0);
 
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
+    <AppShell role="athlete" userName={me.name} userCity={me.city}>
       {/* Swiss surface — pure white, hard rules, mono accents */}
       <div className="-mx-5 -my-6 min-h-screen bg-white sm:-mx-8 sm:-my-8">
         <motion.div

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -12,6 +13,8 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug } from "@/lib/mock-data";
+import { createNeed, listProfiles } from "@/lib/api";
+import { profileToAthlete } from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/sporcu-panel/ihtiyac-olustur")({
   component: CreateNeedPage,
@@ -27,8 +30,52 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const MONEY_CATS = ["Yol", "Ekipman", "Antrenör", "Beslenme", "Kamp katkısı"];
 const TALENT_CATS = ["İçerik", "Tasarım", "Tercüme", "Eğitmen", "Mentor", "Beslenme"];
 
+function buildNeedDescription({
+  type,
+  category,
+  desc,
+  amount,
+  deadline,
+  talentNeed,
+  availability,
+  urgent,
+}: {
+  type: "money" | "talent";
+  category: string;
+  desc: string;
+  amount: number;
+  deadline: string;
+  talentNeed: string;
+  availability: "local" | "online";
+  urgent: boolean;
+}) {
+  const details =
+    type === "money"
+      ? [`Hedef tutar: ${amount.toLocaleString("tr-TR")} TL`, `Son tarih: ${deadline}`]
+      : [`Aranan yetenek: ${talentNeed}`, `Uygunluk: ${availability === "local" ? "Yerel" : "Online"}`];
+
+  return [
+    desc.trim(),
+    "",
+    `Kategori: ${category}`,
+    `Tür: ${type === "money" ? "Para" : "Yetenek"}`,
+    ...details,
+    `Acil: ${urgent ? "Evet" : "Hayır"}`,
+  ].join("\n");
+}
+
 function CreateNeedPage() {
-  const me = athleteBySlug("mete-gazoz");
+  const queryClient = useQueryClient();
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const activeProfile = profilesQuery.data?.profiles?.[0] ?? null;
+  const me = useMemo(
+    () => (activeProfile ? profileToAthlete(activeProfile, 0) : athleteBySlug("mete-gazoz")),
+    [activeProfile],
+  );
   const [type, setType] = useState<"money" | "talent">("money");
   const [category, setCategory] = useState("Yol");
   const [title, setTitle] = useState("Avrupa Şampiyonası yol masrafı");
@@ -41,10 +88,42 @@ function CreateNeedPage() {
   const [availability, setAvailability] = useState<"local" | "online">("online");
   const [urgent, setUrgent] = useState(false);
 
+  const createNeedMutation = useMutation({
+    mutationFn: () => {
+      if (!activeProfile?.id) {
+        throw new Error("Backend'de sporcu profili bulunamadi.");
+      }
+      return createNeed({
+        athlete_id: activeProfile.id,
+        title: title.trim(),
+        description: buildNeedDescription({
+          type,
+          category,
+          desc,
+          amount,
+          deadline,
+          talentNeed,
+          availability,
+          urgent,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["needs"] });
+    },
+  });
+
+  const canPublish = Boolean(activeProfile?.id && title.trim() && desc.trim());
+
+  function handlePublish() {
+    if (!canPublish || createNeedMutation.isPending) return;
+    createNeedMutation.mutate();
+  }
+
   const cats = type === "money" ? MONEY_CATS : TALENT_CATS;
 
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
+    <AppShell role="athlete" userName={me.name} userCity={me.city}>
       <motion.div
         initial="hidden"
         animate="show"
@@ -259,10 +338,31 @@ function CreateNeedPage() {
               >
                 Vazgeç
               </Link>
-              <button className="btn-primary-light inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-semibold">
-                Yayınla <ArrowRight className="h-4 w-4" />
+              <button
+                type="button"
+                onClick={handlePublish}
+                disabled={!canPublish || createNeedMutation.isPending}
+                className="btn-primary-light inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {createNeedMutation.isPending ? "Yayınlanıyor..." : "Yayınla"} <ArrowRight className="h-4 w-4" />
               </button>
             </div>
+            {((!activeProfile && !profilesQuery.isLoading) ||
+              profilesQuery.isError ||
+              createNeedMutation.isError ||
+              createNeedMutation.isSuccess) && (
+              <p className="text-right text-xs text-[color:var(--app-ink-mute)]">
+                {createNeedMutation.isSuccess
+                  ? "İhtiyaç backend'e kaydedildi."
+                  : createNeedMutation.isError
+                    ? createNeedMutation.error instanceof Error
+                      ? createNeedMutation.error.message
+                      : "İhtiyaç kaydedilemedi."
+                    : !activeProfile
+                      ? "Yayınlamak için backend'de en az bir sporcu profili gerekli."
+                      : "Backend'e ulaşılamadı; yayınlamak için backend bağlantısı gerekli."}
+              </p>
+            )}
           </motion.section>
 
           <motion.aside variants={fadeUp}>

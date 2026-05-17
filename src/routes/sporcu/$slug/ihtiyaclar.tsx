@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowLeft,
   MapPin,
@@ -13,6 +14,12 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug, needs, type Need } from "@/lib/mock-data";
+import { listNeeds, listProfiles } from "@/lib/api";
+import {
+  backendNeedsToNeeds,
+  findAthleteBySlug,
+  findProfileBySlug,
+} from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/sporcu/$slug/ihtiyaclar")({
   component: AthleteNeedsPage,
@@ -146,11 +153,32 @@ function NeedCard({ need, index }: { need: Need; index: number }) {
 
 function AthleteNeedsPage() {
   const { slug } = Route.useParams();
-  const a = athleteBySlug(slug);
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const profile = useMemo(
+    () => findProfileBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+  const a = useMemo(
+    () => findAthleteBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+  const needsQuery = useQuery({
+    queryKey: ["needs", profile?.id],
+    queryFn: () => listNeeds(profile!.id),
+    enabled: Boolean(profile?.id),
+    retry: 1,
+  });
   const [tab, setTab] = useState<Tab>("all");
 
-  let athleteNeeds = needs.filter((n) => n.athleteSlug === slug);
-  const isFallback = athleteNeeds.length === 0;
+  const hasBackendNeeds = Boolean(needsQuery.data);
+  let athleteNeeds = hasBackendNeeds
+    ? backendNeedsToNeeds(needsQuery.data?.needs, a)
+    : needs.filter((n) => n.athleteSlug === slug);
+  const isFallback = !hasBackendNeeds && athleteNeeds.length === 0;
   if (isFallback) {
     athleteNeeds = needs.slice(0, 3).map((n, i) => ({
       ...n,
