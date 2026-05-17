@@ -44,8 +44,8 @@ export function useSession(): SessionState {
 
 export function useLogin() {
   const queryClient = useQueryClient();
-  return async (email: string): Promise<AuthResponse> => {
-    const result = await loginUser({ email });
+  return async (email: string, password: string): Promise<AuthResponse> => {
+    const result = await loginUser({ email, password });
     writeAuthToken(result.token);
     queryClient.setQueryData(SESSION_QUERY_KEY, result.profile);
     return result;
@@ -56,6 +56,7 @@ export function useRegister() {
   const queryClient = useQueryClient();
   return async (data: {
     email: string;
+    password: string;
     full_name: string;
     role: ProfileRole;
     branch?: string;

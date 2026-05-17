@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check, Lock, Eye, EyeOff } from "lucide-react";
 import { useRegister } from "@/lib/session";
 import { defaultRouteForRole } from "@/lib/session";
 
@@ -28,6 +28,9 @@ function RegisterPage() {
   const [role, setRole] = useState<Role>("taraftar");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [city, setCity] = useState("");
   const [branch, setBranch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,10 +45,19 @@ function RegisterPage() {
       setError("Ad ve email zorunlu");
       return;
     }
+    if (password.length < 6) {
+      setError("Şifre en az 6 karakter olmalı");
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError("Şifreler eşleşmiyor");
+      return;
+    }
     setLoading(true);
     try {
       const result = await register({
         email: email.trim(),
+        password,
         full_name: fullName.trim(),
         role,
         city: city.trim() || undefined,
@@ -201,6 +213,32 @@ function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Field
+                icon={Lock}
+                type={showPw ? "text" : "password"}
+                placeholder="Şifre (en az 6 karakter)"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                suffix={
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((v) => !v)}
+                    className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                    aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                  >
+                    {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                }
+              />
+              <Field
+                icon={Lock}
+                type={showPw ? "text" : "password"}
+                placeholder="Şifre tekrar"
+                required
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+              <Field
                 icon={User}
                 type="text"
                 placeholder="Şehir (opsiyonel)"
@@ -216,10 +254,6 @@ function RegisterPage() {
                   onChange={(e) => setBranch(e.target.value)}
                 />
               )}
-
-              <p className="pt-2 text-[11px] leading-relaxed text-[color:var(--app-ink-mute)]">
-                Demo: şifre yok. Email tek başına oturum açmaya yetiyor.
-              </p>
 
               {error && (
                 <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>
