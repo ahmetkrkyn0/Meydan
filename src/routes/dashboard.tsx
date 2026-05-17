@@ -543,7 +543,7 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Timeline: upcoming events ─── */}
-        <motion.section variants={fadeUp} aria-labelledby="yakinda-etkinlik">
+        <motion.section variants={fadeUp} aria-labelledby="yakinda-etkinlik" className="stage-bleed px-5 sm:px-8">
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">03</span>
