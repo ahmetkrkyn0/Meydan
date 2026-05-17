@@ -110,7 +110,7 @@ export function Sunar() {
         alt="Busenaz"
         side="left"
         mirror
-        scale={2.5}
+        scale={1.5}
         offsetY={180}
       />
       {/* Very gentle bloom */}
