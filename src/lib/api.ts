@@ -277,6 +277,28 @@ export function getEvent(eventId: string) {
   return apiRequest<BackendEvent>(`/events/${eventId}`);
 }
 
+// --- Geo (ORS isochrone proxy) ---
+
+export type IsochroneMode = "foot-walking" | "cycling-regular" | "driving-car";
+export type IsochroneMinutes = 15 | 30 | 45;
+
+export type IsochroneResponse = {
+  center: [number, number]; // [lat, lng]
+  polygon: GeoJSON.Feature<GeoJSON.Polygon>;
+  cached: boolean;
+};
+
+export function getIsochrone(params: {
+  city: string;
+  mode: IsochroneMode;
+  minutes: IsochroneMinutes;
+}) {
+  return apiRequest<IsochroneResponse>("/geo/isochrone", {
+    query: params,
+    skipAuth: true,
+  });
+}
+
 // --- AI Talent Match ---
 
 export type TalentMatchResult = {
