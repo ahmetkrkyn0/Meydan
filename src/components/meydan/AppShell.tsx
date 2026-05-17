@@ -214,7 +214,7 @@ export function AppShell({
 
           {/* Search */}
           {!hideSearch && (
-            <div className="relative ml-auto hidden max-w-md flex-1 sm:block lg:ml-0">
+            <div className="relative ml-auto hidden max-w-md flex-1 sm:block lg:ml-8 lg:mr-auto xl:ml-16">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)]" strokeWidth={1.7} />
               <input
                 type="text"
