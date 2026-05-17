@@ -171,7 +171,7 @@ function KesfetPage() {
                 </div>
               </div>
 
-              <div className="mx-auto mb-44 max-w-4xl self-center text-center lg:mb-36">
+              <div className="mx-auto mb-8 max-w-4xl self-center text-center lg:mb-12">
                 <p className="font-display text-2xl font-bold leading-tight text-white drop-shadow-[0_4px_24px_oklch(0.08_0.03_258/0.90)] sm:text-5xl">
                   Her sporcu bir sahne bekliyor.{" "}
                   <span className="text-white/90">Seninki hangisi?</span>
@@ -182,7 +182,7 @@ function KesfetPage() {
         </motion.header>
 
         {/* ─── Filter bar ─── */}
-        <section className="fixed bottom-24 left-4 right-4 z-40 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl border border-[color:var(--app-line)] bg-white/95 px-4 py-4 shadow-[0_22px_80px_oklch(0.18_0.04_258/0.18)] backdrop-blur-xl lg:bottom-6 lg:left-[17rem] lg:right-8">
+        <section className="mx-5 rounded-3xl border border-[color:var(--app-line)] bg-white px-5 py-5 shadow-sm sm:mx-8">
           <div className="mb-3 flex items-baseline justify-between">
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">
