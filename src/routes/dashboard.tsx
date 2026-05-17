@@ -599,9 +599,9 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Dark block: Keşfet modu ─── */}
-        <motion.section variants={fadeUp} className="-mx-5 sm:-mx-8">
+        <motion.section variants={fadeUp} className="stage-bleed">
           <Link to="/kesfet/mod" className="block">
-            <article className="group relative overflow-hidden bg-[color:var(--app-ink)] sm:rounded-3xl">
+            <article className="group relative overflow-hidden bg-[color:var(--app-ink)]">
               {/* Aurora glow */}
               <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet/30 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-sky/20 blur-3xl" />
