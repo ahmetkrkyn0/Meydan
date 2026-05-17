@@ -182,10 +182,12 @@ function DashboardPage() {
                   <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
                     Bugünkü tribün
                   </p>
-                  <p className="font-display text-3xl font-bold text-[color:var(--app-ink)]">
-                    3.420
+                  <p className="font-display text-3xl font-bold text-[color:var(--app-ink)] tabular-nums">
+                    <CountUp to={3420} />
                   </p>
-                  <p className="text-[11px] text-[color:var(--app-ink-soft)]">izleyici · 860 tezahürat</p>
+                  <p className="text-[11px] text-[color:var(--app-ink-soft)]">
+                    izleyici · <CountUp to={860} duration={1.4} /> tezahürat
+                  </p>
                 </div>
 
                 <Link
