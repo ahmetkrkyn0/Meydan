@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment variables (GİZLİ — asla commit'leme)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Claude Code dosyaları (isteğe bağlı, GitHub'a gitmesin)
+.claude/
+.mcp.json
+CLAUDE.md
+.code-review-graph/
+
+# Cache / temp
+*.tmp
+*.bak
+.cache/
