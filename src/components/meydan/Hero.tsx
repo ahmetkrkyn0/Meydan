@@ -123,7 +123,7 @@ export function Hero() {
                     </span>
                     <div>
                       <p className="font-display text-lg leading-none text-white">{s.value}</p>
-                      <p className="mt-0.5 text-[11px] text-white/58">{s.label}</p>
+                      <p className="mt-0.5 text-[11px] text-white/70">{s.label}</p>
                     </div>
                   </motion.div>
                 ))}
