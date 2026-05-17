@@ -120,13 +120,27 @@ function KesfetPage() {
               aria-hidden
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
-            <div className="stage-veil-light absolute inset-0" />
-            <div className="stage-merge-down absolute inset-x-0 bottom-0 h-32" />
-            <div className="stage-merge-glow absolute inset-x-0 bottom-0 h-40" />
-            <div className="stage-veil-tint absolute inset-0" />
+            {/* soft left-side legibility wash – keeps image visible on the right */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 backdrop-blur-[6px]"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, oklch(1 0 0 / 0.78) 0%, oklch(1 0 0 / 0.55) 28%, oklch(1 0 0 / 0.15) 55%, transparent 80%)",
+              }}
+            />
+            {/* gentle bottom merge into page */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-28"
+              style={{
+                background:
+                  "linear-gradient(to top, var(--app-bg, #fff) 0%, transparent 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 backdrop-blur-[3px]"
               style={{
                 maskImage: "linear-gradient(to top, black, transparent)",
                 WebkitMaskImage: "linear-gradient(to top, black, transparent)",
