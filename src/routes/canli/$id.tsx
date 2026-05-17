@@ -575,9 +575,13 @@ function LiveMatchPage() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 2.4, ease: "easeOut" }}
                     style={{ left: `${f.x}%` }}
-                    className="pointer-events-none absolute bottom-8 text-3xl"
+                    className="pointer-events-none absolute bottom-8 text-3xl flex items-center justify-center"
                   >
-                    {f.emoji}
+                    {f.emoji === "🇹🇷" ? (
+                      <img src="https://flagcdn.com/w40/tr.png" alt="TR" className="h-5 w-7 rounded-[2px] object-cover shadow-sm" />
+                    ) : (
+                      f.emoji
+                    )}
                   </motion.span>
                 ))}
               </AnimatePresence>
@@ -598,7 +602,11 @@ function LiveMatchPage() {
                       onClick={() => fireReaction(r)}
                       className="flex h-9 w-9 items-center justify-center rounded-full text-xl transition-colors hover:bg-violet/8"
                     >
-                      {r}
+                      {r === "🇹🇷" ? (
+                        <img src="https://flagcdn.com/w40/tr.png" alt="TR" className="h-3.5 w-5 rounded-[2px] object-cover shadow-[0_1px_2px_rgba(0,0,0,0.15)]" />
+                      ) : (
+                        r
+                      )}
                     </motion.button>
                   ))}
                 </div>
