@@ -448,7 +448,7 @@ function DashboardPage() {
                 </span>
 
                 {/* Live ping */}
-                <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral" />
                   Takipte
                 </span>
@@ -536,7 +536,7 @@ function DashboardPage() {
                   <article className="soft-card group flex items-center gap-5 rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
                     <div className="flex w-16 shrink-0 flex-col items-center rounded-2xl bg-gradient-to-br from-violet/15 to-violet/5 py-2.5 text-violet">
                       <span className="font-display text-2xl font-bold leading-none">{e.day}</span>
-                      <span className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider">{e.month}</span>
+                      <span className="mt-1 font-mono text-[10px] font-bold uppercase tracking-wider">{e.month}</span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-display text-base font-bold leading-snug text-[color:var(--app-ink)]">{e.title}</p>

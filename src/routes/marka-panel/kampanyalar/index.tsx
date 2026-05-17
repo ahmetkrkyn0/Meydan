@@ -251,7 +251,7 @@ function Sparkline({ data }: { data: number[] }) {
           points={points}
         />
       </svg>
-      <span className={`mt-0.5 inline-flex items-center gap-0.5 text-[9px] font-semibold ${trendUp ? "text-violet" : "text-coral"}`}>
+      <span className={`mt-0.5 inline-flex items-center gap-0.5 text-[10px] font-semibold ${trendUp ? "text-violet" : "text-coral"}`}>
         <TrendingUp className={`h-2.5 w-2.5 ${trendUp ? "" : "rotate-180"}`} />
         Trend
       </span>

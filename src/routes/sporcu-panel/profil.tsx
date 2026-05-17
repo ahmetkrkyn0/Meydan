@@ -394,19 +394,19 @@ function AthleteProfilePage() {
                     <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
                       0
                     </p>
-                    <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">takipçi</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">takipçi</p>
                   </div>
                   <div className="rounded-xl bg-[color:var(--app-line-soft)] py-2">
                     <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
                       {achievements.length}
                     </p>
-                    <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">başarı</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">başarı</p>
                   </div>
                   <div className="rounded-xl bg-[color:var(--app-line-soft)] py-2">
                     <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
                       0
                     </p>
-                    <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">destekçi</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">destekçi</p>
                   </div>
                 </div>
               </div>
