@@ -442,13 +442,14 @@ def get_need_matches(need_id: str, current_user: dict = Depends(get_current_prof
             metin = (need.get("title") or "") + ". " + (need.get("description") or "")
             embedding = gemini_service.generate_embedding(metin.strip())
 
-        # Sporcunun şehri + need'in availability'si ile lokasyon-aware eşleştir.
+        # Sporcunun şehri + need'in availability'si + talent kategorisi ile eşleştir.
         athlete_city = (current_user or {}).get("city")
         matches = supabase_service.find_matching_talents(
             embedding,
             need["athlete_id"],
             city=athlete_city,
             availability=need.get("availability"),
+            required_talent=need.get("talent_needed"),
         )
 
         # Need'in embedding'sini ayıklayıp frontend'e safe versiyonu döndür.

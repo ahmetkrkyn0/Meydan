@@ -44,11 +44,14 @@ def find_matching_talents(
     athlete_id: str,
     city: str | None = None,
     availability: str | None = None,
+    required_talent: str | None = None,
 ) -> list[dict]:
     """pgvector ile en yakın taraftar yeteneklerini bulur.
 
-    Threshold 0.80 + max 3 sonuç. availability='local' ise aynı şehir
-    filtresi uygulanır; 'online' veya None ise şehir filtresi yok.
+    Threshold 0.80 + max 3 sonuç. Filtreler:
+    - availability='local' + city dolu  -> aynı şehir zorunlu
+    - required_talent dolu              -> offered_talent içinde geçmesi zorunlu
+                                           (fotoğrafçı ihtiyacına fizyo gelmesin)
     """
     try:
         response = supabase.rpc(
@@ -59,6 +62,7 @@ def find_matching_talents(
                 "match_count": 3,
                 "filter_city": city,
                 "availability": availability,
+                "required_talent": required_talent,
             },
         ).execute()
         return response.data
