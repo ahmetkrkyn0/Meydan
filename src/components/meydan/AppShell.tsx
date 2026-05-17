@@ -118,7 +118,7 @@ export function AppShell({
           </div>
         </Link>
 
-        <nav className="flex-1 space-y-1 px-3 pt-2">
+        <nav className="sidebar-scroll min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2">
           {nav.map((item) => {
             const active = loc.pathname === item.to ||
               (item.to !== "/dashboard" && loc.pathname.startsWith(item.to));
