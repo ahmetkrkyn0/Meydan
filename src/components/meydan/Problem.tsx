@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import archeryImg from "@/assets/sport-archery-nobg.png";
+import meteGazozImg from "@/assets/metegazoz.png";
 
 const problems = [
   {
@@ -37,7 +37,14 @@ export function Problem() {
 
   return (
     <section id="problem" ref={ref} className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={archeryImg} alt="Okçuluk sporcusu" side="right" />
+      <FloatingAthlete
+        src={meteGazozImg}
+        alt="Mete Gazoz"
+        side="right"
+        mirror
+        scale={1.25}
+        offsetX={-40}
+      />
       {/* Dot grid */}
       <div className="pointer-events-none absolute inset-0 -z-10 grid-dots" />
       {/* Subtle color blooms */}

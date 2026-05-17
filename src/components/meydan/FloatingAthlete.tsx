@@ -5,9 +5,13 @@ interface FloatingAthleteProps {
   src: string;
   alt: string;
   side: "left" | "right";
+  mirror?: boolean;
+  scale?: number;
+  offsetX?: number;
+  offsetY?: number;
 }
 
-export function FloatingAthlete({ src, alt, side }: FloatingAthleteProps) {
+export function FloatingAthlete({ src, alt, side, mirror = false, scale: scaleProp = 1, offsetX = 0, offsetY = 0 }: FloatingAthleteProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -15,13 +19,25 @@ export function FloatingAthlete({ src, alt, side }: FloatingAthleteProps) {
     offset: ["start end", "end start"],
   });
 
-  const rawY = useTransform(scrollYProgress, [0, 0.35, 0.75, 1], [160, 0, -30, -90]);
+  const rawY = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.75, 1],
+    [160 + offsetY, offsetY, -30 + offsetY, -90 + offsetY]
+  );
   const y = useSpring(rawY, { stiffness: 42, damping: 16, mass: 1.3 });
 
-  const rawX = useTransform(scrollYProgress, [0, 0.32], [side === "right" ? 60 : -60, 0]);
+  const rawX = useTransform(
+    scrollYProgress,
+    [0, 0.32],
+    [(side === "right" ? 60 : -60) + offsetX, offsetX]
+  );
   const x = useSpring(rawX, { stiffness: 50, damping: 18 });
 
-  const rawScale = useTransform(scrollYProgress, [0, 0.38, 0.75, 1], [0.82, 1.0, 1.0, 0.93]);
+  const rawScale = useTransform(
+    scrollYProgress,
+    [0, 0.38, 0.75, 1],
+    [0.82 * scaleProp, 1.0 * scaleProp, 1.0 * scaleProp, 0.93 * scaleProp]
+  );
   const scale = useSpring(rawScale, { stiffness: 50, damping: 18 });
 
   const rawRotate = useTransform(
@@ -59,7 +75,7 @@ export function FloatingAthlete({ src, alt, side }: FloatingAthleteProps) {
           src={src}
           alt={alt}
           draggable={false}
-          className={`relative block w-full h-auto select-none ${side === "left" ? "-scale-x-100" : ""}`}
+          className={`relative block w-full h-auto select-none ${((side === "left") !== mirror) ? "-scale-x-100" : ""}`}
           style={{
             maxHeight: "clamp(380px, 52vh, 580px)",
             objectFit: "contain",

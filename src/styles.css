@@ -205,4 +205,138 @@
       0 1px 2px oklch(0 0 0 / 0.20),
       0 4px 16px oklch(0 0 0 / 0.15);
   }
+
+  /* ============================================
+   * APP SURFACE — Light / Warm cream for inner app pages
+   * Landing palette korunur (violet/sky/coral), zemin warm cream.
+   * ============================================ */
+  .app-surface {
+    --app-bg:        oklch(0.985 0.005 90);    /* warm cream paper */
+    --app-bg-soft:   oklch(0.97 0.012 80);     /* slightly warmer */
+    --app-bg-muted:  oklch(0.945 0.018 78);    /* section backgrounds */
+    --app-ink:       oklch(0.22 0.05 258);     /* deep navy ink (text) */
+    --app-ink-soft:  oklch(0.42 0.04 258);     /* secondary text */
+    --app-ink-mute:  oklch(0.58 0.025 258);    /* tertiary / placeholder */
+    --app-line:      oklch(0.22 0.05 258 / 0.10);
+    --app-line-soft: oklch(0.22 0.05 258 / 0.06);
+
+    background-color: var(--app-bg);
+    color: var(--app-ink);
+  }
+
+  /* ─────────────────────────────────────────────────────
+   * APP AMBIENT — mesh blobs + grain texture
+   * Bigger, softer light pools + 3% film grain overlay
+   * ───────────────────────────────────────────────────── */
+  .app-ambient {
+    position: relative;
+    background:
+      /* Top-left violet pool */
+      radial-gradient(ellipse 80% 60% at 5% -10%,
+        oklch(0.60 0.22 252 / 0.10), transparent 55%),
+      /* Top-right warm coral whisper */
+      radial-gradient(ellipse 60% 50% at 105% 5%,
+        oklch(0.65 0.20 18 / 0.06), transparent 60%),
+      /* Center floating sky */
+      radial-gradient(ellipse 70% 55% at 60% 45%,
+        oklch(0.72 0.16 222 / 0.06), transparent 65%),
+      /* Bottom-left violet wash */
+      radial-gradient(ellipse 90% 60% at 15% 110%,
+        oklch(0.50 0.22 262 / 0.08), transparent 60%),
+      /* Bottom-right sky pool */
+      radial-gradient(ellipse 70% 55% at 95% 100%,
+        oklch(0.72 0.16 222 / 0.07), transparent 60%),
+      oklch(0.985 0.005 90);
+  }
+
+  /* Grain overlay — adds paper texture, sits above gradient */
+  .app-ambient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.13 0 0 0 0 0.22 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+  }
+
+  /* Ensure content stays above grain layer */
+  .app-ambient > * { position: relative; z-index: 1; }
+
+  /* Soft card — for app pages (no harsh borders, organic) */
+  .soft-card {
+    background: oklch(1 0 0 / 0.7);
+    border: 1px solid oklch(0.22 0.05 258 / 0.07);
+    box-shadow:
+      0 1px 0 oklch(1 0 0),
+      0 1px 3px oklch(0.22 0.05 258 / 0.04),
+      0 8px 24px -12px oklch(0.22 0.05 258 / 0.08);
+    backdrop-filter: blur(8px);
+  }
+
+  .soft-card-strong {
+    background: oklch(1 0 0);
+    border: 1px solid oklch(0.22 0.05 258 / 0.08);
+    box-shadow:
+      0 1px 2px oklch(0.22 0.05 258 / 0.04),
+      0 12px 32px -16px oklch(0.22 0.05 258 / 0.12);
+  }
+
+  /* Subtle dot pattern for warm bg */
+  .grid-dots-warm {
+    background-image: radial-gradient(
+      oklch(0.22 0.05 258 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Aurora light — same aurora but on cream */
+  .bg-aurora-light {
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 20%,
+        oklch(0.60 0.22 252 / 0.10), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 88% 12%,
+        oklch(0.72 0.16 222 / 0.08), transparent 58%),
+      radial-gradient(ellipse 70% 55% at 50% 100%,
+        oklch(0.65 0.20 18 / 0.06), transparent 65%),
+      oklch(0.985 0.005 90);
+  }
+
+  /* Chip / pill — universal compact label */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: oklch(0.22 0.05 258 / 0.06);
+    color: oklch(0.32 0.05 258);
+    border: 1px solid oklch(0.22 0.05 258 / 0.08);
+  }
+  .chip-violet { background: oklch(0.60 0.22 252 / 0.10); color: oklch(0.48 0.22 252); border-color: oklch(0.60 0.22 252 / 0.20); }
+  .chip-sky    { background: oklch(0.72 0.16 222 / 0.12); color: oklch(0.42 0.16 222); border-color: oklch(0.72 0.16 222 / 0.20); }
+  .chip-coral  { background: oklch(0.65 0.20 18 / 0.12);  color: oklch(0.45 0.18 18);  border-color: oklch(0.65 0.20 18 / 0.20);  }
+  .chip-emerald{ background: oklch(0.70 0.16 152 / 0.12); color: oklch(0.40 0.14 152); border-color: oklch(0.70 0.16 152 / 0.20); }
+
+  /* Soft button (primary on light) */
+  .btn-primary-light {
+    background: linear-gradient(135deg, oklch(0.60 0.22 252), oklch(0.50 0.22 262));
+    color: white;
+    box-shadow:
+      0 1px 2px oklch(0.50 0.22 262 / 0.20),
+      0 8px 24px -8px oklch(0.60 0.22 252 / 0.45);
+  }
+  .btn-ghost-light {
+    background: oklch(1 0 0);
+    color: oklch(0.22 0.05 258);
+    border: 1px solid oklch(0.22 0.05 258 / 0.10);
+  }
+  .btn-ghost-light:hover {
+    background: oklch(0.96 0.012 80);
+    border-color: oklch(0.22 0.05 258 / 0.18);
+  }
 }

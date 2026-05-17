@@ -10,13 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SporcuRouteImport } from './routes/sporcu'
+import { Route as SehrimdeRouteImport } from './routes/sehrimde'
+import { Route as MesajlarRouteImport } from './routes/mesajlar'
+import { Route as KayitRouteImport } from './routes/kayit'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as DesteklerimRouteImport } from './routes/desteklerim'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BildirimlerRouteImport } from './routes/bildirimler'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as YetenekIndexRouteImport } from './routes/yetenek/index'
+import { Route as SporcuPanelIndexRouteImport } from './routes/sporcu-panel/index'
+import { Route as RozetlerimIndexRouteImport } from './routes/rozetlerim/index'
+import { Route as MarkaPanelIndexRouteImport } from './routes/marka-panel/index'
+import { Route as KesfetIndexRouteImport } from './routes/kesfet/index'
+import { Route as CanliIndexRouteImport } from './routes/canli/index'
+import { Route as SporcuPanelTekliflerRouteImport } from './routes/sporcu-panel/teklifler'
+import { Route as SporcuPanelProfilRouteImport } from './routes/sporcu-panel/profil'
+import { Route as SporcuPanelIhtiyaclarRouteImport } from './routes/sporcu-panel/ihtiyaclar'
+import { Route as SporcuPanelIhtiyacOlusturRouteImport } from './routes/sporcu-panel/ihtiyac-olustur'
+import { Route as RozetlerimIlkAdimRouteImport } from './routes/rozetlerim/ilk-adim'
+import { Route as MarkaPanelProfilOlusturRouteImport } from './routes/marka-panel/profil-olustur'
+import { Route as MarkaPanelProfilRouteImport } from './routes/marka-panel/profil'
+import { Route as MarkaPanelEslesmeRouteImport } from './routes/marka-panel/eslesme'
+import { Route as KesfetModRouteImport } from './routes/kesfet/mod'
+import { Route as FonSlugRouteImport } from './routes/fon/$slug'
+import { Route as EtkinlikIdRouteImport } from './routes/etkinlik/$id'
+import { Route as DestekleSlugRouteImport } from './routes/destekle/$slug'
+import { Route as CanliIdRouteImport } from './routes/canli/$id'
+import { Route as YetenekEslesmeIndexRouteImport } from './routes/yetenek/eslesme/index'
+import { Route as SporcuSlugIndexRouteImport } from './routes/sporcu/$slug/index'
+import { Route as MarkaPanelKampanyalarIndexRouteImport } from './routes/marka-panel/kampanyalar/index'
+import { Route as YetenekEslesmeIdRouteImport } from './routes/yetenek/eslesme/$id'
+import { Route as TezahuratMatchIdOzetRouteImport } from './routes/tezahurat/$matchId/ozet'
+import { Route as SporcuSlugYolculukRouteImport } from './routes/sporcu/$slug/yolculuk'
+import { Route as SporcuSlugIhtiyaclarRouteImport } from './routes/sporcu/$slug/ihtiyaclar'
+import { Route as SporcuSlugGunlukRouteImport } from './routes/sporcu/$slug/gunluk'
+import { Route as MarkaPanelTeklifSlugRouteImport } from './routes/marka-panel/teklif/$slug'
+import { Route as MarkaPanelKampanyalarIdRouteImport } from './routes/marka-panel/kampanyalar/$id'
+import { Route as KesfetBransIdRouteImport } from './routes/kesfet/brans/$id'
 
 const SporcuRoute = SporcuRouteImport.update({
   id: '/sporcu',
   path: '/sporcu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SehrimdeRoute = SehrimdeRouteImport.update({
+  id: '/sehrimde',
+  path: '/sehrimde',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesajlarRoute = MesajlarRouteImport.update({
+  id: '/mesajlar',
+  path: '/mesajlar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KayitRoute = KayitRouteImport.update({
+  id: '/kayit',
+  path: '/kayit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GirisRoute = GirisRouteImport.update({
@@ -24,9 +74,19 @@ const GirisRoute = GirisRouteImport.update({
   path: '/giris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DesteklerimRoute = DesteklerimRouteImport.update({
+  id: '/desteklerim',
+  path: '/desteklerim',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BildirimlerRoute = BildirimlerRouteImport.update({
+  id: '/bildirimler',
+  path: '/bildirimler',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,39 +94,443 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const YetenekIndexRoute = YetenekIndexRouteImport.update({
+  id: '/yetenek/',
+  path: '/yetenek/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuPanelIndexRoute = SporcuPanelIndexRouteImport.update({
+  id: '/sporcu-panel/',
+  path: '/sporcu-panel/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RozetlerimIndexRoute = RozetlerimIndexRouteImport.update({
+  id: '/rozetlerim/',
+  path: '/rozetlerim/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarkaPanelIndexRoute = MarkaPanelIndexRouteImport.update({
+  id: '/marka-panel/',
+  path: '/marka-panel/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KesfetIndexRoute = KesfetIndexRouteImport.update({
+  id: '/kesfet/',
+  path: '/kesfet/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanliIndexRoute = CanliIndexRouteImport.update({
+  id: '/canli/',
+  path: '/canli/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuPanelTekliflerRoute = SporcuPanelTekliflerRouteImport.update({
+  id: '/sporcu-panel/teklifler',
+  path: '/sporcu-panel/teklifler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuPanelProfilRoute = SporcuPanelProfilRouteImport.update({
+  id: '/sporcu-panel/profil',
+  path: '/sporcu-panel/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuPanelIhtiyaclarRoute = SporcuPanelIhtiyaclarRouteImport.update({
+  id: '/sporcu-panel/ihtiyaclar',
+  path: '/sporcu-panel/ihtiyaclar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuPanelIhtiyacOlusturRoute =
+  SporcuPanelIhtiyacOlusturRouteImport.update({
+    id: '/sporcu-panel/ihtiyac-olustur',
+    path: '/sporcu-panel/ihtiyac-olustur',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RozetlerimIlkAdimRoute = RozetlerimIlkAdimRouteImport.update({
+  id: '/ilk-adim',
+  path: '/ilk-adim',
+  getParentRoute: () => RozetlerimRoute,
+} as any)
+const MarkaPanelProfilOlusturRoute = MarkaPanelProfilOlusturRouteImport.update({
+  id: '/marka-panel/profil-olustur',
+  path: '/marka-panel/profil-olustur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarkaPanelProfilRoute = MarkaPanelProfilRouteImport.update({
+  id: '/marka-panel/profil',
+  path: '/marka-panel/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarkaPanelEslesmeRoute = MarkaPanelEslesmeRouteImport.update({
+  id: '/marka-panel/eslesme',
+  path: '/marka-panel/eslesme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KesfetModRoute = KesfetModRouteImport.update({
+  id: '/mod',
+  path: '/mod',
+  getParentRoute: () => KesfetRoute,
+} as any)
+const FonSlugRoute = FonSlugRouteImport.update({
+  id: '/fon/$slug',
+  path: '/fon/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EtkinlikIdRoute = EtkinlikIdRouteImport.update({
+  id: '/etkinlik/$id',
+  path: '/etkinlik/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestekleSlugRoute = DestekleSlugRouteImport.update({
+  id: '/destekle/$slug',
+  path: '/destekle/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanliIdRoute = CanliIdRouteImport.update({
+  id: '/canli/$id',
+  path: '/canli/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const YetenekEslesmeIndexRoute = YetenekEslesmeIndexRouteImport.update({
+  id: '/yetenek/eslesme/',
+  path: '/yetenek/eslesme/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuSlugIndexRoute = SporcuSlugIndexRouteImport.update({
+  id: '/$slug/',
+  path: '/$slug/',
+  getParentRoute: () => SporcuRoute,
+} as any)
+const MarkaPanelKampanyalarIndexRoute =
+  MarkaPanelKampanyalarIndexRouteImport.update({
+    id: '/marka-panel/kampanyalar/',
+    path: '/marka-panel/kampanyalar/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const YetenekEslesmeIdRoute = YetenekEslesmeIdRouteImport.update({
+  id: '/yetenek/eslesme/$id',
+  path: '/yetenek/eslesme/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TezahuratMatchIdOzetRoute = TezahuratMatchIdOzetRouteImport.update({
+  id: '/tezahurat/$matchId/ozet',
+  path: '/tezahurat/$matchId/ozet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SporcuSlugYolculukRoute = SporcuSlugYolculukRouteImport.update({
+  id: '/$slug/yolculuk',
+  path: '/$slug/yolculuk',
+  getParentRoute: () => SporcuRoute,
+} as any)
+const SporcuSlugIhtiyaclarRoute = SporcuSlugIhtiyaclarRouteImport.update({
+  id: '/$slug/ihtiyaclar',
+  path: '/$slug/ihtiyaclar',
+  getParentRoute: () => SporcuRoute,
+} as any)
+const SporcuSlugGunlukRoute = SporcuSlugGunlukRouteImport.update({
+  id: '/$slug/gunluk',
+  path: '/$slug/gunluk',
+  getParentRoute: () => SporcuRoute,
+} as any)
+const MarkaPanelTeklifSlugRoute = MarkaPanelTeklifSlugRouteImport.update({
+  id: '/marka-panel/teklif/$slug',
+  path: '/marka-panel/teklif/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarkaPanelKampanyalarIdRoute = MarkaPanelKampanyalarIdRouteImport.update({
+  id: '/marka-panel/kampanyalar/$id',
+  path: '/marka-panel/kampanyalar/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KesfetBransIdRoute = KesfetBransIdRouteImport.update({
+  id: '/kesfet/brans/$id',
+  path: '/kesfet/brans/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
+  '/desteklerim': typeof DesteklerimRoute
   '/giris': typeof GirisRoute
-  '/sporcu': typeof SporcuRoute
+  '/kayit': typeof KayitRoute
+  '/mesajlar': typeof MesajlarRoute
+  '/sehrimde': typeof SehrimdeRoute
+  '/sporcu': typeof SporcuRouteWithChildren
+  '/canli/$id': typeof CanliIdRoute
+  '/destekle/$slug': typeof DestekleSlugRoute
+  '/etkinlik/$id': typeof EtkinlikIdRoute
+  '/fon/$slug': typeof FonSlugRoute
+  '/kesfet/mod': typeof KesfetModRoute
+  '/marka-panel/eslesme': typeof MarkaPanelEslesmeRoute
+  '/marka-panel/profil': typeof MarkaPanelProfilRoute
+  '/marka-panel/profil-olustur': typeof MarkaPanelProfilOlusturRoute
+  '/rozetlerim/ilk-adim': typeof RozetlerimIlkAdimRoute
+  '/sporcu-panel/ihtiyac-olustur': typeof SporcuPanelIhtiyacOlusturRoute
+  '/sporcu-panel/ihtiyaclar': typeof SporcuPanelIhtiyaclarRoute
+  '/sporcu-panel/profil': typeof SporcuPanelProfilRoute
+  '/sporcu-panel/teklifler': typeof SporcuPanelTekliflerRoute
+  '/canli/': typeof CanliIndexRoute
+  '/kesfet/': typeof KesfetIndexRoute
+  '/marka-panel/': typeof MarkaPanelIndexRoute
+  '/rozetlerim/': typeof RozetlerimIndexRoute
+  '/sporcu-panel/': typeof SporcuPanelIndexRoute
+  '/yetenek/': typeof YetenekIndexRoute
+  '/kesfet/brans/$id': typeof KesfetBransIdRoute
+  '/marka-panel/kampanyalar/$id': typeof MarkaPanelKampanyalarIdRoute
+  '/marka-panel/teklif/$slug': typeof MarkaPanelTeklifSlugRoute
+  '/sporcu/$slug/gunluk': typeof SporcuSlugGunlukRoute
+  '/sporcu/$slug/ihtiyaclar': typeof SporcuSlugIhtiyaclarRoute
+  '/sporcu/$slug/yolculuk': typeof SporcuSlugYolculukRoute
+  '/tezahurat/$matchId/ozet': typeof TezahuratMatchIdOzetRoute
+  '/yetenek/eslesme/$id': typeof YetenekEslesmeIdRoute
+  '/marka-panel/kampanyalar/': typeof MarkaPanelKampanyalarIndexRoute
+  '/sporcu/$slug/': typeof SporcuSlugIndexRoute
+  '/yetenek/eslesme/': typeof YetenekEslesmeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
+  '/desteklerim': typeof DesteklerimRoute
   '/giris': typeof GirisRoute
-  '/sporcu': typeof SporcuRoute
+  '/kayit': typeof KayitRoute
+  '/mesajlar': typeof MesajlarRoute
+  '/sehrimde': typeof SehrimdeRoute
+  '/sporcu': typeof SporcuRouteWithChildren
+  '/canli/$id': typeof CanliIdRoute
+  '/destekle/$slug': typeof DestekleSlugRoute
+  '/etkinlik/$id': typeof EtkinlikIdRoute
+  '/fon/$slug': typeof FonSlugRoute
+  '/kesfet/mod': typeof KesfetModRoute
+  '/marka-panel/eslesme': typeof MarkaPanelEslesmeRoute
+  '/marka-panel/profil': typeof MarkaPanelProfilRoute
+  '/marka-panel/profil-olustur': typeof MarkaPanelProfilOlusturRoute
+  '/rozetlerim/ilk-adim': typeof RozetlerimIlkAdimRoute
+  '/sporcu-panel/ihtiyac-olustur': typeof SporcuPanelIhtiyacOlusturRoute
+  '/sporcu-panel/ihtiyaclar': typeof SporcuPanelIhtiyaclarRoute
+  '/sporcu-panel/profil': typeof SporcuPanelProfilRoute
+  '/sporcu-panel/teklifler': typeof SporcuPanelTekliflerRoute
+  '/canli': typeof CanliIndexRoute
+  '/kesfet': typeof KesfetIndexRoute
+  '/marka-panel': typeof MarkaPanelIndexRoute
+  '/rozetlerim': typeof RozetlerimIndexRoute
+  '/sporcu-panel': typeof SporcuPanelIndexRoute
+  '/yetenek': typeof YetenekIndexRoute
+  '/kesfet/brans/$id': typeof KesfetBransIdRoute
+  '/marka-panel/kampanyalar/$id': typeof MarkaPanelKampanyalarIdRoute
+  '/marka-panel/teklif/$slug': typeof MarkaPanelTeklifSlugRoute
+  '/sporcu/$slug/gunluk': typeof SporcuSlugGunlukRoute
+  '/sporcu/$slug/ihtiyaclar': typeof SporcuSlugIhtiyaclarRoute
+  '/sporcu/$slug/yolculuk': typeof SporcuSlugYolculukRoute
+  '/tezahurat/$matchId/ozet': typeof TezahuratMatchIdOzetRoute
+  '/yetenek/eslesme/$id': typeof YetenekEslesmeIdRoute
+  '/marka-panel/kampanyalar': typeof MarkaPanelKampanyalarIndexRoute
+  '/sporcu/$slug': typeof SporcuSlugIndexRoute
+  '/yetenek/eslesme': typeof YetenekEslesmeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bildirimler': typeof BildirimlerRoute
   '/dashboard': typeof DashboardRoute
+  '/desteklerim': typeof DesteklerimRoute
   '/giris': typeof GirisRoute
-  '/sporcu': typeof SporcuRoute
+  '/kayit': typeof KayitRoute
+  '/mesajlar': typeof MesajlarRoute
+  '/sehrimde': typeof SehrimdeRoute
+  '/sporcu': typeof SporcuRouteWithChildren
+  '/canli/$id': typeof CanliIdRoute
+  '/destekle/$slug': typeof DestekleSlugRoute
+  '/etkinlik/$id': typeof EtkinlikIdRoute
+  '/fon/$slug': typeof FonSlugRoute
+  '/kesfet/mod': typeof KesfetModRoute
+  '/marka-panel/eslesme': typeof MarkaPanelEslesmeRoute
+  '/marka-panel/profil': typeof MarkaPanelProfilRoute
+  '/marka-panel/profil-olustur': typeof MarkaPanelProfilOlusturRoute
+  '/rozetlerim/ilk-adim': typeof RozetlerimIlkAdimRoute
+  '/sporcu-panel/ihtiyac-olustur': typeof SporcuPanelIhtiyacOlusturRoute
+  '/sporcu-panel/ihtiyaclar': typeof SporcuPanelIhtiyaclarRoute
+  '/sporcu-panel/profil': typeof SporcuPanelProfilRoute
+  '/sporcu-panel/teklifler': typeof SporcuPanelTekliflerRoute
+  '/canli/': typeof CanliIndexRoute
+  '/kesfet/': typeof KesfetIndexRoute
+  '/marka-panel/': typeof MarkaPanelIndexRoute
+  '/rozetlerim/': typeof RozetlerimIndexRoute
+  '/sporcu-panel/': typeof SporcuPanelIndexRoute
+  '/yetenek/': typeof YetenekIndexRoute
+  '/kesfet/brans/$id': typeof KesfetBransIdRoute
+  '/marka-panel/kampanyalar/$id': typeof MarkaPanelKampanyalarIdRoute
+  '/marka-panel/teklif/$slug': typeof MarkaPanelTeklifSlugRoute
+  '/sporcu/$slug/gunluk': typeof SporcuSlugGunlukRoute
+  '/sporcu/$slug/ihtiyaclar': typeof SporcuSlugIhtiyaclarRoute
+  '/sporcu/$slug/yolculuk': typeof SporcuSlugYolculukRoute
+  '/tezahurat/$matchId/ozet': typeof TezahuratMatchIdOzetRoute
+  '/yetenek/eslesme/$id': typeof YetenekEslesmeIdRoute
+  '/marka-panel/kampanyalar/': typeof MarkaPanelKampanyalarIndexRoute
+  '/sporcu/$slug/': typeof SporcuSlugIndexRoute
+  '/yetenek/eslesme/': typeof YetenekEslesmeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/giris' | '/sporcu'
+  fullPaths:
+    | '/'
+    | '/bildirimler'
+    | '/dashboard'
+    | '/desteklerim'
+    | '/giris'
+    | '/kayit'
+    | '/mesajlar'
+    | '/sehrimde'
+    | '/sporcu'
+    | '/canli/$id'
+    | '/destekle/$slug'
+    | '/etkinlik/$id'
+    | '/fon/$slug'
+    | '/kesfet/mod'
+    | '/marka-panel/eslesme'
+    | '/marka-panel/profil'
+    | '/marka-panel/profil-olustur'
+    | '/rozetlerim/ilk-adim'
+    | '/sporcu-panel/ihtiyac-olustur'
+    | '/sporcu-panel/ihtiyaclar'
+    | '/sporcu-panel/profil'
+    | '/sporcu-panel/teklifler'
+    | '/canli/'
+    | '/kesfet/'
+    | '/marka-panel/'
+    | '/rozetlerim/'
+    | '/sporcu-panel/'
+    | '/yetenek/'
+    | '/kesfet/brans/$id'
+    | '/marka-panel/kampanyalar/$id'
+    | '/marka-panel/teklif/$slug'
+    | '/sporcu/$slug/gunluk'
+    | '/sporcu/$slug/ihtiyaclar'
+    | '/sporcu/$slug/yolculuk'
+    | '/tezahurat/$matchId/ozet'
+    | '/yetenek/eslesme/$id'
+    | '/marka-panel/kampanyalar/'
+    | '/sporcu/$slug/'
+    | '/yetenek/eslesme/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/giris' | '/sporcu'
-  id: '__root__' | '/' | '/dashboard' | '/giris' | '/sporcu'
+  to:
+    | '/'
+    | '/bildirimler'
+    | '/dashboard'
+    | '/desteklerim'
+    | '/giris'
+    | '/kayit'
+    | '/mesajlar'
+    | '/sehrimde'
+    | '/sporcu'
+    | '/canli/$id'
+    | '/destekle/$slug'
+    | '/etkinlik/$id'
+    | '/fon/$slug'
+    | '/kesfet/mod'
+    | '/marka-panel/eslesme'
+    | '/marka-panel/profil'
+    | '/marka-panel/profil-olustur'
+    | '/rozetlerim/ilk-adim'
+    | '/sporcu-panel/ihtiyac-olustur'
+    | '/sporcu-panel/ihtiyaclar'
+    | '/sporcu-panel/profil'
+    | '/sporcu-panel/teklifler'
+    | '/canli'
+    | '/kesfet'
+    | '/marka-panel'
+    | '/rozetlerim'
+    | '/sporcu-panel'
+    | '/yetenek'
+    | '/kesfet/brans/$id'
+    | '/marka-panel/kampanyalar/$id'
+    | '/marka-panel/teklif/$slug'
+    | '/sporcu/$slug/gunluk'
+    | '/sporcu/$slug/ihtiyaclar'
+    | '/sporcu/$slug/yolculuk'
+    | '/tezahurat/$matchId/ozet'
+    | '/yetenek/eslesme/$id'
+    | '/marka-panel/kampanyalar'
+    | '/sporcu/$slug'
+    | '/yetenek/eslesme'
+  id:
+    | '__root__'
+    | '/'
+    | '/bildirimler'
+    | '/dashboard'
+    | '/desteklerim'
+    | '/giris'
+    | '/kayit'
+    | '/mesajlar'
+    | '/sehrimde'
+    | '/sporcu'
+    | '/canli/$id'
+    | '/destekle/$slug'
+    | '/etkinlik/$id'
+    | '/fon/$slug'
+    | '/kesfet/mod'
+    | '/marka-panel/eslesme'
+    | '/marka-panel/profil'
+    | '/marka-panel/profil-olustur'
+    | '/rozetlerim/ilk-adim'
+    | '/sporcu-panel/ihtiyac-olustur'
+    | '/sporcu-panel/ihtiyaclar'
+    | '/sporcu-panel/profil'
+    | '/sporcu-panel/teklifler'
+    | '/canli/'
+    | '/kesfet/'
+    | '/marka-panel/'
+    | '/rozetlerim/'
+    | '/sporcu-panel/'
+    | '/yetenek/'
+    | '/kesfet/brans/$id'
+    | '/marka-panel/kampanyalar/$id'
+    | '/marka-panel/teklif/$slug'
+    | '/sporcu/$slug/gunluk'
+    | '/sporcu/$slug/ihtiyaclar'
+    | '/sporcu/$slug/yolculuk'
+    | '/tezahurat/$matchId/ozet'
+    | '/yetenek/eslesme/$id'
+    | '/marka-panel/kampanyalar/'
+    | '/sporcu/$slug/'
+    | '/yetenek/eslesme/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BildirimlerRoute: typeof BildirimlerRoute
   DashboardRoute: typeof DashboardRoute
+  DesteklerimRoute: typeof DesteklerimRoute
   GirisRoute: typeof GirisRoute
-  SporcuRoute: typeof SporcuRoute
+  KayitRoute: typeof KayitRoute
+  MesajlarRoute: typeof MesajlarRoute
+  SehrimdeRoute: typeof SehrimdeRoute
+  SporcuRoute: typeof SporcuRouteWithChildren
+  CanliIdRoute: typeof CanliIdRoute
+  DestekleSlugRoute: typeof DestekleSlugRoute
+  EtkinlikIdRoute: typeof EtkinlikIdRoute
+  FonSlugRoute: typeof FonSlugRoute
+  MarkaPanelEslesmeRoute: typeof MarkaPanelEslesmeRoute
+  MarkaPanelProfilRoute: typeof MarkaPanelProfilRoute
+  MarkaPanelProfilOlusturRoute: typeof MarkaPanelProfilOlusturRoute
+  SporcuPanelIhtiyacOlusturRoute: typeof SporcuPanelIhtiyacOlusturRoute
+  SporcuPanelIhtiyaclarRoute: typeof SporcuPanelIhtiyaclarRoute
+  SporcuPanelProfilRoute: typeof SporcuPanelProfilRoute
+  SporcuPanelTekliflerRoute: typeof SporcuPanelTekliflerRoute
+  CanliIndexRoute: typeof CanliIndexRoute
+  KesfetIndexRoute: typeof KesfetIndexRoute
+  MarkaPanelIndexRoute: typeof MarkaPanelIndexRoute
+  RozetlerimIndexRoute: typeof RozetlerimIndexRoute
+  SporcuPanelIndexRoute: typeof SporcuPanelIndexRoute
+  YetenekIndexRoute: typeof YetenekIndexRoute
+  KesfetBransIdRoute: typeof KesfetBransIdRoute
+  MarkaPanelKampanyalarIdRoute: typeof MarkaPanelKampanyalarIdRoute
+  MarkaPanelTeklifSlugRoute: typeof MarkaPanelTeklifSlugRoute
+  TezahuratMatchIdOzetRoute: typeof TezahuratMatchIdOzetRoute
+  YetenekEslesmeIdRoute: typeof YetenekEslesmeIdRoute
+  MarkaPanelKampanyalarIndexRoute: typeof MarkaPanelKampanyalarIndexRoute
+  YetenekEslesmeIndexRoute: typeof YetenekEslesmeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,11 +542,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SporcuRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sehrimde': {
+      id: '/sehrimde'
+      path: '/sehrimde'
+      fullPath: '/sehrimde'
+      preLoaderRoute: typeof SehrimdeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mesajlar': {
+      id: '/mesajlar'
+      path: '/mesajlar'
+      fullPath: '/mesajlar'
+      preLoaderRoute: typeof MesajlarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kayit': {
+      id: '/kayit'
+      path: '/kayit'
+      fullPath: '/kayit'
+      preLoaderRoute: typeof KayitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/giris': {
       id: '/giris'
       path: '/giris'
       fullPath: '/giris'
       preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/desteklerim': {
+      id: '/desteklerim'
+      path: '/desteklerim'
+      fullPath: '/desteklerim'
+      preLoaderRoute: typeof DesteklerimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -92,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bildirimler': {
+      id: '/bildirimler'
+      path: '/bildirimler'
+      fullPath: '/bildirimler'
+      preLoaderRoute: typeof BildirimlerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,14 +598,270 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/yetenek/': {
+      id: '/yetenek/'
+      path: '/yetenek'
+      fullPath: '/yetenek/'
+      preLoaderRoute: typeof YetenekIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu-panel/': {
+      id: '/sporcu-panel/'
+      path: '/sporcu-panel'
+      fullPath: '/sporcu-panel/'
+      preLoaderRoute: typeof SporcuPanelIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rozetlerim/': {
+      id: '/rozetlerim/'
+      path: '/rozetlerim'
+      fullPath: '/rozetlerim/'
+      preLoaderRoute: typeof RozetlerimIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marka-panel/': {
+      id: '/marka-panel/'
+      path: '/marka-panel'
+      fullPath: '/marka-panel/'
+      preLoaderRoute: typeof MarkaPanelIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kesfet/': {
+      id: '/kesfet/'
+      path: '/kesfet'
+      fullPath: '/kesfet/'
+      preLoaderRoute: typeof KesfetIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canli/': {
+      id: '/canli/'
+      path: '/canli'
+      fullPath: '/canli/'
+      preLoaderRoute: typeof CanliIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu-panel/teklifler': {
+      id: '/sporcu-panel/teklifler'
+      path: '/sporcu-panel/teklifler'
+      fullPath: '/sporcu-panel/teklifler'
+      preLoaderRoute: typeof SporcuPanelTekliflerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu-panel/profil': {
+      id: '/sporcu-panel/profil'
+      path: '/sporcu-panel/profil'
+      fullPath: '/sporcu-panel/profil'
+      preLoaderRoute: typeof SporcuPanelProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu-panel/ihtiyaclar': {
+      id: '/sporcu-panel/ihtiyaclar'
+      path: '/sporcu-panel/ihtiyaclar'
+      fullPath: '/sporcu-panel/ihtiyaclar'
+      preLoaderRoute: typeof SporcuPanelIhtiyaclarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu-panel/ihtiyac-olustur': {
+      id: '/sporcu-panel/ihtiyac-olustur'
+      path: '/sporcu-panel/ihtiyac-olustur'
+      fullPath: '/sporcu-panel/ihtiyac-olustur'
+      preLoaderRoute: typeof SporcuPanelIhtiyacOlusturRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rozetlerim/ilk-adim': {
+      id: '/rozetlerim/ilk-adim'
+      path: '/ilk-adim'
+      fullPath: '/rozetlerim/ilk-adim'
+      preLoaderRoute: typeof RozetlerimIlkAdimRouteImport
+      parentRoute: typeof RozetlerimRoute
+    }
+    '/marka-panel/profil-olustur': {
+      id: '/marka-panel/profil-olustur'
+      path: '/marka-panel/profil-olustur'
+      fullPath: '/marka-panel/profil-olustur'
+      preLoaderRoute: typeof MarkaPanelProfilOlusturRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marka-panel/profil': {
+      id: '/marka-panel/profil'
+      path: '/marka-panel/profil'
+      fullPath: '/marka-panel/profil'
+      preLoaderRoute: typeof MarkaPanelProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marka-panel/eslesme': {
+      id: '/marka-panel/eslesme'
+      path: '/marka-panel/eslesme'
+      fullPath: '/marka-panel/eslesme'
+      preLoaderRoute: typeof MarkaPanelEslesmeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kesfet/mod': {
+      id: '/kesfet/mod'
+      path: '/mod'
+      fullPath: '/kesfet/mod'
+      preLoaderRoute: typeof KesfetModRouteImport
+      parentRoute: typeof KesfetRoute
+    }
+    '/fon/$slug': {
+      id: '/fon/$slug'
+      path: '/fon/$slug'
+      fullPath: '/fon/$slug'
+      preLoaderRoute: typeof FonSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etkinlik/$id': {
+      id: '/etkinlik/$id'
+      path: '/etkinlik/$id'
+      fullPath: '/etkinlik/$id'
+      preLoaderRoute: typeof EtkinlikIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destekle/$slug': {
+      id: '/destekle/$slug'
+      path: '/destekle/$slug'
+      fullPath: '/destekle/$slug'
+      preLoaderRoute: typeof DestekleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canli/$id': {
+      id: '/canli/$id'
+      path: '/canli/$id'
+      fullPath: '/canli/$id'
+      preLoaderRoute: typeof CanliIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/yetenek/eslesme/': {
+      id: '/yetenek/eslesme/'
+      path: '/yetenek/eslesme'
+      fullPath: '/yetenek/eslesme/'
+      preLoaderRoute: typeof YetenekEslesmeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu/$slug/': {
+      id: '/sporcu/$slug/'
+      path: '/$slug'
+      fullPath: '/sporcu/$slug/'
+      preLoaderRoute: typeof SporcuSlugIndexRouteImport
+      parentRoute: typeof SporcuRoute
+    }
+    '/marka-panel/kampanyalar/': {
+      id: '/marka-panel/kampanyalar/'
+      path: '/marka-panel/kampanyalar'
+      fullPath: '/marka-panel/kampanyalar/'
+      preLoaderRoute: typeof MarkaPanelKampanyalarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/yetenek/eslesme/$id': {
+      id: '/yetenek/eslesme/$id'
+      path: '/yetenek/eslesme/$id'
+      fullPath: '/yetenek/eslesme/$id'
+      preLoaderRoute: typeof YetenekEslesmeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tezahurat/$matchId/ozet': {
+      id: '/tezahurat/$matchId/ozet'
+      path: '/tezahurat/$matchId/ozet'
+      fullPath: '/tezahurat/$matchId/ozet'
+      preLoaderRoute: typeof TezahuratMatchIdOzetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sporcu/$slug/yolculuk': {
+      id: '/sporcu/$slug/yolculuk'
+      path: '/$slug/yolculuk'
+      fullPath: '/sporcu/$slug/yolculuk'
+      preLoaderRoute: typeof SporcuSlugYolculukRouteImport
+      parentRoute: typeof SporcuRoute
+    }
+    '/sporcu/$slug/ihtiyaclar': {
+      id: '/sporcu/$slug/ihtiyaclar'
+      path: '/$slug/ihtiyaclar'
+      fullPath: '/sporcu/$slug/ihtiyaclar'
+      preLoaderRoute: typeof SporcuSlugIhtiyaclarRouteImport
+      parentRoute: typeof SporcuRoute
+    }
+    '/sporcu/$slug/gunluk': {
+      id: '/sporcu/$slug/gunluk'
+      path: '/$slug/gunluk'
+      fullPath: '/sporcu/$slug/gunluk'
+      preLoaderRoute: typeof SporcuSlugGunlukRouteImport
+      parentRoute: typeof SporcuRoute
+    }
+    '/marka-panel/teklif/$slug': {
+      id: '/marka-panel/teklif/$slug'
+      path: '/marka-panel/teklif/$slug'
+      fullPath: '/marka-panel/teklif/$slug'
+      preLoaderRoute: typeof MarkaPanelTeklifSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marka-panel/kampanyalar/$id': {
+      id: '/marka-panel/kampanyalar/$id'
+      path: '/marka-panel/kampanyalar/$id'
+      fullPath: '/marka-panel/kampanyalar/$id'
+      preLoaderRoute: typeof MarkaPanelKampanyalarIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kesfet/brans/$id': {
+      id: '/kesfet/brans/$id'
+      path: '/kesfet/brans/$id'
+      fullPath: '/kesfet/brans/$id'
+      preLoaderRoute: typeof KesfetBransIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface SporcuRouteChildren {
+  SporcuSlugGunlukRoute: typeof SporcuSlugGunlukRoute
+  SporcuSlugIhtiyaclarRoute: typeof SporcuSlugIhtiyaclarRoute
+  SporcuSlugYolculukRoute: typeof SporcuSlugYolculukRoute
+  SporcuSlugIndexRoute: typeof SporcuSlugIndexRoute
+}
+
+const SporcuRouteChildren: SporcuRouteChildren = {
+  SporcuSlugGunlukRoute: SporcuSlugGunlukRoute,
+  SporcuSlugIhtiyaclarRoute: SporcuSlugIhtiyaclarRoute,
+  SporcuSlugYolculukRoute: SporcuSlugYolculukRoute,
+  SporcuSlugIndexRoute: SporcuSlugIndexRoute,
+}
+
+const SporcuRouteWithChildren =
+  SporcuRoute._addFileChildren(SporcuRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BildirimlerRoute: BildirimlerRoute,
   DashboardRoute: DashboardRoute,
+  DesteklerimRoute: DesteklerimRoute,
   GirisRoute: GirisRoute,
-  SporcuRoute: SporcuRoute,
+  KayitRoute: KayitRoute,
+  MesajlarRoute: MesajlarRoute,
+  SehrimdeRoute: SehrimdeRoute,
+  SporcuRoute: SporcuRouteWithChildren,
+  CanliIdRoute: CanliIdRoute,
+  DestekleSlugRoute: DestekleSlugRoute,
+  EtkinlikIdRoute: EtkinlikIdRoute,
+  FonSlugRoute: FonSlugRoute,
+  MarkaPanelEslesmeRoute: MarkaPanelEslesmeRoute,
+  MarkaPanelProfilRoute: MarkaPanelProfilRoute,
+  MarkaPanelProfilOlusturRoute: MarkaPanelProfilOlusturRoute,
+  SporcuPanelIhtiyacOlusturRoute: SporcuPanelIhtiyacOlusturRoute,
+  SporcuPanelIhtiyaclarRoute: SporcuPanelIhtiyaclarRoute,
+  SporcuPanelProfilRoute: SporcuPanelProfilRoute,
+  SporcuPanelTekliflerRoute: SporcuPanelTekliflerRoute,
+  CanliIndexRoute: CanliIndexRoute,
+  KesfetIndexRoute: KesfetIndexRoute,
+  MarkaPanelIndexRoute: MarkaPanelIndexRoute,
+  RozetlerimIndexRoute: RozetlerimIndexRoute,
+  SporcuPanelIndexRoute: SporcuPanelIndexRoute,
+  YetenekIndexRoute: YetenekIndexRoute,
+  KesfetBransIdRoute: KesfetBransIdRoute,
+  MarkaPanelKampanyalarIdRoute: MarkaPanelKampanyalarIdRoute,
+  MarkaPanelTeklifSlugRoute: MarkaPanelTeklifSlugRoute,
+  TezahuratMatchIdOzetRoute: TezahuratMatchIdOzetRoute,
+  YetenekEslesmeIdRoute: YetenekEslesmeIdRoute,
+  MarkaPanelKampanyalarIndexRoute: MarkaPanelKampanyalarIndexRoute,
+  YetenekEslesmeIndexRoute: YetenekEslesmeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { IdCard, Radio, MapPin, Coins, Users, Compass } from "lucide-react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import billiardsImg from "@/assets/sport-billiards-nobg.png";
+import cemKaanImg from "@/assets/cem-kaan-gokerkan.png";
 
 const features = [
   { icon: IdCard,  title: "Sporcu Kartı",     desc: "Sıralama, son maç ve destekçiler tek bakışta. Her sporcunun kendi dijital kimliği.", hue: "violet" },
@@ -30,7 +30,7 @@ const cardVariants = {
 export function Features() {
   return (
     <section id="ozellikler" className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={billiardsImg} alt="Bilardo sporcusu" side="right" />
+      <FloatingAthlete src={cemKaanImg} alt="Cem Kaan Gökerkan" side="right" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-violet/5 to-transparent" />
 
