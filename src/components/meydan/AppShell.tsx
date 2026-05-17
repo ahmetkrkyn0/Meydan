@@ -106,8 +106,8 @@ export function AppShell({
   return (
     <div className="app-surface app-ambient relative flex min-h-screen w-full">
       {/* ── Sidebar ── */}
-      <aside className="sticky top-0 z-30 hidden h-screen w-64 shrink-0 flex-col border-r border-[color:var(--app-line)] bg-white/70 backdrop-blur-xl lg:flex">
-        <Link to="/" className="flex items-center gap-2.5 px-6 py-5">
+      <aside className="sidebar-glass sticky top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden border-r border-[color:var(--app-line)] lg:flex">
+        <Link to="/" className="flex shrink-0 items-center gap-2.5 px-6 py-5">
           <span className="relative inline-flex h-9 w-9 items-center justify-center">
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet via-indigo to-sky opacity-95" />
             <span className="relative font-display text-base font-bold text-white">M</span>
@@ -118,7 +118,7 @@ export function AppShell({
           </div>
         </Link>
 
-        <nav className="flex-1 space-y-1 px-3 pt-2">
+        <nav className="sidebar-scroll min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2">
           {nav.map((item) => {
             const active = loc.pathname === item.to ||
               (item.to !== "/dashboard" && loc.pathname.startsWith(item.to));
@@ -151,7 +151,7 @@ export function AppShell({
         </nav>
 
         {/* Mode switcher — demo: ilgili roldeki ilk profile login yapar */}
-        <div className="mx-3 mb-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2">
+        <div className="mx-3 mb-3 mt-3 shrink-0 rounded-2xl border border-[color:var(--app-line)] bg-white/80 p-2 backdrop-blur">
           <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
             Demo rol
           </p>
@@ -188,7 +188,7 @@ export function AppShell({
         </div>
 
         {/* User card */}
-        <div className="m-3 mt-0 flex items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2.5">
+        <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
           <img src={adaImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
