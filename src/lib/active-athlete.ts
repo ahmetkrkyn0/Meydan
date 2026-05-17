@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listProfiles, type BackendProfile, type ProfileRole } from "@/lib/api";
 import { profileToAthlete, slugifyProfile } from "@/lib/api-mappers";
+import { useSession } from "@/lib/session";
 import type { Athlete } from "@/lib/mock-data";
 
 const STORAGE_KEY_FOR: Record<ProfileRole, string> = {
@@ -75,28 +76,38 @@ function useActiveProfileForRole(role: ProfileRole) {
 }
 
 export function useActiveAthlete(): ActiveAthleteState {
-  const { profiles, activeId, setActiveId, isLoading, isError } =
-    useActiveProfileForRole("sporcu");
+  const session = useSession();
+  const fallback = useActiveProfileForRole("sporcu");
 
-  const athleteOptions = useMemo(
-    () =>
-      profiles.map((profile, index) => ({
-        profile,
-        athlete: profileToAthlete(profile, index),
-      })),
-    [profiles],
-  );
+  // Login yapıldıysa session profilini kullan; picker tamamen devre dışı.
+  if (session.isAuthenticated && session.role === "sporcu" && session.profile) {
+    const sessionAthlete = profileToAthlete(session.profile, 0);
+    return {
+      profile: session.profile,
+      athlete: sessionAthlete,
+      athleteOptions: [{ profile: session.profile, athlete: sessionAthlete }],
+      isLoading: false,
+      isError: false,
+      hasBackend: true,
+      setActiveId: () => undefined,
+    };
+  }
 
-  const active = athleteOptions.find((o) => o.profile.id === activeId) ?? null;
+  const athleteOptions = fallback.profiles.map((profile, index) => ({
+    profile,
+    athlete: profileToAthlete(profile, index),
+  }));
+
+  const active = athleteOptions.find((o) => o.profile.id === fallback.activeId) ?? null;
 
   return {
     profile: active?.profile ?? null,
     athlete: active?.athlete ?? null,
     athleteOptions,
-    isLoading,
-    isError,
+    isLoading: fallback.isLoading || session.isLoading,
+    isError: fallback.isError,
     hasBackend: athleteOptions.length > 0,
-    setActiveId,
+    setActiveId: fallback.setActiveId,
   };
 }
 
@@ -110,18 +121,30 @@ export type ActiveFanState = {
 };
 
 export function useActiveFan(): ActiveFanState {
-  const { profiles, activeId, setActiveId, isLoading, isError } =
-    useActiveProfileForRole("taraftar");
+  const session = useSession();
+  const fallback = useActiveProfileForRole("taraftar");
 
-  const active = profiles.find((p) => p.id === activeId) ?? null;
+  // Login yapıldıysa session profilini kullan.
+  if (session.isAuthenticated && session.role === "taraftar" && session.profile) {
+    return {
+      profile: session.profile,
+      fanOptions: [session.profile],
+      isLoading: false,
+      isError: false,
+      hasBackend: true,
+      setActiveId: () => undefined,
+    };
+  }
+
+  const active = fallback.profiles.find((p) => p.id === fallback.activeId) ?? null;
 
   return {
     profile: active,
-    fanOptions: profiles,
-    isLoading,
-    isError,
-    hasBackend: profiles.length > 0,
-    setActiveId,
+    fanOptions: fallback.profiles,
+    isLoading: fallback.isLoading || session.isLoading,
+    isError: fallback.isError,
+    hasBackend: fallback.profiles.length > 0,
+    setActiveId: fallback.setActiveId,
   };
 }
 
