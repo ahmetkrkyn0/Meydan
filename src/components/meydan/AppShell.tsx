@@ -151,7 +151,7 @@ export function AppShell({
         </nav>
 
         {/* Mode switcher — demo: ilgili roldeki ilk profile login yapar */}
-        <div className="mx-3 mb-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2">
+        <div className="mx-3 mb-3 mt-3 shrink-0 rounded-2xl border border-[color:var(--app-line)] bg-white/80 p-2 backdrop-blur">
           <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
             Demo rol
           </p>
