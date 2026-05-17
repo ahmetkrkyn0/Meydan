@@ -1,60 +1,82 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/meydan/AppShell";
 import { Send, Phone, Video, MoreVertical, CheckCheck } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export const Route = createFileRoute("/sohbet")({
   component: SohbetPage,
   head: () => ({ meta: [{ title: "Mesajlar — Meydan" }] }),
 });
 
+// Sponsor verileri
+const SPONSORS = [
+  { id: "mb", name: "Murat Beslenme", time: "10:47", color: "blue", bg: "bg-blue-100", text: "text-blue-600", initials: "MB", isOnline: true },
+  { id: "ka", name: "Karaca", time: "12 May", color: "red", bg: "bg-red-100", text: "text-red-600", initials: "KA", isOnline: false },
+  { id: "pe", name: "Pegasus", time: "08 May", color: "sky", bg: "bg-sky-100", text: "text-sky-600", initials: "PE", isOnline: false },
+  { id: "to", name: "Tofaş", time: "06 May", color: "cyan", bg: "bg-cyan-100", text: "text-cyan-600", initials: "TO", isOnline: true },
+];
+
+// Her sponsor için başlangıç mesajları
+const INITIAL_MESSAGES = {
+  "mb": [
+    { id: 1, sender: "sponsor", text: "Merhaba! Yetenek profilinizi inceledik. İhtiyacınız olan destek için sizinle çalışmak isteriz.", time: "10:42" },
+    { id: 2, sender: "me", text: "Merhaba! Çok teşekkür ederim. Hedeflerim doğrultusunda yanımda sizin gibi bir destekçiyi görmek beni çok mutlu eder.", time: "10:45", status: "read" },
+    { id: 3, sender: "sponsor", text: "Harika! Önümüzdeki hafta bir tanışma toplantısı organize edelim. Ekibimiz detaylar için sizinle iletişime geçecek.", time: "10:47" }
+  ],
+  "ka": [
+    { id: 1, sender: "sponsor", text: "Kampanya detaylarını ilettim, inceleyip dönüş yapabilir misiniz?", time: "11:00" }
+  ],
+  "pe": [
+    { id: 1, sender: "sponsor", text: "Uçuş destek paketiniz onaylandı. Turnuva biletiniz sistemdeki mail adresinize gönderilecek.", time: "09:30" }
+  ],
+  "to": [
+    { id: 1, sender: "sponsor", text: "Maç sonrası içerikler için içerik anlaşma metnini onaylamanızı bekliyoruz. Başarılar dileriz!", time: "14:15" }
+  ]
+};
+
 function SohbetPage() {
   const [msg, setMsg] = useState("");
+  const [activeId, setActiveId] = useState("mb");
+  const [chatHistory, setChatHistory] = useState<Record<string, any[]>>(INITIAL_MESSAGES);
   
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "sponsor",
-      text: "Merhaba! Yetenek profilinizi inceledik. İhtiyacınız olan destek için sizinle çalışmak isteriz.",
-      time: "10:42",
-      avatar: "https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1",
-    },
-    {
-      id: 2,
-      sender: "me",
-      text: "Merhaba! Çok teşekkür ederim. Hedeflerim doğrultusunda yanımda sizin gibi bir destekçiyi görmek beni çok mutlu eder.",
-      time: "10:45",
-      status: "read",
-    },
-    {
-      id: 3,
-      sender: "sponsor",
-      text: "Harika! Önümüzdeki hafta bir tanışma toplantısı organize edelim. Ekibimiz detaylar için sizinle iletişime geçecek.",
-      time: "10:47",
-    }
-  ]);
+  // Otomatik kaydırma için referans
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Aktif veriler
+  const activeSponsor = SPONSORS.find(s => s.id === activeId)!;
+  const messages = chatHistory[activeId] || [];
+
+  // Mesaj eklendiğinde en alta kaydır
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!msg.trim()) return;
     
-    setMessages([...messages, {
-      id: Date.now(),
-      sender: "me",
-      text: msg,
-      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }),
-      status: "sent"
-    }]);
+    const timeNow = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+
+    // Kendi mesajımızı ekle
+    setChatHistory(prev => ({
+      ...prev,
+      [activeId]: [
+        ...(prev[activeId] || []),
+        { id: Date.now(), sender: "me", text: msg, time: timeNow, status: "sent" }
+      ]
+    }));
     setMsg("");
     
-    // Murat Beslenme'den otomatik cevap
+    // Aktif sponsordan 1.5 saniye sonra otomatik cevap gelsin
+    const currentActiveId = activeId; // Timeout içinde doğru ID'yi referans alması için
     setTimeout(() => {
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        sender: "sponsor",
-        text: "Mesajınızı aldık, en kısa sürede dönüş yapacağız. Teşekkürler!",
-        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }),
-      }]);
+      setChatHistory(prev => ({
+        ...prev,
+        [currentActiveId]: [
+          ...(prev[currentActiveId] || []),
+          { id: Date.now() + 1, sender: "sponsor", text: "Biz teşekkür ederiz, sizinle çalışmak bizim için de bir onur. En kısa sürede detaylar için dönüş yapacağız.", time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) }
+        ]
+      }));
     }, 1500);
   };
 
@@ -76,63 +98,46 @@ function SohbetPage() {
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             
-            {/* Aktif Sohbet - Murat Beslenme */}
-            <div className="flex cursor-pointer items-center gap-4 rounded-3xl bg-blue-50/50 p-3 transition-colors border border-blue-100/50">
-              <div className="relative">
-                <img src="https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1" alt="MB" className="h-[52px] w-[52px] rounded-full object-cover" />
-                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-[2.5px] border-white bg-emerald-500"></span>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <h3 className="truncate font-bold text-blue-900">Murat Beslenme</h3>
-                  <span className="text-[12px] font-bold text-blue-600">10:47</span>
+            {SPONSORS.map((sponsor) => {
+              const isActive = activeId === sponsor.id;
+              const lastMsg = chatHistory[sponsor.id]?.[chatHistory[sponsor.id].length - 1]?.text || "";
+              
+              return (
+                <div 
+                  key={sponsor.id}
+                  onClick={() => setActiveId(sponsor.id)}
+                  className={`flex cursor-pointer items-center gap-4 rounded-3xl p-3 transition-colors ${
+                    isActive ? "bg-blue-50/50 border border-blue-100/50" : "hover:bg-slate-50 border border-transparent"
+                  }`}
+                >
+                  <div className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full font-bold overflow-hidden bg-slate-100">
+                    {sponsor.id === "mb" ? (
+                       <img src="https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1" alt="MB" className="h-full w-full object-cover" />
+                    ) : (
+                      <span className={`${sponsor.bg} ${sponsor.text} h-full w-full flex items-center justify-center`}>
+                        {sponsor.initials}
+                      </span>
+                    )}
+                    {sponsor.isOnline && (
+                      <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-[2.5px] border-white bg-emerald-500"></span>
+                    )}
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <h3 className={`truncate font-bold ${isActive ? "text-blue-900" : "text-slate-700"}`}>
+                        {sponsor.name}
+                      </h3>
+                      <span className={`text-[12px] font-medium ${isActive ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+                        {sponsor.time}
+                      </span>
+                    </div>
+                    <p className={`truncate text-[13px] ${isActive ? "text-blue-600/80 font-medium" : "text-slate-500"}`}>
+                      {lastMsg}
+                    </p>
+                  </div>
                 </div>
-                <p className="truncate text-[13px] font-medium text-blue-600/80">Harika! Önümüzdeki hafta bir t...</p>
-              </div>
-            </div>
-
-            {/* Karaca */}
-            <div className="flex cursor-pointer items-center gap-4 rounded-3xl p-3 transition-colors hover:bg-slate-50">
-              <div className="relative flex h-[52px] w-[52px] items-center justify-center rounded-full bg-red-100 text-red-600 font-bold">
-                KA
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <h3 className="truncate font-bold text-slate-700">Karaca</h3>
-                  <span className="text-[12px] font-medium text-slate-400">12 May</span>
-                </div>
-                <p className="truncate text-[13px] text-slate-500">Kampanya detaylarını ilettim...</p>
-              </div>
-            </div>
-
-            {/* Pegasus */}
-            <div className="flex cursor-pointer items-center gap-4 rounded-3xl p-3 transition-colors hover:bg-slate-50">
-              <div className="relative flex h-[52px] w-[52px] items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">
-                PE
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <h3 className="truncate font-bold text-slate-700">Pegasus</h3>
-                  <span className="text-[12px] font-medium text-slate-400">08 May</span>
-                </div>
-                <p className="truncate text-[13px] text-slate-500">Uçuş destek paketiniz onaylan...</p>
-              </div>
-            </div>
-            
-            {/* Tofaş */}
-            <div className="flex cursor-pointer items-center gap-4 rounded-3xl p-3 transition-colors hover:bg-slate-50">
-              <div className="relative flex h-[52px] w-[52px] items-center justify-center rounded-full bg-cyan-100 text-cyan-600 font-bold">
-                TO
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <h3 className="truncate font-bold text-slate-700">Tofaş</h3>
-                  <span className="text-[12px] font-medium text-slate-400">06 May</span>
-                </div>
-                <p className="truncate text-[13px] text-slate-500">Maç sonrası içerikler için...</p>
-              </div>
-            </div>
-
+              );
+            })}
           </div>
         </aside>
 
@@ -141,20 +146,34 @@ function SohbetPage() {
           {/* HEADER */}
           <header className="flex items-center justify-between border-b border-slate-100 p-6 z-10">
             <div className="flex items-center gap-4">
-              <img src="https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1" alt="MB" className="h-[52px] w-[52px] rounded-full object-cover" />
+               <div className="relative flex h-[52px] w-[52px] items-center justify-center rounded-full font-bold overflow-hidden bg-slate-100 shrink-0">
+                  {activeSponsor.id === "mb" ? (
+                      <img src="https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1" alt="MB" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className={`${activeSponsor.bg} ${activeSponsor.text} h-full w-full flex items-center justify-center text-xl`}>
+                      {activeSponsor.initials}
+                    </span>
+                  )}
+               </div>
               <div>
                 <h2 className="font-display text-xl font-bold text-slate-900 flex items-center gap-2">
-                  Murat Beslenme 
+                  {activeSponsor.name}
                   <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-600">
                     SPONSOR
                   </span>
                 </h2>
                 <div className="flex items-center gap-1.5 mt-1">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-                  </span>
-                  <p className="text-[13px] font-bold text-emerald-600">Çevrimiçi</p>
+                  {activeSponsor.isOnline ? (
+                    <>
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                      </span>
+                      <p className="text-[13px] font-bold text-emerald-600">Çevrimiçi</p>
+                    </>
+                  ) : (
+                    <p className="text-[13px] font-medium text-slate-400">Son görülme yakın zamanda</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -177,7 +196,15 @@ function SohbetPage() {
                 <div key={m.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                   <div className={`flex max-w-[85%] md:max-w-[70%] gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                     {!isMe && (
-                      <img src={m.avatar || "https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1"} alt="avatar" className="h-10 w-10 rounded-full object-cover self-end mb-6" />
+                      <div className="h-10 w-10 shrink-0 self-end mb-6">
+                        {activeSponsor.id === "mb" ? (
+                           <img src="https://ui-avatars.com/api/?name=MB&background=e0f2fe&color=0369a1" alt="avatar" className="h-full w-full rounded-full object-cover shadow-sm" />
+                        ) : (
+                           <div className={`${activeSponsor.bg} ${activeSponsor.text} h-full w-full rounded-full flex items-center justify-center font-bold text-xs shadow-sm`}>
+                             {activeSponsor.initials}
+                           </div>
+                        )}
+                      </div>
                     )}
                     <div className="flex flex-col gap-1.5">
                       <div className={`rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm ${
@@ -197,6 +224,8 @@ function SohbetPage() {
                 </div>
               );
             })}
+            {/* OTO KAYDIRMA İÇİN GÖRÜNMEZ HEDEF */}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* INPUT ALANI */}
@@ -206,13 +235,13 @@ function SohbetPage() {
                 type="text"
                 value={msg}
                 onChange={(e) => setMsg(e.target.value)}
-                placeholder="Mesaj yazın..."
+                placeholder={`${activeSponsor.name} firmasına mesaj yazın...`}
                 className="flex-1 bg-transparent text-[15px] font-medium outline-none placeholder:text-slate-400"
               />
               <button 
                 type="submit"
                 disabled={!msg.trim()}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#A29BFE] text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 shadow-sm"
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#A29BFE] text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 shadow-sm"
               >
                 <Send className="h-5 w-5 ml-1" />
               </button>
