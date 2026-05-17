@@ -38,7 +38,8 @@ backend/**/__pycache__/
 backend/*.pyc
 backend/**/*.pyc
 backend/.env
-backend/.env.*
+backend/.env.local
+backend/.env.*.local
 backend/*.egg-info/
 backend/dist/
 backend/build/
