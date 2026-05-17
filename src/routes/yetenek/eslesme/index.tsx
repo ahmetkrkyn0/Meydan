@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { talentMatches, needs } from "@/lib/mock-data";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg from "@/assets/athlete-lina.jpg";
+import tenisImg from "@/assets/athlete-tenis-kadin.png";
+import boksImg from "@/assets/athlete-boks-kadin.png";
 
 export const Route = createFileRoute("/yetenek/eslesme/")({
   component: MatchListPage,
@@ -35,7 +35,7 @@ const EXTRA_MATCHES = [
     id: "tm3",
     needId: "n5",
     athleteName: "Buse Naz Çakıroğlu",
-    athleteImg: linaImg,
+    athleteImg: boksImg,
     talentName: "Selen Y.",
     talentCity: "İzmit",
     talentType: "İngilizce öğretmeni",
@@ -46,7 +46,7 @@ const EXTRA_MATCHES = [
     id: "tm4",
     needId: "n2",
     athleteName: "Zeynep Sönmez",
-    athleteImg: keremImg,
+    athleteImg: tenisImg,
     talentName: "Mehmet K.",
     talentCity: "Ankara",
     talentType: "Fizyoterapist",

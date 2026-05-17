@@ -1,7 +1,13 @@
-import adaImg from "@/assets/athlete-ada.jpg";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg from "@/assets/athlete-lina.jpg";
-import mertImg from "@/assets/athlete-mert.jpg";
+import okculukImg from "@/assets/athlete-okculuk-kadin.png";
+import tenisImg from "@/assets/athlete-tenis-kadin.png";
+import bilardoImg from "@/assets/athlete-bilardo-erkek.png";
+import boksImg from "@/assets/athlete-boks-kadin.png";
+import atletizmImg from "@/assets/athlete-atletizm-erkek.png";
+import guresImg from "@/assets/athlete-gures-erkek.png";
+import yelkenImg from "@/assets/athlete-yelken-kadin.png";
+import satrancImg from "@/assets/athlete-satranc-erkek.png";
+import voleybolImg from "@/assets/athlete-voleybol-kadin.png";
+import eskrimImg from "@/assets/athlete-eskrim-kadin.png";
 import archeryPng from "@/assets/sport-archery-nobg.png";
 import basketballPng from "@/assets/sport-basketball-nobg.png";
 import billiardsPng from "@/assets/sport-billiards-nobg.png";
@@ -53,7 +59,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 18_400,
     bio: "Olimpiyat şampiyonu. Sessiz odakta nefes alır, hedefte konuşur.",
     values: ["Disiplin", "Sabır", "Odak"],
-    img: adaImg,
+    img: okculukImg,
     cutout: archeryPng,
     accent: "violet",
     alive: true,
@@ -87,7 +93,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 12_300,
     bio: "Toprak korta âşık. Türkiye’nin tenisteki yeni umudu.",
     values: ["Cesaret", "Mücadele", "Sürat"],
-    img: keremImg,
+    img: tenisImg,
     cutout: tennisPng,
     accent: "sky",
     alive: true,
@@ -120,7 +126,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 7_800,
     bio: "Sessiz salonların hesabı. Üç bant ustası.",
     values: ["Hesap", "Sabır", "Zarafet"],
-    img: linaImg,
+    img: bilardoImg,
     cutout: billiardsPng,
     accent: "coral",
     alive: true,
@@ -153,7 +159,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 9_200,
     bio: "Cebi boş, hedefi dolu. Türk sporunun en sakin yüzü.",
     values: ["Soğukkanlılık", "Tecrübe", "Disiplin"],
-    img: mertImg,
+    img: okculukImg,
     cutout: archeryPng,
     accent: "violet",
     alive: true,
@@ -185,7 +191,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 11_600,
     bio: "Kürsünün gümüş şampiyonu, ringin sessiz kıvılcımı.",
     values: ["Cesaret", "Direnç", "Strateji"],
-    img: linaImg,
+    img: boksImg,
     cutout: basketballPng,
     accent: "coral",
     alive: true,
@@ -217,7 +223,7 @@ export const athletes: Athlete[] = [
     monthlySupport: 4_400,
     bio: "Üç adım atlama. Pist ve toz, sabah karanlığı.",
     values: ["Ritim", "Sabır", "Sessizlik"],
-    img: mertImg,
+    img: atletizmImg,
     cutout: basketballPng,
     accent: "emerald",
     alive: false,
@@ -317,21 +323,21 @@ export type Match = {
 
 export const liveMatches: Match[] = [
   /* ── Canlı (5) ── */
-  { id: "m1", athleteSlug: "zeynep-sonmez",       athleteName: "Zeynep Sönmez",       athleteImg: keremImg, opponent: "Maria Sakkari",   opponentFlag: "🇬🇷", sport: "Tenis",    emoji: "🎾", status: "live", startsAt: "Şimdi", score: "1-0",  setScore: "5-3", viewers: 1_240, cheers: 320,  momentum: 72 },
-  { id: "m2", athleteSlug: "buse-naz-cakiroglu",  athleteName: "Buse Naz Çakıroğlu",  athleteImg: linaImg,  opponent: "Buse Philon",     opponentFlag: "🇫🇷", sport: "Boks",     emoji: "🥊", status: "live", startsAt: "Şimdi", score: "2-1",  setScore: "R3",  viewers: 2_180, cheers: 540,  momentum: 64 },
-  { id: "m3", athleteSlug: "mete-gazoz",          athleteName: "Mete Gazoz",          athleteImg: adaImg,   opponent: "Kim Woo-jin",     opponentFlag: "🇰🇷", sport: "Okçuluk",  emoji: "🏹", status: "live", startsAt: "Şimdi", score: "5-4",  setScore: "1/4", viewers: 3_460, cheers: 1_120,momentum: 81 },
-  { id: "m4", athleteSlug: "necati-er",           athleteName: "Necati Er",           athleteImg: mertImg,  opponent: "Pedro Pichardo",  opponentFlag: "🇵🇹", sport: "Atletizm", emoji: "🏃", status: "live", startsAt: "Şimdi", score: "17.42m", setScore: "5/6", viewers: 612,   cheers: 142,  momentum: 48 },
-  { id: "m5", athleteSlug: "sureyya-demir",       athleteName: "Süreyya Demir",       athleteImg: linaImg,  opponent: "Eddy Merckx",     opponentFlag: "🇧🇪", sport: "Bilardo",  emoji: "🎱", status: "live", startsAt: "Şimdi", score: "23-19", setScore: "1/3", viewers: 480,   cheers: 96,   momentum: 55 },
+  { id: "m1", athleteSlug: "zeynep-sonmez",       athleteName: "Zeynep Sönmez",       athleteImg: tenisImg,    opponent: "Maria Sakkari",   opponentFlag: "🇬🇷", sport: "Tenis",    emoji: "🎾", status: "live", startsAt: "Şimdi", score: "1-0",  setScore: "5-3", viewers: 1_240, cheers: 320,  momentum: 72 },
+  { id: "m2", athleteSlug: "buse-naz-cakiroglu",  athleteName: "Buse Naz Çakıroğlu",  athleteImg: boksImg,     opponent: "Buse Philon",     opponentFlag: "🇫🇷", sport: "Boks",     emoji: "🥊", status: "live", startsAt: "Şimdi", score: "2-1",  setScore: "R3",  viewers: 2_180, cheers: 540,  momentum: 64 },
+  { id: "m3", athleteSlug: "mete-gazoz",          athleteName: "Mete Gazoz",          athleteImg: okculukImg,  opponent: "Kim Woo-jin",     opponentFlag: "🇰🇷", sport: "Okçuluk",  emoji: "🏹", status: "live", startsAt: "Şimdi", score: "5-4",  setScore: "1/4", viewers: 3_460, cheers: 1_120,momentum: 81 },
+  { id: "m4", athleteSlug: "necati-er",           athleteName: "Necati Er",           athleteImg: atletizmImg, opponent: "Pedro Pichardo",  opponentFlag: "🇵🇹", sport: "Atletizm", emoji: "🏃", status: "live", startsAt: "Şimdi", score: "17.42m", setScore: "5/6", viewers: 612,   cheers: 142,  momentum: 48 },
+  { id: "m5", athleteSlug: "sureyya-demir",       athleteName: "Süreyya Demir",       athleteImg: bilardoImg,  opponent: "Eddy Merckx",     opponentFlag: "🇧🇪", sport: "Bilardo",  emoji: "🎱", status: "live", startsAt: "Şimdi", score: "23-19", setScore: "1/3", viewers: 480,   cheers: 96,   momentum: 55 },
 
   /* ── Yakında (3) ── */
-  { id: "m6", athleteSlug: "mete-gazoz",          athleteName: "Mete Gazoz",          athleteImg: adaImg,   opponent: "Brady Ellison",   opponentFlag: "🇺🇸", sport: "Okçuluk",  emoji: "🏹", status: "soon", startsAt: "Bugün 19:30", viewers: 870,  cheers: 220, momentum: 0 },
-  { id: "m7", athleteSlug: "sureyya-demir",       athleteName: "Süreyya Demir",       athleteImg: linaImg,  opponent: "Dani Sánchez",    opponentFlag: "🇪🇸", sport: "Bilardo",  emoji: "🎱", status: "soon", startsAt: "Bugün 21:15", viewers: 410,  cheers: 88,  momentum: 0 },
-  { id: "m8", athleteSlug: "zeynep-sonmez",       athleteName: "Zeynep Sönmez",       athleteImg: keremImg, opponent: "Iga Świątek",     opponentFlag: "🇵🇱", sport: "Tenis",    emoji: "🎾", status: "soon", startsAt: "Yarın 14:00", viewers: 1_980, cheers: 420, momentum: 0 },
+  { id: "m6", athleteSlug: "mete-gazoz",          athleteName: "Mete Gazoz",          athleteImg: okculukImg,  opponent: "Brady Ellison",   opponentFlag: "🇺🇸", sport: "Okçuluk",  emoji: "🏹", status: "soon", startsAt: "Bugün 19:30", viewers: 870,  cheers: 220, momentum: 0 },
+  { id: "m7", athleteSlug: "sureyya-demir",       athleteName: "Süreyya Demir",       athleteImg: bilardoImg,  opponent: "Dani Sánchez",    opponentFlag: "🇪🇸", sport: "Bilardo",  emoji: "🎱", status: "soon", startsAt: "Bugün 21:15", viewers: 410,  cheers: 88,  momentum: 0 },
+  { id: "m8", athleteSlug: "zeynep-sonmez",       athleteName: "Zeynep Sönmez",       athleteImg: tenisImg,    opponent: "Iga Świątek",     opponentFlag: "🇵🇱", sport: "Tenis",    emoji: "🎾", status: "soon", startsAt: "Yarın 14:00", viewers: 1_980, cheers: 420, momentum: 0 },
 
   /* ── Bitti (3) ── */
-  { id: "m9",  athleteSlug: "yusuf-dikec",        athleteName: "Yusuf Dikeç",         athleteImg: mertImg,  opponent: "Serhiy Kulish",  opponentFlag: "🇺🇦", sport: "Atıcılık", emoji: "🎯", status: "ended", startsAt: "Bitti", score: "10-8",  viewers: 980,  cheers: 612, momentum: 100 },
-  { id: "m10", athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu",  athleteImg: linaImg,  opponent: "Nazym Kyzaibay", opponentFlag: "🇰🇿", sport: "Boks",     emoji: "🥊", status: "ended", startsAt: "Bitti", score: "5-0",   viewers: 1_540, cheers: 410, momentum: 100 },
-  { id: "m11", athleteSlug: "necati-er",          athleteName: "Necati Er",           athleteImg: mertImg,  opponent: "Hugues Zango",   opponentFlag: "🇧🇫", sport: "Atletizm", emoji: "🏃", status: "ended", startsAt: "Bitti", score: "17.18m", viewers: 380,  cheers: 92,  momentum: 100 },
+  { id: "m9",  athleteSlug: "yusuf-dikec",        athleteName: "Yusuf Dikeç",         athleteImg: okculukImg,  opponent: "Serhiy Kulish",  opponentFlag: "🇺🇦", sport: "Atıcılık", emoji: "🎯", status: "ended", startsAt: "Bitti", score: "10-8",  viewers: 980,  cheers: 612, momentum: 100 },
+  { id: "m10", athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu",  athleteImg: boksImg,     opponent: "Nazym Kyzaibay", opponentFlag: "🇰🇿", sport: "Boks",     emoji: "🥊", status: "ended", startsAt: "Bitti", score: "5-0",   viewers: 1_540, cheers: 410, momentum: 100 },
+  { id: "m11", athleteSlug: "necati-er",          athleteName: "Necati Er",           athleteImg: atletizmImg, opponent: "Hugues Zango",   opponentFlag: "🇧🇫", sport: "Atletizm", emoji: "🏃", status: "ended", startsAt: "Bitti", score: "17.18m", viewers: 380,  cheers: 92,  momentum: 100 },
 ];
 
 /* ============================================================
@@ -355,11 +361,11 @@ export type Need = {
 };
 
 export const needs: Need[] = [
-  { id: "n1", athleteSlug: "sureyya-demir", athleteName: "Süreyya Demir",  athleteImg: linaImg,  type: "money",  category: "Yol",       title: "Antalya Dünya Kupası yol masrafı",  description: "Tek başına gidiyor, otel + ulaşım için destek lazım.",  targetAmount: 14000, collectedAmount: 9300, city: "İzmir",    deadline: "30 May", urgent: true  },
-  { id: "n2", athleteSlug: "zeynep-sonmez", athleteName: "Zeynep Sönmez",  athleteImg: keremImg, type: "money",  category: "Ekipman",    title: "Yeni grip ve kort ayakkabısı",        description: "Roland Garros eleme öncesi malzeme yenilenmeli.",          targetAmount: 6000,  collectedAmount: 2100, city: "Ankara",   deadline: "01 Haz", urgent: false },
-  { id: "n3", athleteSlug: "necati-er",     athleteName: "Necati Er",      athleteImg: mertImg,  type: "talent", category: "Beslenme",   title: "Beslenme danışmanı arıyor",            description: "Yarış sezonu için 3 ay haftalık takip.",                   talentNeeded: "Beslenme uzmanı",                                       city: "Eskişehir",deadline: "10 Haz", urgent: false },
-  { id: "n4", athleteSlug: "mete-gazoz",    athleteName: "Mete Gazoz",     athleteImg: adaImg,   type: "talent", category: "İçerik",     title: "Reels editörü gönüllüsü",              description: "Maç sonrası kısa video kurgu desteği.",                    talentNeeded: "Video editör",                                          city: "İstanbul", deadline: "20 May", urgent: true  },
-  { id: "n5", athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu", athleteImg: linaImg, type: "money", category: "Antrenör", title: "Yabancı antrenör kampı katkısı",   description: "Avrupa Şampiyonası öncesi 2 hafta İspanya kampı.",        targetAmount: 22000, collectedAmount: 11400, city: "İzmit",  deadline: "12 Haz", urgent: false },
+  { id: "n1", athleteSlug: "sureyya-demir", athleteName: "Süreyya Demir",  athleteImg: bilardoImg,  type: "money",  category: "Yol",       title: "Antalya Dünya Kupası yol masrafı",  description: "Tek başına gidiyor, otel + ulaşım için destek lazım.",  targetAmount: 14000, collectedAmount: 9300, city: "İzmir",    deadline: "30 May", urgent: true  },
+  { id: "n2", athleteSlug: "zeynep-sonmez", athleteName: "Zeynep Sönmez",  athleteImg: tenisImg,    type: "money",  category: "Ekipman",    title: "Yeni grip ve kort ayakkabısı",        description: "Roland Garros eleme öncesi malzeme yenilenmeli.",          targetAmount: 6000,  collectedAmount: 2100, city: "Ankara",   deadline: "01 Haz", urgent: false },
+  { id: "n3", athleteSlug: "necati-er",     athleteName: "Necati Er",      athleteImg: atletizmImg, type: "talent", category: "Beslenme",   title: "Beslenme danışmanı arıyor",            description: "Yarış sezonu için 3 ay haftalık takip.",                   talentNeeded: "Beslenme uzmanı",                                       city: "Eskişehir",deadline: "10 Haz", urgent: false },
+  { id: "n4", athleteSlug: "mete-gazoz",    athleteName: "Mete Gazoz",     athleteImg: okculukImg,  type: "talent", category: "İçerik",     title: "Reels editörü gönüllüsü",              description: "Maç sonrası kısa video kurgu desteği.",                    talentNeeded: "Video editör",                                          city: "İstanbul", deadline: "20 May", urgent: true  },
+  { id: "n5", athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu", athleteImg: boksImg,    type: "money", category: "Antrenör", title: "Yabancı antrenör kampı katkısı",   description: "Avrupa Şampiyonası öncesi 2 hafta İspanya kampı.",        targetAmount: 22000, collectedAmount: 11400, city: "İzmit",  deadline: "12 Haz", urgent: false },
 ];
 
 /* ============================================================
@@ -418,9 +424,9 @@ export type MatchResult = {
 
 export const matchResults: Record<string, MatchResult[]> = {
   b1: [
-    { athleteSlug: "mete-gazoz",     athleteName: "Mete Gazoz",     athleteImg: adaImg,  sport: "Okçuluk", fitScore: 94, riskScore: 8,  estROI: "3.2x", growth: "+12%/ay", reasoning: ["Değer eşleşmesi: Disiplin, Türkiye", "İzleyici demografisi 25-45 ağırlıklı", "Düşük kontroversi geçmişi"] },
-    { athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu", athleteImg: linaImg, sport: "Boks", fitScore: 87, riskScore: 12, estROI: "2.8x", growth: "+18%/ay", reasoning: ["Olimpiyat madalyası halk takdiri","Aile değerleriyle uyumlu","Genç kadın izleyici"] },
-    { athleteSlug: "yusuf-dikec",    athleteName: "Yusuf Dikeç",    athleteImg: mertImg, sport: "Atıcılık",fitScore: 82, riskScore: 6,  estROI: "2.4x", growth: "+8%/ay",  reasoning: ["Düşük risk profili","Klasik Türk imajı","Sosyal medyada viral potansiyel"] },
+    { athleteSlug: "mete-gazoz",     athleteName: "Mete Gazoz",     athleteImg: okculukImg, sport: "Okçuluk", fitScore: 94, riskScore: 8,  estROI: "3.2x", growth: "+12%/ay", reasoning: ["Değer eşleşmesi: Disiplin, Türkiye", "İzleyici demografisi 25-45 ağırlıklı", "Düşük kontroversi geçmişi"] },
+    { athleteSlug: "buse-naz-cakiroglu", athleteName: "Buse Naz Çakıroğlu", athleteImg: boksImg,    sport: "Boks", fitScore: 87, riskScore: 12, estROI: "2.8x", growth: "+18%/ay", reasoning: ["Olimpiyat madalyası halk takdiri","Aile değerleriyle uyumlu","Genç kadın izleyici"] },
+    { athleteSlug: "yusuf-dikec",    athleteName: "Yusuf Dikeç",    athleteImg: okculukImg, sport: "Atıcılık",fitScore: 82, riskScore: 6,  estROI: "2.4x", growth: "+8%/ay",  reasoning: ["Düşük risk profili","Klasik Türk imajı","Sosyal medyada viral potansiyel"] },
   ],
 };
 
@@ -550,8 +556,8 @@ export type TalentMatch = {
 };
 
 export const talentMatches: TalentMatch[] = [
-  { id: "tm1", needId: "n3", athleteName: "Necati Er",  athleteImg: mertImg, talentName: "Dr. Elif Aksoy",  talentCity: "Eskişehir", talentType: "Beslenme uzmanı", matchScore: 92, reasoning: "Aynı şehirde, atletizm tecrübesi var, müsaitliği uygun." },
-  { id: "tm2", needId: "n4", athleteName: "Mete Gazoz", athleteImg: adaImg,  talentName: "Cem Toprak",      talentCity: "İstanbul",  talentType: "Video editör",    matchScore: 87, reasoning: "Spor içerik portföyü güçlü, İstanbul'da bulunuyor." },
+  { id: "tm1", needId: "n3", athleteName: "Necati Er",  athleteImg: atletizmImg, talentName: "Dr. Elif Aksoy",  talentCity: "Eskişehir", talentType: "Beslenme uzmanı", matchScore: 92, reasoning: "Aynı şehirde, atletizm tecrübesi var, müsaitliği uygun." },
+  { id: "tm2", needId: "n4", athleteName: "Mete Gazoz", athleteImg: okculukImg, talentName: "Cem Toprak",      talentCity: "İstanbul",  talentType: "Video editör",    matchScore: 87, reasoning: "Spor içerik portföyü güçlü, İstanbul'da bulunuyor." },
 ];
 
 /* ============================================================
@@ -586,7 +592,7 @@ export const campaigns: Campaign[] = [
     title: "Yaz Koleksiyonu — Mete Gazoz",
     athleteSlug: "mete-gazoz",
     athleteName: "Mete Gazoz",
-    athleteImg: adaImg,
+    athleteImg: okculukImg,
     sport: "Okçuluk",
     budget: 60_000,
     spent: 47_800,
@@ -612,7 +618,7 @@ export const campaigns: Campaign[] = [
     title: "Anneler Günü — Buse Naz Çakıroğlu",
     athleteSlug: "buse-naz-cakiroglu",
     athleteName: "Buse Naz Çakıroğlu",
-    athleteImg: linaImg,
+    athleteImg: boksImg,
     sport: "Boks",
     budget: 20_000,
     spent: 11_200,
@@ -638,7 +644,7 @@ export const campaigns: Campaign[] = [
     title: "Sahil & Mavi — Bahar Lansmanı",
     athleteSlug: "zeynep-sonmez",
     athleteName: "Zeynep Sönmez",
-    athleteImg: keremImg,
+    athleteImg: tenisImg,
     sport: "Tenis",
     budget: 45_000,
     spent: 45_000,
@@ -663,7 +669,7 @@ export const campaigns: Campaign[] = [
     title: "Mutfak Hikâyesi (Taslak)",
     athleteSlug: "yusuf-dikec",
     athleteName: "Yusuf Dikeç",
-    athleteImg: mertImg,
+    athleteImg: okculukImg,
     sport: "Atıcılık",
     budget: 60_000,
     spent: 0,
@@ -710,7 +716,7 @@ export const pastMatches: PastMatch[] = [
     id: "m1",
     athleteSlug: "mete-gazoz",
     athleteName: "Mete Gazoz",
-    athleteImg: adaImg,
+    athleteImg: okculukImg,
     title: "Avrupa Şampiyonası — Yarı Final",
     city: "Budapeşte",
     date: "12 May",
@@ -742,7 +748,7 @@ export const pastMatches: PastMatch[] = [
     id: "m2",
     athleteSlug: "mete-gazoz",
     athleteName: "Mete Gazoz",
-    athleteImg: adaImg,
+    athleteImg: okculukImg,
     title: "Dünya Kupası 2. Tur",
     city: "Antalya",
     date: "06 May",

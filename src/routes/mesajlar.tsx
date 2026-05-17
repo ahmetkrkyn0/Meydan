@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Paperclip, Search, Send, Smile, Phone, Video, MoreHorizontal } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import adaImg from "@/assets/athlete-ada.jpg";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg from "@/assets/athlete-lina.jpg";
-import mertImg from "@/assets/athlete-mert.jpg";
+import okculukImg from "@/assets/athlete-okculuk-kadin.png";
+import tenisImg from "@/assets/athlete-tenis-kadin.png";
+import bilardoImg from "@/assets/athlete-bilardo-erkek.png";
+import boksImg from "@/assets/athlete-boks-kadin.png";
+import atletizmImg from "@/assets/athlete-atletizm-erkek.png";
 
 export const Route = createFileRoute("/mesajlar")({
   component: MesajlarPage,
@@ -44,7 +45,7 @@ const conversations: Conversation[] = [
     id: "c1",
     name: "Mete Gazoz",
     subtitle: "Okçuluk · İstanbul",
-    avatar: adaImg,
+    avatar: okculukImg,
     lastMessage: "Budapeşte yolu için sesli not bırakacağım.",
     lastTime: "şimdi",
     unread: 2,
@@ -63,7 +64,7 @@ const conversations: Conversation[] = [
     id: "c2",
     name: "Zeynep Sönmez",
     subtitle: "Tenis · Ankara",
-    avatar: keremImg,
+    avatar: tenisImg,
     lastMessage: "Grip değişimi hafta sonu gelirse harika olur.",
     lastTime: "12 dk",
     unread: 1,
@@ -81,7 +82,7 @@ const conversations: Conversation[] = [
     id: "c3",
     name: "Karaca",
     subtitle: "Marka · Ev & Yaşam",
-    avatar: linaImg,
+    avatar: boksImg,
     lastMessage: "Reels çekim takvimini paylaşır mısın?",
     lastTime: "1 sa",
     unread: 0,
@@ -99,7 +100,7 @@ const conversations: Conversation[] = [
     id: "c4",
     name: "Süreyya Demir",
     subtitle: "Bilardo · İzmir",
-    avatar: linaImg,
+    avatar: bilardoImg,
     lastMessage: "Antalya yolu için planı yarın yazıyorum.",
     lastTime: "3 sa",
     unread: 0,
@@ -116,7 +117,7 @@ const conversations: Conversation[] = [
     id: "c5",
     name: "Dr. Elif Aksoy",
     subtitle: "Yetenek eşleşmesi · Beslenme",
-    avatar: mertImg,
+    avatar: atletizmImg,
     lastMessage: "Necati ile ilk görüşme için cuma uygun mu?",
     lastTime: "Dün",
     unread: 0,

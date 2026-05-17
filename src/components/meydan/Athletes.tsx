@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
-import adaImg   from "@/assets/athlete-ada.jpg";
-import keremImg from "@/assets/athlete-kerem.jpg";
-import linaImg  from "@/assets/athlete-lina.jpg";
-import mertImg  from "@/assets/athlete-mert.jpg";
+import okculukImg  from "@/assets/athlete-okculuk-kadin.png";
+import guresImg    from "@/assets/athlete-gures-erkek.png";
+import boksImg     from "@/assets/athlete-boks-kadin.png";
+import satrancImg  from "@/assets/athlete-satranc-erkek.png";
 
 const athletes = [
-  { img: adaImg,   name: "Ada Yılmaz",  sport: "Okçuluk", rank: "#3 Ulusal",    supporters: "1.2K", featured: false },
-  { img: keremImg, name: "Kerem Taş",   sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
-  { img: linaImg,  name: "Lina Demir",  sport: "Yüzme",   rank: "Olimpik Aday", supporters: "980",  featured: false },
-  { img: mertImg,  name: "Mert Kaya",   sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
+  { img: okculukImg, name: "Mete Gazoz",           sport: "Okçuluk", rank: "#3 Dünya",     supporters: "2.1K", featured: false },
+  { img: guresImg,   name: "Taha Akgül",            sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
+  { img: boksImg,    name: "Buse Naz Çakıroğlu",    sport: "Boks",    rank: "#2 Dünya",     supporters: "1.5K", featured: false },
+  { img: satrancImg, name: "Emre Can Özkan",        sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
 ];
 
 export function Athletes() {

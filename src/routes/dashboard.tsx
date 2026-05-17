@@ -21,8 +21,8 @@ import { backendEventsToEvents, profilesToAthletes, profileToAthlete } from "@/l
 import { useActiveFan } from "@/lib/active-athlete";
 import { useSession } from "@/lib/session";
 import { badges, liveMatches } from "@/lib/mock-data";
-import heroAthlete from "@/assets/athlete-kerem.jpg";
-import spotlightAthlete from "@/assets/athlete-mert.jpg";
+import heroAthlete from "@/assets/athlete-gures-erkek.png";
+import spotlightAthlete from "@/assets/athlete-voleybol-kadin.png";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,

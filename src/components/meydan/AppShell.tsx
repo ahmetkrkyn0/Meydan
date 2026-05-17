@@ -6,7 +6,7 @@ import {
   Mail, Sparkles, LogIn,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import adaImg from "@/assets/athlete-ada.jpg";
+import okculukImg from "@/assets/athlete-okculuk-kadin.png";
 import { useDemoLogin, useLogout, useSession } from "@/lib/session";
 import type { ProfileRole } from "@/lib/api";
 
@@ -189,7 +189,7 @@ export function AppShell({
 
         {/* User card */}
         <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
-          <img src={adaImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
+          <img src={okculukImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
             <p className="text-[10px] text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
@@ -237,7 +237,7 @@ export function AppShell({
               onClick={() => setMenuOpen((v) => !v)}
               className="flex items-center gap-2.5 rounded-xl border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 transition-colors hover:bg-[color:var(--app-line-soft)]"
             >
-              <img src={adaImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
+              <img src={okculukImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
               <div className="hidden text-left sm:block">
                 <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">{effectiveName}</p>
                 <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
