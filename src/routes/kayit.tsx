@@ -1,45 +1,62 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ArrowLeft, Mail, Lock, User, Eye, EyeOff, Trophy, Heart, ShieldCheck, Wrench, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check } from "lucide-react";
+import { useRegister } from "@/lib/session";
+import { defaultRouteForRole } from "@/lib/session";
 
 export const Route = createFileRoute("/kayit")({
   component: RegisterPage,
   head: () => ({
     meta: [
       { title: "Kayıt Ol — Meydan" },
-      { name: "description", content: "Meydan'a katıl: sporcu, taraftar, marka veya yetenek sahibi olarak." },
+      { name: "description", content: "Meydan'a katıl: sporcu, taraftar veya marka olarak." },
     ],
   }),
 });
 
-type Role = "fan" | "athlete" | "brand" | "talent";
+type Role = "taraftar" | "sporcu" | "marka";
 
 const roles: { id: Role; label: string; desc: string; icon: typeof Heart; iconBg: string; }[] = [
-  { id: "fan",     label: "Taraftar",        desc: "Keşfet, destekle, sessiz tezahürat yap.",            icon: Heart,        iconBg: "bg-violet/12 text-violet" },
-  { id: "athlete", label: "Sporcu",          desc: "Kartını oluştur, hikâyeni paylaş.",                  icon: Trophy,       iconBg: "bg-coral/12 text-coral" },
-  { id: "brand",   label: "Marka",           desc: "AI eşleştirmeyle değer uyumlu sporcu bul.",          icon: ShieldCheck,  iconBg: "bg-sky/12 text-sky" },
-  { id: "talent",  label: "Yetenek Sahibi",  desc: "Para değil, beceri bağışla. Doğru sporcuyla eşleş.", icon: Wrench,       iconBg: "bg-emerald-500/12 text-emerald-600" },
+  { id: "taraftar", label: "Taraftar", desc: "Keşfet, destekle, sessiz tezahürat yap.",          icon: Heart,       iconBg: "bg-violet/12 text-violet" },
+  { id: "sporcu",   label: "Sporcu",   desc: "Kartını oluştur, hikâyeni paylaş.",                icon: Trophy,      iconBg: "bg-coral/12 text-coral" },
+  { id: "marka",    label: "Marka",    desc: "AI eşleştirmeyle değer uyumlu sporcu bul.",        icon: ShieldCheck, iconBg: "bg-sky/12 text-sky" },
 ];
 
 function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
-  const [role, setRole] = useState<Role>("fan");
-  const [showPw, setShowPw] = useState(false);
+  const [role, setRole] = useState<Role>("taraftar");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
+  const [branch, setBranch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const register = useRegister();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!fullName.trim() || !email.trim()) {
+      setError("Ad ve email zorunlu");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      const dest =
-        role === "athlete" ? "/sporcu-panel" :
-        role === "brand"   ? "/marka-panel"  :
-        role === "talent"  ? "/yetenek"      :
-                              "/dashboard";
-      navigate({ to: dest });
-    }, 800);
+    try {
+      const result = await register({
+        email: email.trim(),
+        full_name: fullName.trim(),
+        role,
+        city: city.trim() || undefined,
+        branch: role === "sporcu" && branch.trim() ? branch.trim() : undefined,
+      });
+      navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kayıt başarısız.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,7 +120,7 @@ function RegisterPage() {
               </p>
             </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {roles.map((r, i) => {
                 const active = role === r.id;
                 return (
@@ -167,27 +184,46 @@ function RegisterPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md space-y-3">
-              <Field icon={User}  type="text"  placeholder={role === "brand" ? "Marka adı" : "Ad Soyad"} required />
-              <Field icon={Mail}  type="email" placeholder="E-posta adresi" required />
               <Field
-                icon={Lock}
-                type={showPw ? "text" : "password"}
-                placeholder="Şifre (en az 8 karakter)"
+                icon={User}
+                type="text"
+                placeholder={role === "marka" ? "Marka adı" : "Ad Soyad"}
                 required
-                suffix={
-                  <button type="button" onClick={() => setShowPw((v) => !v)} className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]">
-                    {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                }
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
               />
+              <Field
+                icon={Mail}
+                type="email"
+                placeholder="E-posta adresi"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Field
+                icon={User}
+                type="text"
+                placeholder="Şehir (opsiyonel)"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+              {role === "sporcu" && (
+                <Field
+                  icon={Trophy}
+                  type="text"
+                  placeholder="Branş (örn. Okçuluk)"
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
+                />
+              )}
 
-              <label className="flex items-start gap-2 pt-2 text-xs text-[color:var(--app-ink-soft)]">
-                <input type="checkbox" required className="mt-0.5 h-3.5 w-3.5 rounded border-[color:var(--app-line)] accent-[color:var(--violet)]" />
-                <span>
-                  <a className="underline-offset-4 hover:underline" href="#">Kullanım Şartları</a>'nı ve{" "}
-                  <a className="underline-offset-4 hover:underline" href="#">Gizlilik Politikası</a>'nı okudum, kabul ediyorum.
-                </span>
-              </label>
+              <p className="pt-2 text-[11px] leading-relaxed text-[color:var(--app-ink-mute)]">
+                Demo: şifre yok. Email tek başına oturum açmaya yetiyor.
+              </p>
+
+              {error && (
+                <p className="rounded-xl bg-coral/10 px-3 py-2 text-xs text-coral">{error}</p>
+              )}
 
               <div className="flex items-center gap-2 pt-4">
                 <button

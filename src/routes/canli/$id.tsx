@@ -6,6 +6,7 @@ import { ArrowLeft, Eye, Send, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { createCheer, listProfiles } from "@/lib/api";
 import { findProfileBySlug } from "@/lib/api-mappers";
+import { useSession } from "@/lib/session";
 import { liveMatches, recentCheers, cheerTemplates, type Cheer } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/canli/$id")({
@@ -34,6 +35,7 @@ const mockIncoming: Omit<Cheer, "id">[] = [
 function LiveMatchPage() {
   const { id } = Route.useParams();
   const match = liveMatches.find((m) => m.id === id) ?? liveMatches[0];
+  const session = useSession();
   const profilesQuery = useQuery({
     queryKey: ["profiles", "sporcu"],
     queryFn: () => listProfiles({ role: "sporcu" }),
@@ -48,9 +50,12 @@ function LiveMatchPage() {
       if (!athleteProfile?.id) {
         throw new Error("Backend'de bu mac icin sporcu profili bulunamadi.");
       }
+      if (!session.profile?.id) {
+        throw new Error("Tezahürat için giriş yapman gerekli.");
+      }
       return createCheer({
         athlete_id: athleteProfile.id,
-        fan_id: "demo-fan",
+        fan_id: session.profile.id,
         message,
         match_date: new Date().toISOString().slice(0, 10),
       });
@@ -100,7 +105,7 @@ function LiveMatchPage() {
       { id: `c-${Date.now()}`, from: "Sen", message, time: "şimdi" },
       ...f,
     ].slice(0, 12));
-    if (athleteProfile?.id) {
+    if (athleteProfile?.id && session.profile?.id) {
       createCheerMutation.mutate(message);
     }
     setDraft("");
@@ -114,7 +119,9 @@ function LiveMatchPage() {
       ? "Backend'e ulaşılamadı; tezahürat backend'e iletilmiyor."
       : !backendReady
         ? `Bu sporcu (${match.athleteName}) backend'de bulunamadı; tezahürat backend'e iletilmiyor.`
-        : null;
+        : !session.profile?.id
+          ? "Tezahüratın backend'e gönderilmesi için giriş yap."
+          : null;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

@@ -1,12 +1,53 @@
 """Meydan — FastAPI ana uygulama."""
 
-from fastapi import FastAPI, HTTPException
+import re
+import secrets
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
 
 import gemini_service
 import supabase_service
+
+
+_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+
+def _normalize_email(raw: str) -> str:
+    """Email'i lowercase + trim eder, formatı doğrular."""
+    email = (raw or "").strip().lower()
+    if not _EMAIL_RE.match(email):
+        raise HTTPException(status_code=400, detail="Geçersiz email biçimi")
+    return email
+
+
+def _generate_token() -> str:
+    """64 karakter URL-safe rastgele token."""
+    return secrets.token_urlsafe(48)
+
+
+def get_current_profile(authorization: str | None = Header(default=None)) -> dict:
+    """Authorization header'ından token okuyup profil döner. Geçersizse 401."""
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Oturum gerekli")
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Oturum gerekli")
+    profile = supabase_service.get_profile_by_token(token)
+    if not profile:
+        raise HTTPException(status_code=401, detail="Geçersiz oturum")
+    return profile
+
+
+def get_optional_profile(authorization: str | None = Header(default=None)) -> dict | None:
+    """Token varsa profili döner, yoksa None. 401 atmaz."""
+    if not authorization or not authorization.lower().startswith("bearer "):
+        return None
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        return None
+    return supabase_service.get_profile_by_token(token)
 
 app = FastAPI(title="Meydan Backend")
 
@@ -37,6 +78,7 @@ class NeedMatchRequest(BaseModel):
 class ProfileCreateRequest(BaseModel):
     role: Literal["sporcu", "taraftar", "marka"]
     full_name: str
+    email: str | None = None
     branch: str | None = None
     city: str | None = None
     bio: str | None = None
@@ -45,6 +87,19 @@ class ProfileCreateRequest(BaseModel):
     offered_talent: str | None = None
     brand_budget: int | None = None
     brand_values: str | None = None
+
+
+class RegisterRequest(BaseModel):
+    email: str
+    full_name: str
+    role: Literal["sporcu", "taraftar", "marka"]
+    branch: str | None = None
+    city: str | None = None
+    bio: str | None = None
+
+
+class LoginRequest(BaseModel):
+    email: str
 
 
 class NeedCreateRequest(BaseModel):
@@ -145,10 +200,95 @@ class EventUpdateRequest(BaseModel):
 
 # --- Endpoint'ler ---
 
+# --- Auth (Demo: email + token, şifresiz) ---
+
+@app.post("/auth/register")
+def auth_register(body: RegisterRequest):
+    """Yeni profil oluşturur ve token döner. Email unique."""
+    try:
+        email = _normalize_email(body.email)
+        existing = supabase_service.get_profile_by_email(email)
+        if existing is not None:
+            raise HTTPException(
+                status_code=409,
+                detail="Bu email zaten kayıtlı. Giriş yapmayı dene.",
+            )
+
+        token = _generate_token()
+        data: dict = {
+            "role": body.role,
+            "full_name": body.full_name,
+            "email": email,
+            "auth_token": token,
+        }
+        if body.branch is not None:
+            data["branch"] = body.branch
+        if body.city is not None:
+            data["city"] = body.city
+        if body.bio is not None:
+            data["bio"] = body.bio
+
+        profile_id = supabase_service.create_profile(data)
+        profile = supabase_service.get_profile(profile_id)
+        return {
+            "token": token,
+            "profile": profile,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/auth/register hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/auth/login")
+def auth_login(body: LoginRequest):
+    """Email ile giriş yapar, yeni token üretip döner. Şifre yok."""
+    try:
+        email = _normalize_email(body.email)
+        profile = supabase_service.get_profile_by_email(email)
+        if profile is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Bu email ile kayıtlı kullanıcı bulunamadı. Önce kayıt ol.",
+            )
+
+        token = _generate_token()
+        updated = supabase_service.update_profile(profile["id"], {"auth_token": token})
+        return {
+            "token": token,
+            "profile": updated or profile,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/auth/login hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/auth/logout")
+def auth_logout(current: dict = Depends(get_current_profile)):
+    """Token'ı invalidate eder."""
+    try:
+        supabase_service.update_profile(current["id"], {"auth_token": None})
+        return {"status": "ok"}
+    except Exception as e:
+        print(f"/auth/logout hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/auth/me")
+def auth_me(current: dict = Depends(get_current_profile)):
+    """Oturum sahibi profili döner."""
+    return {"profile": current}
+
+
 @app.post("/cheers")
-def post_cheer(body: CheerRequest):
+def post_cheer(body: CheerRequest, current: dict = Depends(get_current_profile)):
     """Taraftar tezahüratını toksisite kontrolünden geçirip kaydeder."""
     try:
+        if body.fan_id != current["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının adına tezahürat gönderilemez")
         is_toxic = gemini_service.check_toxicity(body.message)
         cheer_data = {
             "athlete_id": body.athlete_id,
@@ -158,6 +298,8 @@ def post_cheer(body: CheerRequest):
         }
         supabase_service.insert_cheer(cheer_data, is_toxic)
         return {"status": "ok", "is_toxic": is_toxic}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"/cheers hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -230,23 +372,12 @@ def get_profile(profile_id: str):
 
 @app.post("/profiles")
 def post_profile(body: ProfileCreateRequest):
-    """Yeni profil oluşturur."""
-    try:
-        data = body.model_dump(exclude_none=True)
-        if body.role != "taraftar":
-            data.pop("offered_talent", None)
-        if body.role != "marka":
-            data.pop("brand_budget", None)
-            data.pop("brand_values", None)
-
-        if body.role == "taraftar" and body.offered_talent:
-            data["talent_embedding"] = gemini_service.generate_embedding(body.offered_talent)
-
-        profile_id = supabase_service.create_profile(data)
-        return {"id": profile_id, "status": "created"}
-    except Exception as e:
-        print(f"/profiles oluşturma hatası: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    """DEPRECATED — `/auth/register` kullanın. Bu endpoint kayıt akışını
+    bypass ettiği için artık 410 döner."""
+    raise HTTPException(
+        status_code=410,
+        detail="Bu endpoint kullanım dışı. Yeni profil için /auth/register kullanın.",
+    )
 
 
 @app.get("/needs")
@@ -261,26 +392,43 @@ def get_needs(athlete_id: str | None = None):
 
 
 @app.post("/needs")
-def post_need(body: NeedCreateRequest):
-    """Yeni sporcu ihtiyacı oluşturur."""
+def post_need(body: NeedCreateRequest, current: dict = Depends(get_current_profile)):
+    """Yeni sporcu ihtiyacı oluşturur. Sadece sahibi olduğun athlete_id için."""
     try:
+        if body.athlete_id != current["id"]:
+            raise HTTPException(status_code=403, detail="Başka bir sporcu adına ihtiyaç oluşturulamaz")
+        if current.get("role") != "sporcu":
+            raise HTTPException(status_code=403, detail="Sadece sporcu rolündeki kullanıcılar ihtiyaç oluşturabilir")
         data = body.model_dump(exclude_none=True)
         metin = body.title + ". " + body.description
         data["need_embedding"] = gemini_service.generate_embedding(metin)
 
         need_id = supabase_service.create_need(data)
         return {"id": need_id, "status": "created"}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"/needs oluşturma hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.patch("/needs/{need_id}/fulfill")
-def patch_need_fulfill(need_id: str, body: NeedFulfillRequest):
-    """Bir ihtiyacı karşılandı olarak işaretler."""
+def patch_need_fulfill(
+    need_id: str,
+    body: NeedFulfillRequest,
+    current: dict = Depends(get_current_profile),
+):
+    """Bir ihtiyacı karşılandı olarak işaretler. Sadece ihtiyacın sahibi sporcu."""
     try:
+        need = supabase_service.get_need(need_id)
+        if need is None:
+            raise HTTPException(status_code=404, detail="İhtiyaç bulunamadı")
+        if need.get("athlete_id") != current["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının ihtiyacı kapatılamaz")
         supabase_service.fulfill_need(need_id, body.fulfilled_by)
         return {"status": "fulfilled"}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"/needs/{need_id}/fulfill hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -298,21 +446,33 @@ def get_journals(athlete_id: str):
 
 
 @app.post("/journals")
-def post_journal(body: JournalCreateRequest):
-    """Yeni günlük kaydı oluşturur."""
+def post_journal(body: JournalCreateRequest, current: dict = Depends(get_current_profile)):
+    """Yeni günlük kaydı oluşturur. Sadece kendi günlüğüne yazabilirsin."""
     try:
+        if body.athlete_id != current["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının günlüğüne yazılamaz")
+        if current.get("role") != "sporcu":
+            raise HTTPException(status_code=403, detail="Sadece sporcu rolündeki kullanıcılar günlük yazabilir")
         data = body.model_dump(exclude_none=True)
         journal_id = supabase_service.create_journal(data)
         return {"id": journal_id, "status": "created"}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"/journals oluşturma hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.patch("/profiles/{profile_id}")
-def patch_profile(profile_id: str, body: ProfileUpdateRequest):
-    """Profil bilgilerini günceller."""
+def patch_profile(
+    profile_id: str,
+    body: ProfileUpdateRequest,
+    current_user: dict = Depends(get_current_profile),
+):
+    """Profil bilgilerini günceller. Sadece kendi profilini düzenleyebilirsin."""
     try:
+        if profile_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının profili düzenlenemez")
         current = supabase_service.get_profile(profile_id)
         if current is None:
             raise HTTPException(status_code=404, detail="Profil bulunamadı")
@@ -355,9 +515,11 @@ def patch_profile(profile_id: str, body: ProfileUpdateRequest):
 
 
 @app.delete("/profiles/{profile_id}")
-def delete_profile(profile_id: str):
-    """Profil kaydını siler."""
+def delete_profile(profile_id: str, current_user: dict = Depends(get_current_profile)):
+    """Profil kaydını siler. Sadece kendi profilini silebilirsin."""
     try:
+        if profile_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının profili silinemez")
         deleted = supabase_service.delete_profile(profile_id)
         if not deleted:
             raise HTTPException(status_code=404, detail="Profil bulunamadı")
@@ -370,20 +532,26 @@ def delete_profile(profile_id: str):
 
 
 @app.patch("/needs/{need_id}")
-def patch_need(need_id: str, body: NeedUpdateRequest):
-    """İhtiyaç kaydını günceller."""
+def patch_need(
+    need_id: str,
+    body: NeedUpdateRequest,
+    current_user: dict = Depends(get_current_profile),
+):
+    """İhtiyaç kaydını günceller. Sadece sahibi sporcu düzenleyebilir."""
     try:
-        current = supabase_service.get_need(need_id)
-        if current is None:
+        existing = supabase_service.get_need(need_id)
+        if existing is None:
             raise HTTPException(status_code=404, detail="İhtiyaç bulunamadı")
+        if existing.get("athlete_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının ihtiyacı düzenlenemez")
 
         data = body.model_dump(exclude_unset=True)
         if not data:
             raise HTTPException(status_code=400, detail="Güncellenecek alan yok")
 
         if "title" in data or "description" in data:
-            title = data.get("title", current.get("title", ""))
-            description = data.get("description", current.get("description", ""))
+            title = data.get("title", existing.get("title", ""))
+            description = data.get("description", existing.get("description", ""))
             data["need_embedding"] = gemini_service.generate_embedding(title + ". " + description)
 
         need = supabase_service.update_need(need_id, data)
@@ -398,9 +566,14 @@ def patch_need(need_id: str, body: NeedUpdateRequest):
 
 
 @app.delete("/needs/{need_id}")
-def delete_need(need_id: str):
-    """İhtiyaç kaydını siler."""
+def delete_need(need_id: str, current_user: dict = Depends(get_current_profile)):
+    """İhtiyaç kaydını siler. Sadece sahibi sporcu silebilir."""
     try:
+        existing = supabase_service.get_need(need_id)
+        if existing is None:
+            raise HTTPException(status_code=404, detail="İhtiyaç bulunamadı")
+        if existing.get("athlete_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının ihtiyacı silinemez")
         deleted = supabase_service.delete_need(need_id)
         if not deleted:
             raise HTTPException(status_code=404, detail="İhtiyaç bulunamadı")
@@ -413,9 +586,19 @@ def delete_need(need_id: str):
 
 
 @app.patch("/journals/{journal_id}")
-def patch_journal(journal_id: str, body: JournalUpdateRequest):
-    """Günlük kaydını günceller."""
+def patch_journal(
+    journal_id: str,
+    body: JournalUpdateRequest,
+    current_user: dict = Depends(get_current_profile),
+):
+    """Günlük kaydını günceller. Sadece sahibi sporcu."""
     try:
+        existing = supabase_service.get_journal(journal_id)
+        if existing is None:
+            raise HTTPException(status_code=404, detail="Günlük bulunamadı")
+        if existing.get("athlete_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının günlüğü düzenlenemez")
+
         data = body.model_dump(exclude_unset=True)
         if not data:
             raise HTTPException(status_code=400, detail="Güncellenecek alan yok")
@@ -432,9 +615,14 @@ def patch_journal(journal_id: str, body: JournalUpdateRequest):
 
 
 @app.delete("/journals/{journal_id}")
-def delete_journal(journal_id: str):
-    """Günlük kaydını siler."""
+def delete_journal(journal_id: str, current_user: dict = Depends(get_current_profile)):
+    """Günlük kaydını siler. Sadece sahibi sporcu."""
     try:
+        existing = supabase_service.get_journal(journal_id)
+        if existing is None:
+            raise HTTPException(status_code=404, detail="Günlük bulunamadı")
+        if existing.get("athlete_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının günlüğü silinemez")
         deleted = supabase_service.delete_journal(journal_id)
         if not deleted:
             raise HTTPException(status_code=404, detail="Günlük bulunamadı")
@@ -543,9 +731,11 @@ def delete_event(event_id: str):
 # --- Donations ---
 
 @app.post("/donations")
-def post_donation(body: DonationRequest):
+def post_donation(body: DonationRequest, current_user: dict = Depends(get_current_profile)):
     """Bağış kaydı oluşturur. Şimdilik ödeme gateway yok; status='completed'."""
     try:
+        if body.supporter_profile_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkası adına bağış yapılamaz")
         if body.amount <= 0:
             raise HTTPException(status_code=400, detail="Bağış miktarı pozitif olmalı")
         data = body.model_dump(exclude_none=True)
@@ -595,22 +785,32 @@ def get_donation_summary(athlete_profile_id: str):
 # --- Follows ---
 
 @app.post("/follows")
-def post_follow(body: FollowRequest):
-    """Bir taraftar bir sporcuyu takip eder."""
+def post_follow(body: FollowRequest, current_user: dict = Depends(get_current_profile)):
+    """Bir taraftar bir sporcuyu takip eder. Sadece kendi adına."""
     try:
+        if body.follower_profile_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkası adına takip yapılamaz")
         follow_id = supabase_service.follow_athlete(
             body.follower_profile_id, body.athlete_profile_id
         )
         return {"id": follow_id, "status": "followed"}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"/follows POST hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.delete("/follows")
-def delete_follow(follower_profile_id: str, athlete_profile_id: str):
-    """Takip ilişkisini siler. Query parametreleriyle iki id alınır."""
+def delete_follow(
+    follower_profile_id: str,
+    athlete_profile_id: str,
+    current_user: dict = Depends(get_current_profile),
+):
+    """Takip ilişkisini siler. Sadece kendi takiplerini kaldırabilirsin."""
     try:
+        if follower_profile_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Başkasının takibi kaldırılamaz")
         deleted = supabase_service.unfollow_athlete(follower_profile_id, athlete_profile_id)
         if not deleted:
             raise HTTPException(status_code=404, detail="Takip kaydı bulunamadı")

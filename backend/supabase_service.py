@@ -57,11 +57,13 @@ def find_matching_talents(query_embedding: list[float], athlete_id: str) -> list
 
 
 def _embedding_kolonlarini_cikar(kayit: dict) -> dict:
-    """Embedding kolonlarını tekil kayıttan çıkarır."""
+    """Embedding kolonlarını ve auth_token'ı dışarıya açmaz."""
     return {
         anahtar: deger
         for anahtar, deger in kayit.items()
-        if not anahtar.endswith("_embedding") and anahtar != "embedding"
+        if not anahtar.endswith("_embedding")
+        and anahtar != "embedding"
+        and anahtar != "auth_token"
     }
 
 
@@ -98,6 +100,42 @@ def get_profile(profile_id: str) -> dict | None:
         return _embedding_kolonlarini_cikar(response.data[0])
     except Exception as e:
         print(f"Profil getirme hatası: {e}")
+        raise
+
+
+def get_profile_by_email(email: str) -> dict | None:
+    """Email ile profil bulur (lowercase normalize edilmiş email beklenir)."""
+    try:
+        response = (
+            supabase.table("profiles")
+            .select("*")
+            .ilike("email", email)
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            return None
+        return _embedding_kolonlarini_cikar(response.data[0])
+    except Exception as e:
+        print(f"Email ile profil getirme hatası: {e}")
+        raise
+
+
+def get_profile_by_token(token: str) -> dict | None:
+    """Auth token ile profil bulur."""
+    try:
+        response = (
+            supabase.table("profiles")
+            .select("*")
+            .eq("auth_token", token)
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            return None
+        return _embedding_kolonlarini_cikar(response.data[0])
+    except Exception as e:
+        print(f"Token ile profil getirme hatası: {e}")
         raise
 
 
@@ -239,6 +277,24 @@ def delete_need(need_id: str) -> bool:
         return bool(response.data)
     except Exception as e:
         print(f"İhtiyaç silme hatası: {e}")
+        raise
+
+
+def get_journal(journal_id: str) -> dict | None:
+    """Tek bir günlük kaydını id ile getirir."""
+    try:
+        response = (
+            supabase.table("journals")
+            .select("*")
+            .eq("id", journal_id)
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            return None
+        return response.data[0]
+    except Exception as e:
+        print(f"Günlük getirme hatası: {e}")
         raise
 
 

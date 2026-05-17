@@ -1,6 +1,27 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
+const SESSION_TOKEN_KEY = "meydan.authToken";
+
+export function readAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(SESSION_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function writeAuthToken(token: string | null) {
+  if (typeof window === "undefined") return;
+  try {
+    if (token) window.localStorage.setItem(SESSION_TOKEN_KEY, token);
+    else window.localStorage.removeItem(SESSION_TOKEN_KEY);
+  } catch {
+    // sessiz
+  }
+}
+
 export type ProfileRole = "sporcu" | "taraftar" | "marka";
 
 export type BackendProfile = {
@@ -62,6 +83,7 @@ export type BackendEvent = {
 
 type RequestOptions = RequestInit & {
   query?: Record<string, string | number | boolean | null | undefined>;
+  skipAuth?: boolean;
 };
 
 function buildUrl(path: string, query?: RequestOptions["query"]) {
@@ -74,12 +96,21 @@ function buildUrl(path: string, query?: RequestOptions["query"]) {
   return url.toString();
 }
 
+export class UnauthorizedError extends Error {
+  constructor(message = "Oturum gerekli") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
 async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { query, headers, body, ...rest } = options;
+  const { query, headers, body, skipAuth, ...rest } = options;
+  const token = skipAuth ? null : readAuthToken();
   const response = await fetch(buildUrl(path, query), {
     ...rest,
     headers: {
       ...(body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     body,
@@ -93,11 +124,58 @@ async function apiRequest<T>(path: string, options: RequestOptions = {}): Promis
     } catch {
       // JSON olmayan hata cevaplarında status mesajı yeterli.
     }
+    if (response.status === 401) {
+      // Token geçersiz/eski — temizle ki kullanıcı tekrar girsin.
+      writeAuthToken(null);
+      throw new UnauthorizedError(detail);
+    }
     throw new Error(detail);
   }
 
   return response.json() as Promise<T>;
 }
+
+// --- Auth ---
+
+export type AuthResponse = {
+  token: string;
+  profile: BackendProfile;
+};
+
+export function registerUser(data: {
+  email: string;
+  full_name: string;
+  role: ProfileRole;
+  branch?: string;
+  city?: string;
+  bio?: string;
+}) {
+  return apiRequest<AuthResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(data),
+    skipAuth: true,
+  });
+}
+
+export function loginUser(data: { email: string }) {
+  return apiRequest<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(data),
+    skipAuth: true,
+  });
+}
+
+export function logoutUser() {
+  return apiRequest<{ status: "ok" }>("/auth/logout", {
+    method: "POST",
+  });
+}
+
+export function fetchCurrentProfile() {
+  return apiRequest<{ profile: BackendProfile }>("/auth/me");
+}
+
+// --- Profiles ---
 
 export function listProfiles(params: {
   role?: ProfileRole;
