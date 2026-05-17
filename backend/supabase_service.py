@@ -39,20 +39,26 @@ def get_cheers_for_match(athlete_id: str, match_date: str) -> list[dict]:
         raise
 
 
-def find_matching_talents(query_embedding: list[float], athlete_id: str) -> list[dict]:
+def find_matching_talents(
+    query_embedding: list[float],
+    athlete_id: str,
+    city: str | None = None,
+    availability: str | None = None,
+) -> list[dict]:
     """pgvector ile en yakın taraftar yeteneklerini bulur.
 
-    Threshold 0.65: Gemini 768-dim retrieval embedding'lerde bu değerin
-    altı alâkasız çıkıyor (şehir/müsaitlik gibi ortak meta kelimeler
-    yüzünden 0.3'le video editör ihtiyacına şoför eşleşiyordu).
+    Threshold 0.80 + max 3 sonuç. availability='local' ise aynı şehir
+    filtresi uygulanır; 'online' veya None ise şehir filtresi yok.
     """
     try:
         response = supabase.rpc(
             "match_talents",
             {
                 "query_embedding": query_embedding,
-                "match_threshold": 0.65,
-                "match_count": 5,
+                "match_threshold": 0.80,
+                "match_count": 3,
+                "filter_city": city,
+                "availability": availability,
             },
         ).execute()
         return response.data
