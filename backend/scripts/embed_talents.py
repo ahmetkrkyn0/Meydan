@@ -1,8 +1,14 @@
 """
-Tek seferlik script: taraftar profillerinin offered_talent alanlarını
-Gemini embedding ile vektörleştirir ve talent_embedding kolonuna yazar.
+Taraftar profillerinin offered_talent alanlarını Gemini embedding ile
+vektörleştirir ve talent_embedding kolonuna yazar.
 
-Kullanım: python scripts/embed_talents.py
+Eski sürüm offered_talent'in tamamını (yetenek + şehir + müsaitlik + not)
+embed ediyordu — şehir/müsaitlik ortak meta kelimeleri yüzünden alâkasız
+profiller %70+ skor alıyordu. Bu sürüm sadece "Yetenekler:" ve "Not:"
+segmentlerini embed eder; şehir/müsaitlik DB kolonlarında zaten var.
+
+Kullanım: python scripts/embed_talents.py            # boş olanları doldur
+          python scripts/embed_talents.py --rebuild  # hepsini yeniden hesapla
 """
 
 import os
@@ -23,27 +29,45 @@ supabase = create_client(
 )
 
 
-def embed_tüm_taraftarlar() -> None:
-    """Embedding'i boş olan taraftar profillerini vektörleştirir."""
-    # Sadece taraftar rolündeki ve embedding'i henüz olmayan kayıtları al
-    response = (
+def _semantic_text(offered_talent: str) -> str:
+    """offered_talent'ten sadece anlamsal kısımları (Yetenekler + Not) çıkarır.
+    main.py'deki _extract_talent_semantic_text ile eş davranmalı."""
+    if not offered_talent:
+        return ""
+    kept: list[str] = []
+    for segment in offered_talent.split(" · "):
+        key, sep, value = segment.partition(":")
+        if not sep:
+            continue
+        if key.strip() in ("Yetenekler", "Not"):
+            cleaned = value.strip()
+            if cleaned:
+                kept.append(cleaned)
+    return ". ".join(kept) if kept else offered_talent
+
+
+def embed_tüm_taraftarlar(rebuild: bool = False) -> None:
+    """Embedding'i boş olan taraftar profillerini vektörleştirir.
+    rebuild=True ise mevcut embedding'leri de yeniden hesaplar."""
+    query = (
         supabase.table("profiles")
         .select("id, full_name, offered_talent")
         .eq("role", "taraftar")
-        .is_("talent_embedding", "null")
-        .execute()
     )
+    if not rebuild:
+        query = query.is_("talent_embedding", "null")
 
+    response = query.execute()
     kayitlar = response.data
-    print(f"İşlenecek kayıt sayısı: {len(kayitlar)}")
+    print(f"İşlenecek kayıt sayısı: {len(kayitlar)} (rebuild={rebuild})")
 
     for kayit in kayitlar:
         kullanici_id = kayit["id"]
         isim = kayit.get("full_name", "?")
-        yetenek_metni = kayit.get("offered_talent", "")
+        yetenek_metni = _semantic_text(kayit.get("offered_talent", ""))
 
         if not yetenek_metni:
-            print(f"  [ATLA] {isim} — offered_talent boş")
+            print(f"  [ATLA] {isim} — offered_talent boş veya anlamsal içerik yok")
             continue
 
         try:
@@ -59,4 +83,4 @@ def embed_tüm_taraftarlar() -> None:
 
 
 if __name__ == "__main__":
-    embed_tüm_taraftarlar()
+    embed_tüm_taraftarlar(rebuild="--rebuild" in sys.argv)

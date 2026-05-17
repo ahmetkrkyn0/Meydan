@@ -176,6 +176,14 @@ export function fetchCurrentProfile() {
   return apiRequest<{ profile: BackendProfile }>("/auth/me");
 }
 
+export function demoLogin(role: ProfileRole) {
+  return apiRequest<AuthResponse>("/auth/demo-login", {
+    method: "POST",
+    query: { role },
+    skipAuth: true,
+  });
+}
+
 // --- Profiles ---
 
 export function listProfiles(params: {
@@ -280,9 +288,11 @@ export type TalentMatchResult = {
 };
 
 export function matchNeedById(needId: string) {
-  return apiRequest<{ need_id: string; matches: TalentMatchResult[] }>(
-    `/needs/${needId}/matches`,
-  );
+  return apiRequest<{
+    need_id: string;
+    need: BackendNeed;
+    matches: TalentMatchResult[];
+  }>(`/needs/${needId}/matches`);
 }
 
 // --- Donations ---

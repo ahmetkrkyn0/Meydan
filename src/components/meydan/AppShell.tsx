@@ -7,7 +7,8 @@ import {
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import adaImg from "@/assets/athlete-ada.jpg";
-import { useLogout, useSession } from "@/lib/session";
+import { useDemoLogin, useLogout, useSession } from "@/lib/session";
+import type { ProfileRole } from "@/lib/api";
 
 type NavItem = {
   to: string;
@@ -63,7 +64,35 @@ export function AppShell({
   const [menuOpen, setMenuOpen] = useState(false);
   const session = useSession();
   const logout = useLogout();
+  const demoLogin = useDemoLogin();
   const navigate = useNavigate();
+  const [demoLoading, setDemoLoading] = useState<AppRole | null>(null);
+  const [demoError, setDemoError] = useState<string | null>(null);
+
+  const ROLE_TO_PROFILE: Record<AppRole, ProfileRole> = {
+    fan: "taraftar",
+    athlete: "sporcu",
+    brand: "marka",
+  };
+  const ROLE_TO_DEST: Record<AppRole, string> = {
+    fan: "/dashboard",
+    athlete: "/sporcu-panel",
+    brand: "/marka-panel",
+  };
+
+  async function handleRoleSwitch(target: AppRole) {
+    if (demoLoading) return;
+    setDemoError(null);
+    setDemoLoading(target);
+    try {
+      await demoLogin(ROLE_TO_PROFILE[target]);
+      navigate({ to: ROLE_TO_DEST[target] }).catch(() => undefined);
+    } catch (err) {
+      setDemoError(err instanceof Error ? err.message : "Demo giriş başarısız");
+    } finally {
+      setDemoLoading(null);
+    }
+  }
 
   // Override: oturum açıldıysa session bilgisi tercih edilir.
   const effectiveName = session.profile?.full_name ?? userName ?? "Misafir";
@@ -121,28 +150,41 @@ export function AppShell({
           })}
         </nav>
 
-        {/* Mode switcher */}
+        {/* Mode switcher — demo: ilgili roldeki ilk profile login yapar */}
         <div className="mx-3 mb-3 rounded-2xl border border-[color:var(--app-line)] bg-white p-2">
-          <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">Rol</p>
+          <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+            Demo rol
+          </p>
           <div className="mt-1.5 grid grid-cols-3 gap-1">
             {(["fan", "athlete", "brand"] as AppRole[]).map((r) => {
               const isActive = role === r;
-              const dest = r === "athlete" ? "/sporcu-panel" : r === "brand" ? "/marka-panel" : "/dashboard";
+              const isLoading = demoLoading === r;
               return (
-                <Link
+                <button
                   key={r}
-                  to={dest}
-                  className={`rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all ${
+                  type="button"
+                  onClick={() => void handleRoleSwitch(r)}
+                  disabled={Boolean(demoLoading)}
+                  className={`rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                     isActive
                       ? "bg-[color:var(--app-ink)] text-white"
                       : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]"
                   }`}
                 >
-                  {r === "fan" ? "Taraftar" : r === "athlete" ? "Sporcu" : "Marka"}
-                </Link>
+                  {isLoading
+                    ? "…"
+                    : r === "fan"
+                      ? "Taraftar"
+                      : r === "athlete"
+                        ? "Sporcu"
+                        : "Marka"}
+                </button>
               );
             })}
           </div>
+          {demoError && (
+            <p className="mt-1.5 px-2 text-[10px] font-semibold text-coral">{demoError}</p>
+          )}
         </div>
 
         {/* User card */}

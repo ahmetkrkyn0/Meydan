@@ -49,7 +49,12 @@ function useActiveProfileForRole(role: ProfileRole) {
 
   const profiles = profilesQuery.data?.profiles ?? [];
 
-  const [activeId, setActiveIdState] = useState<string | null>(() => readStoredId(role));
+  // Hydration-safe: ilk render'da null; mount sonrası localStorage'tan oku.
+  const [activeId, setActiveIdState] = useState<string | null>(null);
+
+  useEffect(() => {
+    setActiveIdState(readStoredId(role));
+  }, [role]);
 
   useEffect(() => {
     if (!profiles.length) return;
