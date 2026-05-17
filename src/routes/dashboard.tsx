@@ -333,14 +333,14 @@ function DashboardPage() {
                       {/* Score + momentum bar */}
                       <div className="mt-6 flex items-end justify-between gap-6">
                         <div>
-                          <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">Skor</p>
+                          <p className="font-mono text-[10px] uppercase tracking-wider text-white/70">Skor</p>
                           <p className="font-display text-5xl font-bold leading-none text-white">
                             {m.score}
                           </p>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="mb-1.5 flex items-baseline justify-between">
-                            <span className="font-mono text-[10px] uppercase tracking-wider text-white/50">Momentum</span>
+                            <span className="font-mono text-[10px] uppercase tracking-wider text-white/70">Momentum</span>
                             <span className="font-mono text-xs font-bold text-white">%{m.momentum}</span>
                           </div>
                           <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
@@ -640,14 +640,14 @@ function DashboardPage() {
                       <p className="font-display text-2xl font-bold text-white tabular-nums">
                         <CountUp to={42} />
                       </p>
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">branş havuzda</p>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/70">branş havuzda</p>
                     </div>
                     <div className="h-8 w-px bg-white/10" />
                     <div>
                       <p className="font-display text-2xl font-bold text-white tabular-nums">
                         <CountUp to={1280} />
                       </p>
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">taraftar bu hafta denedi</p>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/70">taraftar bu hafta denedi</p>
                     </div>
                   </div>
                 </div>
