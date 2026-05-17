@@ -258,6 +258,19 @@ export function createCheer(data: {
   });
 }
 
+export type CheerSummary = {
+  total: number;
+  safe_count: number;
+  summary: string;
+  top_messages: string[];
+};
+
+export function getCheerSummary(athleteId: string, matchDate: string) {
+  return apiRequest<CheerSummary>(
+    `/cheers/summary/${athleteId}/${matchDate}`,
+  );
+}
+
 export function listJournals(athleteId: string) {
   return apiRequest<{ journals: BackendJournal[] }>(`/journals/${athleteId}`);
 }

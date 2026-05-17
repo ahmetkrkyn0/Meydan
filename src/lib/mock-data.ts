@@ -562,6 +562,53 @@ export const recentCheers: Cheer[] = [
   { id: "c5", from: "Selin",    message: "Pes etme",             time: "2 dk" },
 ];
 
+/* ── Geniş tribün havuzu — canlı maç chat akışı için ── */
+
+export const tribuneNames: string[] = [
+  "Ayşe", "Mehmet", "Selin", "Ufuk", "Pelin", "Onur", "Burak", "Ela",
+  "Mert", "Defne", "Berk", "Naz", "Kaan", "Sude", "Ege", "Doruk",
+  "Zeynep", "Ozan", "İrem", "Tuna", "Aslı", "Kerem", "Buse", "Deniz",
+  "Yiğit", "Cansu", "Emre", "Beril", "Ahmet", "Şevval", "Çağla",
+  "Bora", "Sıla", "Eren", "Melis", "Atilla", "Damla", "Furkan",
+  "Gizem", "Hakan", "İpek", "Tolga", "Yasemin",
+];
+
+export const tribuneMessages: string[] = [
+  // Genel motivasyon
+  "Seninleyim.",
+  "Pes etme!",
+  "Devam et, az kaldı.",
+  "Türkiye seninle 🇹🇷",
+  "Bir nefes daha.",
+  "Sakin kal, bilirsin.",
+  "Sen bu işi bilirsin.",
+  "Tribün ayakta.",
+  "Burdayız, duy bizi.",
+  "Her vuruşa odaklan.",
+  "Yıllarca bu an için çalıştın.",
+  "Güveniyorum sana.",
+  "Arkandayız!",
+  "Sakin nefes, temiz kafa.",
+  "Sen yaparsın.",
+  "Bu maç senin.",
+  "Vazgeçme sakın.",
+  "Gözünü topa dik.",
+  "Bütün Türkiye ekranda.",
+  // Kısa burst / emoji
+  "🔥🔥🔥",
+  "💪💪",
+  "🇹🇷🇹🇷🇹🇷",
+  "✨ aslan ✨",
+  "👏 muhteşemsin",
+  // Yapıcı / serbest
+  "İlk set kayıptı, dön bu setten.",
+  "Servis çok iyi gidiyor.",
+  "Konsantre ol, başaracaksın.",
+  "Ritmi bulduğun an her şey gelir.",
+  "Nefes al, kendine güven.",
+];
+
+
 /* ============================================================
  * BRAND OFFERS — for athlete inbox
  * ============================================================ */

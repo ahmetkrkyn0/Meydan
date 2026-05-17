@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Eye, Radio, Sparkles, Activity, Zap, ArrowUpRight } from "lucide-react";
+import { Eye, Radio, Sparkles, Activity, Zap, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { liveMatches, type Match } from "@/lib/mock-data";
 
@@ -19,6 +19,7 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 
 function CanliListPage() {
   const matches = liveMatches.filter((m) => m.status === "live");
+  const ended = liveMatches.filter((m) => m.status === "ended");
   const featured = matches[0];
   const rest = matches.slice(1);
 
@@ -91,6 +92,26 @@ function CanliListPage() {
             </p>
           </motion.div>
         )}
+
+        {/* ── BİTEN MAÇLAR — özet hazır ── */}
+        {ended.length > 0 && (
+          <motion.section variants={fadeUp} className="flex flex-col gap-4 pt-4">
+            <SectionHeading
+              eyebrow="Maç sonu"
+              title="Biten maçlar"
+              right={
+                <span className="hidden items-center gap-1.5 text-[11px] font-semibold text-[color:var(--app-ink-soft)] sm:inline-flex">
+                  <Sparkles className="h-3.5 w-3.5 text-violet" /> AI özetleri hazır
+                </span>
+              }
+            />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {ended.map((m) => (
+                <EndedCard key={m.id} match={m} />
+              ))}
+            </div>
+          </motion.section>
+        )}
       </motion.div>
     </AppShell>
   );
@@ -103,14 +124,6 @@ function LivePulse() {
     <span className="relative flex h-2 w-2">
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
       <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
-    </span>
-  );
-}
-
-function ShieldBadge() {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/25 bg-violet/8 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-violet">
-      <Zap className="h-3 w-3" /> AI Korumalı
     </span>
   );
 }
@@ -376,6 +389,64 @@ function MatchCard({ match }: { match: Match }) {
           <ArrowUpRight className="h-3 w-3" />
         </Link>
       </div>
+    </motion.article>
+  );
+}
+
+/* ─────────────────────────── ended card ─────────────────────────── */
+
+function EndedCard({ match }: { match: Match }) {
+  return (
+    <motion.article
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.25, ease: EASE }}
+      className="group relative overflow-hidden rounded-2xl border border-[color:var(--app-line)] bg-white/70 p-4 transition-all hover:border-violet/25 hover:bg-white"
+    >
+      <div className="flex items-start gap-3">
+        <img
+          src={match.athleteImg}
+          alt={match.athleteName}
+          className="h-12 w-12 shrink-0 rounded-xl object-cover object-top opacity-90 grayscale-[15%]"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--app-line-soft)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-soft)]">
+              <CheckCircle2 className="h-2.5 w-2.5" /> Bitti
+            </span>
+            <span className="text-[10px] text-[color:var(--app-ink-mute)]">
+              {match.emoji} {match.sport}
+            </span>
+          </div>
+          <p className="mt-1 truncate text-[13px] font-semibold leading-tight text-[color:var(--app-ink)]">
+            {match.athleteName}
+          </p>
+          <p className="truncate text-[11px] text-[color:var(--app-ink-soft)]">
+            vs {match.opponent} {match.opponentFlag}
+          </p>
+        </div>
+        {match.score && (
+          <div className="shrink-0 text-right">
+            <p className="font-mono text-base font-bold leading-none text-[color:var(--app-ink)]">
+              {match.score}
+            </p>
+            <p className="mt-0.5 text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+              Final
+            </p>
+          </div>
+        )}
+      </div>
+
+      <Link
+        to="/canli/$id"
+        params={{ id: match.id }}
+        className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-violet/20 bg-gradient-to-r from-violet/8 to-coral/8 px-3 py-2 text-[11px] font-semibold text-violet transition-all hover:border-violet/40 hover:from-violet/15 hover:to-coral/12"
+      >
+        <span className="inline-flex items-center gap-1.5">
+          <Sparkles className="h-3 w-3" />
+          AI maç özetini gör
+        </span>
+        <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </Link>
     </motion.article>
   );
 }
