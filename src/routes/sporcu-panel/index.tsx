@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { brandOffers, needs } from "@/lib/mock-data";
+import { useSession } from "@/lib/session";
 import archeryFieldImg from "@/assets/okçulukalan.png";
 
 export const Route = createFileRoute("/sporcu-panel/")({
@@ -28,6 +29,11 @@ const fadeUp = {
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
 function AthletePanelHome() {
+  const session = useSession();
+  const profile = session.profile;
+  const firstName = profile?.full_name ? profile.full_name.split(" ")[0] : "Sporcu";
+  const city = profile?.city || "Şehir Belirtilmedi";
+  
   const myNeeds = needs.filter((n) => n.athleteSlug === "nisan-celik");
   const offers = brandOffers.slice(0, 2);
 
@@ -55,7 +61,7 @@ function AthletePanelHome() {
     },
     {
       label: "Bekleyen marka teklifi",
-      value: "3",
+      value: offers.length.toString(),
       delta: "1 yeni bugün",
       icon: Mail,
       tone: "sky",
@@ -82,78 +88,67 @@ function AthletePanelHome() {
   ];
 
   return (
-    <AppShell role="athlete" userName="Nisan Çelik" userCity="İstanbul">
+    <AppShell role="athlete" userName={profile?.full_name || "Sporcu"} userCity={city}>
       <motion.div
         initial="hidden"
         animate="show"
         variants={stagger}
-        className="mx-auto flex w-full max-w-6xl flex-col gap-16"
+        className="mx-auto flex w-full max-w-6xl flex-col gap-12"
       >
         <motion.header
           variants={fadeUp}
-          className="relative isolate overflow-hidden rounded-3xl"
+          className="relative isolate overflow-hidden rounded-[32px] bg-white border border-slate-200/60 shadow-sm"
         >
-          {/* Sport background image — right side, fades left into cream */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10"
-          >
-            <img
-              src={archeryFieldImg}
-              alt=""
-              className="absolute inset-y-0 right-0 h-full w-[78%] object-cover object-center"
-            />
-            {/* Left-to-right gradient: solid cream → transparent (fade ends earlier so image stays crisp) */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to right, oklch(0.985 0.005 90) 0%, oklch(0.985 0.005 90 / 0.98) 22%, oklch(0.985 0.005 90 / 0.55) 38%, oklch(0.985 0.005 90 / 0.05) 55%, transparent 70%)",
-              }}
-            />
-            {/* Top + bottom soft fades — keep light so image stays visible */}
-            <div
-              className="absolute inset-x-0 top-0 h-10"
-              style={{ background: "linear-gradient(to bottom, oklch(0.985 0.005 90 / 0.35), transparent)" }}
-            />
-            <div
-              className="absolute inset-x-0 bottom-0 h-10"
-              style={{ background: "linear-gradient(to top, oklch(0.985 0.005 90 / 0.35), transparent)" }}
-            />
-          </div>
-
-          <div className="flex flex-col gap-3 px-6 py-16 sm:px-10 sm:py-20 lg:py-24">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-              Sporcu paneli · İstanbul
-            </p>
-            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
-              Hoş geldin <span className="italic text-violet">Mete</span>.
+          {/* Subtle background gradient instead of harsh image slice */}
+          <div className="absolute inset-0 bg-gradient-to-br from-violet/5 via-transparent to-sky/5 pointer-events-none" />
+          
+          <div className="relative flex flex-col gap-4 px-8 py-16 sm:px-12 sm:py-20">
+            <div className="inline-flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                Sporcu Paneli · {city}
+              </p>
+            </div>
+            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl">
+              Hoş geldin <span className="text-violet">{firstName}</span>.
             </h1>
-            <p className="max-w-md text-base leading-relaxed text-[color:var(--app-ink-soft)]">
-              Bugün 312 yeni mesajın var. 3 yeni marka teklifi bekliyor — biri uzun süreli
-              kampanya olabilir.
+            <p className="max-w-xl text-[15px] leading-relaxed text-slate-600">
+              Bugün <strong className="text-slate-900 font-semibold">312 yeni mesajın</strong> var. <strong className="text-slate-900 font-semibold">{offers.length} yeni marka teklifi</strong> bekliyor — biri uzun süreli kampanya olabilir.
             </p>
           </div>
         </motion.header>
 
         <motion.section
           variants={fadeUp}
-          className="grid grid-cols-2 gap-x-8 gap-y-6 px-6 sm:grid-cols-4 sm:gap-x-12 sm:px-10"
+          className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6"
         >
-          {stats.map((s) => (
-            <div key={s.label}>
-              <p className="font-display text-4xl font-bold leading-none tracking-tight text-[color:var(--app-ink)]">
+          {stats.map((s) => {
+            const toneClasses: Record<string, string> = {
+              violet: "bg-violet/10 text-violet",
+              indigo: "bg-indigo/10 text-indigo",
+              coral: "bg-coral/10 text-coral",
+              sky: "bg-sky/10 text-sky",
+            };
+            return (
+            <div key={s.label} className="flex flex-col gap-1 rounded-2xl bg-white border border-slate-200/60 p-5 shadow-sm transition-all hover:shadow-md hover:border-slate-300">
+              <div className="mb-2 flex items-center gap-2">
+                <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${toneClasses[s.tone] || "bg-slate-100 text-slate-500"}`}>
+                  <s.icon className="h-4 w-4" strokeWidth={2} />
+                </span>
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                  {s.label}
+                </p>
+              </div>
+              <p className="font-display text-3xl font-bold tracking-tight text-slate-900">
                 {s.value}
               </p>
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                {s.label}
-              </p>
-              <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-violet">
-                <ArrowUpRight className="h-3 w-3" strokeWidth={2.2} />
+              <p className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} />
                 {s.delta}
               </p>
             </div>
-          ))}
+            );
+          })}
         </motion.section>
 
         {/* ─── HERO: Bu haftaki taraftar sesi (kartsız, editorial) ─── */}
