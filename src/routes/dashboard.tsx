@@ -431,12 +431,15 @@ function DashboardPage() {
           </div>
         </motion.section>
 
-        {/* ─── Followed athletes ─── */}
+        {/* ─── Portrait towers: followed athletes ─── */}
         <motion.section variants={fadeUp} aria-labelledby="senin-sporcular">
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 id="senin-sporcular" className="font-display text-xl font-bold text-[color:var(--app-ink)]">
-              {followsAreReal ? "Senin sporcuların" : "Önerilen sporcular"}
-            </h2>
+          <div className="mb-5 flex items-baseline justify-between">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
+              <h2 id="senin-sporcular" className="font-display text-2xl font-bold tracking-tight text-[color:var(--app-ink)]">
+                {followsAreReal ? "Senin sporcuların" : "Önerilen sporcular"}
+              </h2>
+            </div>
             <Link
               to="/kesfet"
               className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--app-ink-soft)] hover:text-violet"
@@ -445,49 +448,93 @@ function DashboardPage() {
             </Link>
           </div>
           {!followsAreReal && (
-            <p className="mb-3 text-[11px] text-[color:var(--app-ink-mute)]">
+            <p className="mb-4 text-[11px] text-[color:var(--app-ink-mute)]">
               {activeFan.profile
                 ? "Henüz hiç sporcu takip etmedin. Sporcu sayfasından 'Takip Et' diyebilirsin."
                 : "Takip listeni görmek için backend'de bir taraftar profili gerekli (auth eklenmeden geçici)."}
             </p>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {followed.map((a) => (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+            {followed.slice(0, 3).map((a, i) => (
               <Link
                 key={a.slug}
                 to="/sporcu/$slug"
                 params={{ slug: a.slug }}
-                className="soft-card group flex items-center gap-3 rounded-2xl p-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="group relative block aspect-[3/4] overflow-hidden rounded-3xl"
               >
                 <img
                   src={a.img}
                   alt={a.name}
-                  className="h-14 w-14 shrink-0 rounded-2xl object-cover object-top"
+                  className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">{a.name}</p>
-                  <p className="truncate text-[11px] text-[color:var(--app-ink-soft)]">
+                {/* Tri-layer gradient veil */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--app-ink)] via-[color:var(--app-ink)]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-violet/30 via-transparent to-coral/20 mix-blend-overlay opacity-60" />
+
+                {/* Index number top-left */}
+                <span className="absolute left-4 top-4 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/70">
+                  0{i + 1}
+                </span>
+
+                {/* Live ping */}
+                <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral" />
+                  Takipte
+                </span>
+
+                {/* Bottom content */}
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/70">
                     {a.sportEmoji} {a.sport}
                   </p>
+                  <p className="mt-1 font-display text-xl font-bold leading-tight text-white">
+                    {a.name}
+                  </p>
                   {a.nextEvent && (
-                    <p className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-violet">
+                    <p className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium text-white/80">
                       <Calendar className="h-3 w-3" /> {a.nextEvent.date}
                     </p>
                   )}
+                  <div className="mt-3 flex translate-y-1 items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    Profili gör <ArrowUpRight className="h-3 w-3" />
+                  </div>
                 </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-[color:var(--app-ink-mute)] transition-transform group-hover:translate-x-0.5 group-hover:text-violet" />
               </Link>
             ))}
+
+            {/* "+N more" tile */}
+            <Link
+              to="/kesfet"
+              className="group relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-3xl border border-dashed border-[color:var(--app-line)] bg-gradient-to-br from-violet/5 via-white to-sky/5 p-5 transition-all hover:border-violet/40 hover:shadow-lg"
+            >
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-violet">
+                +
+              </span>
+              <div>
+                <p className="font-display text-3xl font-bold leading-none text-[color:var(--app-ink)]">
+                  +{Math.max(followed.length - 3, 12)}
+                </p>
+                <p className="mt-2 text-xs font-semibold text-[color:var(--app-ink-soft)]">
+                  sporcu daha
+                </p>
+                <div className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-violet">
+                  Keşfet <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </div>
+              </div>
+            </Link>
           </div>
         </motion.section>
 
-        {/* ─── Upcoming events ─── */}
+        {/* ─── Timeline: upcoming events ─── */}
         <motion.section variants={fadeUp} aria-labelledby="yakinda-etkinlik">
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 id="yakinda-etkinlik" className="font-display text-xl font-bold text-[color:var(--app-ink)]">
-              Yakında etkinlikler
-            </h2>
+          <div className="mb-5 flex items-baseline justify-between">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">03</span>
+              <h2 id="yakinda-etkinlik" className="font-display text-2xl font-bold tracking-tight text-[color:var(--app-ink)]">
+                Yakında etkinlikler
+              </h2>
+            </div>
             <Link
               to="/sehrimde"
               className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--app-ink-soft)] hover:text-violet"
@@ -496,53 +543,111 @@ function DashboardPage() {
             </Link>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            {upcoming.map((e) => (
-              <motion.article
-                key={e.id}
-                whileHover={{ y: -3 }}
-                className="soft-card flex items-start gap-4 rounded-2xl p-4"
-              >
-                <div className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-violet/10 py-2 text-violet">
-                  <span className="font-display text-lg font-bold leading-none">{e.day}</span>
-                  <span className="mt-1 text-[9px] font-bold uppercase tracking-wider">{e.month}</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold leading-snug text-[color:var(--app-ink)]">{e.title}</p>
-                  <p className="mt-1 inline-flex items-center gap-1 text-[11px] text-[color:var(--app-ink-soft)]">
-                    <MapPin className="h-3 w-3" /> {e.city}
-                  </p>
-                </div>
-              </motion.article>
-            ))}
+          <div className="relative pl-6 sm:pl-8">
+            {/* Spine */}
+            <div className="absolute bottom-2 left-2 top-2 w-px bg-gradient-to-b from-violet/40 via-[color:var(--app-line)] to-transparent sm:left-3" />
+
+            <div className="flex flex-col gap-5">
+              {upcoming.map((e, i) => (
+                <motion.div
+                  key={e.id}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-10% 0px" }}
+                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
+                  className="relative"
+                >
+                  {/* Dot */}
+                  <span className="absolute -left-[18px] top-4 flex h-3 w-3 sm:-left-[26px]">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet/40" />
+                    <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-white bg-violet shadow-md shadow-violet/30" />
+                  </span>
+
+                  <article className="soft-card group flex items-center gap-5 rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+                    <div className="flex w-16 shrink-0 flex-col items-center rounded-2xl bg-gradient-to-br from-violet/15 to-violet/5 py-2.5 text-violet">
+                      <span className="font-display text-2xl font-bold leading-none">{e.day}</span>
+                      <span className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider">{e.month}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-display text-base font-bold leading-snug text-[color:var(--app-ink)]">{e.title}</p>
+                      <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-[color:var(--app-ink-soft)]">
+                        <MapPin className="h-3 w-3" /> {e.city}
+                      </p>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 shrink-0 text-[color:var(--app-ink-mute)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-violet" />
+                  </article>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.section>
 
-        {/* ─── Discover invitation ─── */}
-        <motion.section variants={fadeUp}>
+        {/* ─── Dark block: Keşfet modu ─── */}
+        <motion.section variants={fadeUp} className="-mx-5 sm:-mx-8">
           <Link to="/kesfet/mod" className="block">
-            <article className="soft-card-strong group relative overflow-hidden rounded-3xl px-6 py-5 sm:px-8 sm:py-6">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-violet/15 blur-3xl" />
-              <div className="relative flex items-center gap-5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet/12 text-violet">
-                  <Compass className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-violet">Keşfet modu</p>
-                  <p className="mt-1 font-display text-lg font-bold text-[color:var(--app-ink)]">
-                    Bu hafta yeni bir spor dene
+            <article className="group relative overflow-hidden bg-[color:var(--app-ink)] sm:rounded-3xl">
+              {/* Aurora glow */}
+              <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet/30 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-sky/20 blur-3xl" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.06),transparent_60%)]" />
+
+              {/* Grid texture */}
+              <div
+                className="absolute inset-0 opacity-[0.04]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+                  backgroundSize: "32px 32px",
+                }}
+              />
+
+              <div className="relative grid gap-8 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12">
+                <div className="max-w-2xl">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 backdrop-blur">
+                    <Compass className="h-3 w-3 text-violet" />
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/90">
+                      Keşfet Modu · 04
+                    </span>
+                  </div>
+                  <h3 className="font-display text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-4xl">
+                    Bu hafta hiç{" "}
+                    <span className="italic text-violet">izlemediğin</span> bir
+                    branş öneriyoruz.
+                  </h3>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">
+                    Algoritma sana göre seçti — ama sürpriz olsun diye sahnesi
+                    açılana kadar adını söylemiyor.
                   </p>
-                  <p className="mt-1 text-sm text-[color:var(--app-ink-soft)]">
-                    Sana hiç izlemediğin bir branş öneriyoruz. Sürpriz olsun.
-                  </p>
+
+                  <div className="mt-6 flex items-center gap-6">
+                    <div>
+                      <p className="font-display text-2xl font-bold text-white tabular-nums">
+                        <CountUp to={42} />
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">branş havuzda</p>
+                    </div>
+                    <div className="h-8 w-px bg-white/10" />
+                    <div>
+                      <p className="font-display text-2xl font-bold text-white tabular-nums">
+                        <CountUp to={1280} />
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-white/50">taraftar bu hafta denedi</p>
+                    </div>
+                  </div>
                 </div>
-                <ArrowUpRight className="h-5 w-5 shrink-0 text-[color:var(--app-ink-soft)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-violet" />
+
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-[color:var(--app-ink)] transition-transform group-hover:scale-110">
+                    <ArrowUpRight className="h-5 w-5" />
+                  </span>
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-white/70">
+                    Aç
+                  </span>
+                </div>
               </div>
             </article>
           </Link>
         </motion.section>
-
-        {/* ─── Badge progress strip ─── */}
         <motion.section variants={fadeUp}>
           <Link to="/rozetlerim" className="block">
             <div className="flex items-center gap-4 rounded-2xl border border-[color:var(--app-line-soft)] bg-white/60 px-5 py-4 transition-colors hover:bg-white">
