@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion, type Variants } from "framer-motion";
-import { useMemo } from "react";
+import { animate, motion, useInView, type Variants } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Calendar,
