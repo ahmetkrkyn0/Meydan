@@ -213,8 +213,8 @@ function DashboardPage() {
               aria-hidden
               className="absolute inset-0 h-full w-full object-cover object-center opacity-40"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--app-ink)] via-[color:var(--app-ink)]/95 to-[color:var(--app-ink)]/60" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(123,90,255,0.25),transparent_60%)]" />
+            <div className="stage-dark-veil absolute inset-0" />
+            <div className="stage-dark-glow absolute inset-0" />
 
             <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12">
               <div className="max-w-xl">
