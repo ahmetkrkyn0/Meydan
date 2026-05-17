@@ -1,9 +1,23 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
-  Home, Compass, MapPin, Radio, Heart, User, Bell, Search,
-  Trophy, Wrench, Award, Settings, LogOut, ChevronDown,
-  Mail, Sparkles, LogIn,
+  Home,
+  Compass,
+  MapPin,
+  Radio,
+  Heart,
+  User,
+  Bell,
+  Search,
+  Trophy,
+  Wrench,
+  Award,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Mail,
+  Sparkles,
+  LogIn,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import okculukImg from "@/assets/athlete-okculuk-kadin.png";
@@ -19,33 +33,63 @@ type NavItem = {
 };
 
 const fanNav: NavItem[] = [
-  { to: "/dashboard",    label: "Ana Sahne",       icon: Home,    tooltip: "Takip ettiğin sporcuların canlı sahnesi" },
-  { to: "/kesfet",       label: "Keşfet",          icon: Compass, tooltip: "Yeni sporcular bul, branşları keşfet" },
-  { to: "/sehrimde",     label: "Şehrimde",        icon: MapPin,  tooltip: "Şehrindeki etkinlikler ve sporcular" },
-  { to: "/canli",        label: "Canlı Maçlar",    icon: Radio,   badge: "2", tooltip: "Şu an devam eden maçları izle" },
-  { to: "/desteklerim",  label: "Desteklerim",     icon: Heart,   tooltip: "Aylık desteklediğin sporcular" },
-  { to: "/yetenek",      label: "Yetenek Bağışı",  icon: Wrench,  tooltip: "Sporculara para yerine yetenek bağışla" },
-  { to: "/rozetlerim",   label: "Rozetlerim",      icon: Award,   tooltip: "Kazandığın rozet ve başarılar" },
+  {
+    to: "/dashboard",
+    label: "Ana Sahne",
+    icon: Home,
+    tooltip: "Takip ettiğin sporcuların canlı sahnesi",
+  },
+  {
+    to: "/kesfet",
+    label: "Keşfet",
+    icon: Compass,
+    tooltip: "Yeni sporcular bul, branşları keşfet",
+  },
+  {
+    to: "/sehrimde",
+    label: "Şehrimde",
+    icon: MapPin,
+    tooltip: "Şehrindeki etkinlikler ve sporcular",
+  },
+  {
+    to: "/canli",
+    label: "Canlı Maçlar",
+    icon: Radio,
+    badge: "2",
+    tooltip: "Şu an devam eden maçları izle",
+  },
+  {
+    to: "/desteklerim",
+    label: "Desteklerim",
+    icon: Heart,
+    tooltip: "Aylık desteklediğin sporcular",
+  },
+  {
+    to: "/yetenek",
+    label: "Yetenek Bağışı",
+    icon: Wrench,
+    tooltip: "Sporculara para yerine yetenek bağışla",
+  },
+  { to: "/rozetlerim", label: "Rozetlerim", icon: Award, tooltip: "Kazandığın rozet ve başarılar" },
 ];
 
 export type AppRole = "fan" | "athlete" | "brand";
 
 const athleteNav: NavItem[] = [
-  { to: "/sporcu-panel",      label: "Panelim",        icon: Home },
+  { to: "/sporcu-panel", label: "Panelim", icon: Home },
   { to: "/sporcu-panel/teklifler", label: "Teklifler", icon: Mail, badge: "3" },
   { to: "/sporcu-panel/ihtiyaclar", label: "İhtiyaçlarım", icon: Wrench },
-  { to: "/sporcu-panel/profil",  label: "Profilim",      icon: User },
+  { to: "/sporcu-panel/profil", label: "Profilim", icon: User },
 ];
 
 const brandNav: NavItem[] = [
-  { to: "/marka-panel",            label: "Genel Bakış",   icon: Home },
-  { to: "/marka-panel/eslesme",    label: "AI Eşleştirme", icon: Sparkles },
-  { to: "/marka-panel/kampanyalar",label: "Kampanyalar",   icon: Trophy },
-  { to: "/marka-panel/profil",     label: "Marka Profili", icon: User },
+  { to: "/marka-panel", label: "Genel Bakış", icon: Home },
+  { to: "/marka-panel/eslesme", label: "AI Eşleştirme", icon: Sparkles },
+  { to: "/marka-panel/kampanyalar", label: "Kampanyalar", icon: Trophy },
+  { to: "/marka-panel/profil", label: "Marka Profili", icon: User },
 ];
 
-const navFor = (r: AppRole) =>
-  r === "athlete" ? athleteNav : r === "brand" ? brandNav : fanNav;
+const navFor = (r: AppRole) => (r === "athlete" ? athleteNav : r === "brand" ? brandNav : fanNav);
 
 export function AppShell({
   children,
@@ -53,12 +97,14 @@ export function AppShell({
   userName,
   userCity,
   hideSearch = false,
+  topbarOverlay = false,
 }: {
   children: ReactNode;
   role?: AppRole;
   userName?: string;
   userCity?: string;
   hideSearch?: boolean;
+  topbarOverlay?: boolean;
 }) {
   const loc = useLocation();
   const nav = navFor(role);
@@ -104,6 +150,12 @@ export function AppShell({
   // Override: oturum açıldıysa session bilgisi tercih edilir.
   const effectiveName = session.profile?.full_name ?? userName ?? "Misafir";
   const effectiveCity = session.profile?.city ?? userCity ?? "";
+  const topbarActionClass = topbarOverlay
+    ? "border-white/70 bg-white/95 text-[color:var(--app-ink-soft)] shadow-sm backdrop-blur-md hover:bg-white hover:text-[color:var(--app-ink)]"
+    : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]";
+  const topbarProfileClass = topbarOverlay
+    ? "border-white/70 bg-white/95 shadow-sm backdrop-blur-md hover:bg-white"
+    : "border-[color:var(--app-line)] bg-white hover:bg-[color:var(--app-line-soft)]";
 
   async function handleLogout() {
     await logout();
@@ -120,14 +172,19 @@ export function AppShell({
             <span className="relative font-display text-base font-bold text-white">M</span>
           </span>
           <div>
-            <p className="font-display text-lg font-bold leading-none tracking-tight text-[color:var(--app-ink)]">Meydan</p>
-            <p className="mt-1 text-[10px] text-[color:var(--app-ink-mute)]">Her sporun bir meydanı</p>
+            <p className="font-display text-lg font-bold leading-none tracking-tight text-[color:var(--app-ink)]">
+              Meydan
+            </p>
+            <p className="mt-1 text-[10px] text-[color:var(--app-ink-mute)]">
+              Her sporun bir meydanı
+            </p>
           </div>
         </Link>
 
         <nav className="sidebar-scroll min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2">
           {nav.map((item) => {
-            const active = loc.pathname === item.to ||
+            const active =
+              loc.pathname === item.to ||
               (item.to !== "/dashboard" && loc.pathname.startsWith(item.to));
             return (
               <Link
@@ -197,21 +254,36 @@ export function AppShell({
 
         {/* User card */}
         <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
-          <img src={session.profile?.avatar_url ?? okculukImg} alt="" className="h-9 w-9 rounded-xl object-cover object-top" />
+          <img
+            src={session.profile?.avatar_url ?? okculukImg}
+            alt=""
+            className="h-9 w-9 rounded-xl object-cover object-top"
+          />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">{effectiveName}</p>
+            <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">
+              {effectiveName}
+            </p>
             <p className="text-[10px] text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
           </div>
-          <button aria-label="Kullanıcı menüsü" className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 focus-visible:rounded-lg">
+          <button
+            aria-label="Kullanıcı menüsü"
+            className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 focus-visible:rounded-lg"
+          >
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
         </div>
       </aside>
 
       {/* ── Main column ── */}
-      <div className="flex min-w-0 flex-1 flex-col lg:ml-64">
+      <div className="relative flex min-w-0 flex-1 flex-col lg:ml-64">
         {/* Topbar */}
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[color:var(--app-line-soft)] bg-white/75 px-5 backdrop-blur-xl sm:px-8">
+        <header
+          className={`${
+            topbarOverlay
+              ? "absolute left-0 right-0 top-0 border-transparent bg-transparent"
+              : "sticky top-0 border-[color:var(--app-line-soft)] bg-white/75 backdrop-blur-xl"
+          } z-20 flex h-16 items-center gap-4 border-b px-5 sm:px-8`}
+        >
           {/* Mobile logo */}
           <Link to="/" className="flex items-center gap-2 lg:hidden">
             <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet via-indigo to-sky">
@@ -223,7 +295,10 @@ export function AppShell({
           {/* Search */}
           {!hideSearch && (
             <div className="relative ml-auto hidden max-w-md flex-1 sm:block lg:ml-8 lg:mr-auto xl:ml-16">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)]" strokeWidth={1.7} />
+              <Search
+                className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)]"
+                strokeWidth={1.7}
+              />
               <input
                 type="text"
                 placeholder="Sporcu, branş, etkinlik ara…"
@@ -236,19 +311,27 @@ export function AppShell({
           <div className="ml-auto flex items-center gap-2">
             <button
               aria-label="Bildirimler"
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] transition-colors hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+              className={`relative flex h-9 w-9 items-center justify-center rounded-xl border transition-colors ${topbarActionClass}`}
             >
               <Bell className="h-4 w-4" strokeWidth={1.8} />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-coral" />
             </button>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-2.5 rounded-xl border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 transition-colors hover:bg-[color:var(--app-line-soft)]"
+              className={`flex items-center gap-2.5 rounded-xl border px-2.5 py-1.5 transition-colors ${topbarProfileClass}`}
             >
-              <img src={session.profile?.avatar_url ?? okculukImg} alt="" className="h-7 w-7 rounded-lg object-cover object-top" />
+              <img
+                src={session.profile?.avatar_url ?? okculukImg}
+                alt=""
+                className="h-7 w-7 rounded-lg object-cover object-top"
+              />
               <div className="hidden text-left sm:block">
-                <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">{effectiveName}</p>
-                <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
+                <p className="text-xs font-semibold leading-none text-[color:var(--app-ink)]">
+                  {effectiveName}
+                </p>
+                <p className="mt-0.5 text-[10px] leading-none text-[color:var(--app-ink-mute)]">
+                  {effectiveCity}
+                </p>
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-[color:var(--app-ink-mute)]" />
             </button>
@@ -298,7 +381,9 @@ export function AppShell({
                 to={item.to}
                 aria-label={item.label}
                 className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-colors active:scale-[0.92] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
-                  active ? "bg-[color:var(--app-ink)] text-white" : "text-[color:var(--app-ink-soft)]"
+                  active
+                    ? "bg-[color:var(--app-ink)] text-white"
+                    : "text-[color:var(--app-ink-soft)]"
                 }`}
               >
                 <item.icon className="h-4 w-4" strokeWidth={active ? 2.2 : 1.7} />

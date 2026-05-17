@@ -100,7 +100,7 @@ function BranchPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {sportAthletes.map((a) => (
                 <Link
-                  key={a.slug}
+                  key={a.id}
                   to="/sporcu/$slug"
                   params={{ slug: a.slug }}
                   className="soft-card group flex items-center gap-4 rounded-2xl p-4 transition-all hover:-translate-y-1 hover:shadow-md"

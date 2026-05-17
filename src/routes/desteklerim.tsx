@@ -35,13 +35,14 @@ const fade = {
 type Tab = "active" | "done" | "cancelled";
 
 const SUPPORTS = [
-  { slug: athletes[0].slug, monthly: 250, months: 5, trend: "+87%", status: "active" as const },
-  { slug: athletes[1].slug, monthly: 100, months: 3, trend: "+42%", status: "active" as const },
-  { slug: athletes[2].slug, monthly: 50,  months: 8, trend: "+18%", status: "active" as const },
-  { slug: athletes[3].slug, monthly: 200, months: 2, trend: "+12%", status: "done" as const },
+  { id: athletes[0].id, slug: athletes[0].slug, monthly: 250, months: 5, trend: "+87%", status: "active" as const },
+  { id: athletes[1].id, slug: athletes[1].slug, monthly: 100, months: 3, trend: "+42%", status: "active" as const },
+  { id: athletes[2].id, slug: athletes[2].slug, monthly: 50,  months: 8, trend: "+18%", status: "active" as const },
+  { id: athletes[3].id, slug: athletes[3].slug, monthly: 200, months: 2, trend: "+12%", status: "done" as const },
 ];
 
 type SupportRow = {
+  id: string;
   slug: string;
   monthly: number;
   months: number;
@@ -88,6 +89,7 @@ function SupportsPage() {
       const monthly = Math.max(...rowDonations.map((d) => d.amount));
       const months = rowDonations.length;
       rows.push({
+        id: athleteId,
         slug: athlete.slug,
         monthly,
         months,
@@ -191,10 +193,10 @@ function SupportsPage() {
                   ? profileToAthlete(backendProfile, 0)
                   : athletes.find((x) => x.slug === s.slug);
                 if (!a) return null;
-                const isMenuOpen = openMenu === s.slug;
+                const isMenuOpen = openMenu === s.id;
                 return (
                   <div
-                    key={s.slug}
+                    key={s.id}
                     className={`soft-card relative flex items-center gap-3 rounded-2xl p-3 ${
                       isMenuOpen ? "z-20" : ""
                     }`}
@@ -224,7 +226,7 @@ function SupportsPage() {
 
                     <div className="relative shrink-0">
                       <button
-                        onClick={() => setOpenMenu(isMenuOpen ? null : s.slug)}
+                        onClick={() => setOpenMenu(isMenuOpen ? null : s.id)}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
                         aria-label="Seçenekler"
                         aria-expanded={isMenuOpen}

@@ -22,7 +22,6 @@ import { profilesToAthletes } from "@/lib/api-mappers";
 import { sports, type Athlete } from "@/lib/mock-data";
 import { CITY_OPTIONS } from "@/lib/form-options";
 import heroImg from "@/assets/athlete-eskrim-kadin.png";
-import spotlightImg from "@/assets/athlete-tenis-kadin.png";
 
 export const Route = createFileRoute("/kesfet/")({
   component: KesfetPage,
@@ -80,7 +79,8 @@ function KesfetPage() {
       if (activeSport && a.sport !== activeSport) return false;
       if (city !== "Tüm Türkiye" && a.city !== city) return false;
       if (onlyRising && trendValue(a) < 15) return false;
-      if (searchQuery.trim() && !a.name.toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
+      if (searchQuery.trim() && !a.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+        return false;
       return true;
     });
   }, [activeSport, athleteList, city, onlyRising, searchQuery]);
@@ -90,195 +90,104 @@ function KesfetPage() {
     [athleteList],
   );
 
-  const featured = rising[0];
-
-  const totalCities = useMemo(
-    () => new Set(athleteList.map((a) => a.city)).size,
-    [athleteList],
-  );
-  const totalFollowers = useMemo(
-    () => athleteList.reduce((s, a) => s + (a.followers ?? 0), 0),
-    [athleteList],
-  );
-
   const activeFilters: string[] = [];
   if (activeSport) activeFilters.push(activeSport);
   if (city !== "Tüm Türkiye") activeFilters.push(city);
   if (onlyRising) activeFilters.push("Yeni yükselen");
 
   return (
-    <AppShell role="fan">
+    <AppShell role="fan" hideSearch topbarOverlay>
       <motion.div
         initial="hidden"
         animate="show"
         variants={stagger}
-        className="mx-auto flex w-full max-w-5xl flex-col gap-14"
+        className="mx-auto flex w-full max-w-5xl flex-col gap-14 pb-64 lg:pb-48"
       >
         {/* ─── Cinematic hero ─── */}
         <motion.header
           variants={fadeUp}
           className="stage-bleed relative -mt-6 overflow-hidden sm:-mt-8"
         >
-          <div className="relative h-[460px] sm:h-[540px]">
+          <div className="relative min-h-[680px] sm:min-h-[760px]">
             <img
               src={heroImg}
               alt=""
               aria-hidden
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className="absolute inset-0 h-full w-full object-cover object-[center_14%]"
             />
-            {/* soft left-side legibility wash – keeps image visible on the right */}
+            {/* Text contrast without washing out the photo. */}
             <div
               aria-hidden
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(to right, oklch(1 0 0 / 0.78) 0%, oklch(1 0 0 / 0.55) 28%, oklch(1 0 0 / 0.15) 55%, transparent 80%)",
+                  "linear-gradient(to right, oklch(1 0 0 / 0.72) 0%, oklch(1 0 0 / 0.46) 34%, transparent 64%), linear-gradient(to bottom, oklch(1 0 0 / 0.42) 0%, transparent 42%)",
               }}
             />
-            {/* gentle bottom merge into page */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-28"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-56"
               style={{
                 background:
-                  "linear-gradient(to top, var(--app-bg, #fff) 0%, transparent 100%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 backdrop-blur-[3px]"
-              style={{
-                maskImage: "linear-gradient(to top, black, transparent)",
-                WebkitMaskImage: "linear-gradient(to top, black, transparent)",
+                  "linear-gradient(to top, oklch(0.12 0.04 258 / 0.86), oklch(0.12 0.04 258 / 0.46) 58%, transparent 100%)",
               }}
             />
 
-            <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-10">
-              <div className="flex items-center gap-3">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                  Sahne — 01
-                </p>
-                <span className="h-px w-12 bg-[color:var(--app-line)]" />
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-violet">
-                  Keşfet
-                </p>
-              </div>
+            <div className="relative z-10 flex min-h-[680px] flex-col justify-between px-6 pb-8 pt-24 sm:min-h-[760px] sm:px-10 sm:pb-10 sm:pt-28">
+              <div className="max-w-[580px]">
+                <div className="flex items-center gap-3">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                    Sahne — 01
+                  </p>
+                  <span className="h-px w-12 bg-[color:var(--app-line)]" />
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-violet">
+                    Keşfet
+                  </p>
+                </div>
 
-              <div className="max-w-2xl">
-                <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-7xl">
-                  Türkiye'nin{" "}
-                  <span className="italic bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
-                    sahnesi
-                  </span>
-                  <span className="text-violet">.</span>
-                </h1>
-                <p className="mt-5 max-w-lg text-base leading-relaxed text-[color:var(--app-ink-soft)] sm:text-lg">
-                  Olimpik branşlardan unutulmuş ustalıklara —
-                  hikâyesini anlatacak <span className="font-bold text-[color:var(--app-ink)]">{athleteList.length} sporcu</span> sahnede.
-                </p>
-
-                <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-full border border-violet/25 bg-white/80 px-4 py-2 backdrop-blur">
-                  <Sparkles className="h-3.5 w-3.5 text-violet" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-violet">
-                    Bugün öne çıkan
-                  </span>
-                  {sports.slice(0, 3).map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => setActiveSport(s.name)}
-                      className="text-xs text-[color:var(--app-ink-soft)] hover:text-violet"
-                    >
-                      {s.emoji} {s.name}
-                    </button>
-                  ))}
+                <div className="mt-4">
+                  <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-7xl">
+                    Türkiye'nin{" "}
+                    <span className="italic bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
+                      sahnesi
+                    </span>
+                    <span className="text-violet">.</span>
+                  </h1>
+                  <div className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-full border border-violet/30 bg-white/90 px-4 py-2 shadow-sm backdrop-blur">
+                    <Sparkles className="h-3.5 w-3.5 text-violet" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-violet">
+                      Bugün öne çıkan
+                    </span>
+                    {sports.slice(0, 3).map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setActiveSport(s.name)}
+                        className="rounded-full px-1.5 py-0.5 text-xs font-semibold text-[color:var(--app-ink-soft)] transition-colors hover:bg-violet/10 hover:text-violet"
+                      >
+                        {s.emoji} {s.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="hidden grid-cols-4 gap-6 sm:grid">
-                <Stat label="Sporcu" value={athleteList.length} />
-                <Stat label="Branş" value={sports.length} />
-                <Stat label="Şehir" value={totalCities} />
-                <Stat label="Toplam takipçi" value={totalFollowers} compact />
+              <div className="mx-auto mb-44 max-w-4xl self-center text-center lg:mb-36">
+                <p className="font-display text-2xl font-bold leading-tight text-white drop-shadow-[0_4px_24px_oklch(0.08_0.03_258/0.90)] sm:text-5xl">
+                  Her sporcu bir sahne bekliyor.{" "}
+                  <span className="text-white/90">Seninki hangisi?</span>
+                </p>
               </div>
             </div>
           </div>
         </motion.header>
 
-        {/* ─── Spotlight: Sahnedeki ─── */}
-        {featured && (
-          <motion.section variants={fadeUp} className="stage-bleed -mt-14">
-            <div className="relative overflow-hidden rounded-3xl">
-              <img
-                src={spotlightImg}
-                alt=""
-                aria-hidden
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
-              {/* readable left-to-right dark wash; right side stays photographic */}
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to right, oklch(0.18 0.04 258 / 0.88) 0%, oklch(0.18 0.04 258 / 0.65) 40%, oklch(0.18 0.04 258 / 0.20) 75%, transparent 100%)",
-                }}
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 h-12 backdrop-blur-[3px]"
-                style={{
-                  maskImage: "linear-gradient(to bottom, black, transparent)",
-                  WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
-                }}
-              />
-
-              <div className="relative grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center sm:p-12">
-                <div className="max-w-xl">
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 backdrop-blur">
-                    <Flame className="h-3 w-3 text-coral" />
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/90">
-                      Sahnedeki · {featured.trend}
-                    </span>
-                  </div>
-                  <p className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                    {featured.name}
-                    <span className="block text-white/60">
-                      {featured.sportEmoji} {featured.sport} · {featured.city}
-                    </span>
-                  </p>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                    Bu hafta tribünü en hızlı büyüyen sporcu. Hikâyesi sahnenin tam ortasında.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
-                  <Link
-                    to="/sporcu/$slug"
-                    params={{ slug: featured.slug }}
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-bold text-[color:var(--app-ink)] transition hover:bg-white/90"
-                  >
-                    Sahneye git <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
-                  <Link
-                    to="/sporcu/$slug"
-                    params={{ slug: featured.slug }}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-3 text-xs font-semibold text-white/90 transition hover:bg-white/10"
-                  >
-                    Profili gör
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </motion.section>
-        )}
-
         {/* ─── Filter bar ─── */}
-        <section
-          className="sticky top-20 z-20 rounded-3xl border border-[color:var(--app-line)] bg-white/90 px-4 py-4 shadow-sm backdrop-blur-xl"
-        >
+        <section className="fixed bottom-24 left-4 right-4 z-40 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl border border-[color:var(--app-line)] bg-white/95 px-4 py-4 shadow-[0_22px_80px_oklch(0.18_0.04_258/0.18)] backdrop-blur-xl lg:bottom-6 lg:left-[17rem] lg:right-8">
           <div className="mb-3 flex items-baseline justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
+              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">
+                02
+              </span>
               <h2 className="font-display text-lg font-bold tracking-tight text-[color:var(--app-ink)]">
                 Filtrele
               </h2>
@@ -352,7 +261,9 @@ function KesfetPage() {
                   <button
                     onClick={() => setActiveSport(null)}
                     className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
-                      activeSport === null ? "font-bold text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-soft)]"
+                      activeSport === null
+                        ? "font-bold text-[color:var(--app-ink)]"
+                        : "text-[color:var(--app-ink-soft)]"
                     }`}
                   >
                     <span>Tümü</span>
@@ -392,7 +303,9 @@ function KesfetPage() {
                 >
                   <MapPin className="h-3.5 w-3.5" />
                   <span>Şehir</span>
-                  <span className="font-mono text-[10px] text-[color:var(--app-ink-mute)]">{city}</span>
+                  <span className="font-mono text-[10px] text-[color:var(--app-ink-mute)]">
+                    {city}
+                  </span>
                   <ChevronDown className="h-3 w-3 opacity-60" />
                 </button>
               </PopoverTrigger>
@@ -452,7 +365,9 @@ function KesfetPage() {
                 <button
                   onClick={() => setOnlyRising(false)}
                   className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
-                    !onlyRising ? "font-bold text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-soft)]"
+                    !onlyRising
+                      ? "font-bold text-[color:var(--app-ink)]"
+                      : "text-[color:var(--app-ink-soft)]"
                   }`}
                 >
                   <span>Hepsi</span>
@@ -517,8 +432,13 @@ function KesfetPage() {
         >
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">03</span>
-              <h2 id="kesfet-grid" className="font-display text-2xl font-bold tracking-tight text-[color:var(--app-ink)]">
+              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">
+                03
+              </span>
+              <h2
+                id="kesfet-grid"
+                className="font-display text-2xl font-bold tracking-tight text-[color:var(--app-ink)]"
+              >
                 Sahnedeki sporcular
               </h2>
             </div>
@@ -540,7 +460,7 @@ function KesfetPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {filtered.map((a, i) => (
-                <AthleteCard key={a.slug} a={a} index={i} />
+                <AthleteCard key={a.id} a={a} index={i} />
               ))}
             </div>
           )}
@@ -550,9 +470,13 @@ function KesfetPage() {
         <motion.section variants={fadeUp} className="stage-bleed px-5 sm:px-8">
           <div className="mb-4 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">04</span>
+              <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">
+                04
+              </span>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-coral">Trend</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-coral">
+                  Trend
+                </p>
                 <h2 className="font-display mt-0.5 text-2xl font-bold text-[color:var(--app-ink)]">
                   Yeni yükselenler
                 </h2>
@@ -570,7 +494,7 @@ function KesfetPage() {
             <div className="flex min-w-max gap-4 px-2">
               {rising.map((a, i) => (
                 <Link
-                  key={a.slug}
+                  key={a.id}
                   to="/sporcu/$slug"
                   params={{ slug: a.slug }}
                   className="soft-card group relative w-[240px] shrink-0 rounded-2xl p-4 transition-all hover:-translate-y-1 hover:shadow-md"
@@ -585,7 +509,9 @@ function KesfetPage() {
                       className="h-14 w-14 rounded-2xl object-cover object-top ring-2 ring-white"
                     />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">{a.name}</p>
+                      <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">
+                        {a.name}
+                      </p>
                       <p className="truncate text-[11px] text-[color:var(--app-ink-soft)]">
                         {a.sportEmoji} {a.sport}
                       </p>

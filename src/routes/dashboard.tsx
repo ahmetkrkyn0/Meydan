@@ -60,10 +60,18 @@ function CountUp({ to, duration = 1.6 }: { to: number; duration?: number }) {
   return <span ref={ref}>{display}</span>;
 }
 
+function greetingNameFromFullName(fullName?: string | null) {
+  const parts = (fullName ?? "").trim().split(/\s+/).filter(Boolean);
+  while (parts.length && /^(dr|prof|doc|doç|uzm)\.?$/i.test(parts[0])) {
+    parts.shift();
+  }
+  return parts[0]?.replace(/[.,]+$/g, "") || "Misafir";
+}
+
 function DashboardPage() {
   const session = useSession();
   const activeFan = useActiveFan();
-  const firstName = session.profile?.full_name?.split(" ")[0] ?? "Misafir";
+  const greetingName = greetingNameFromFullName(session.profile?.full_name);
   const profilesQuery = useQuery({
     queryKey: ["profiles", "sporcu"],
     queryFn: () => listProfiles({ role: "sporcu" }),
@@ -134,28 +142,15 @@ function DashboardPage() {
               </div>
 
               <div>
-                <h1 className="font-display text-4xl font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-6xl">
-                  Hoş geldin{" "}
-                  <span className="bg-gradient-to-r from-violet to-sky bg-clip-text text-transparent">
-                    {firstName}
+                <h1 className="font-display max-w-[12ch] text-[2.45rem] font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
+                  <span className="block">Hoş geldin,</span>
+                  <span className="mt-2 block break-words text-sky">
+                    {greetingName}
                   </span>
-                  <span className="text-violet">.</span>
                 </h1>
                 <p className="mt-4 text-sm leading-relaxed text-[color:var(--app-ink-soft)] sm:text-base">
-                  Bugün takip ettiğin <span className="font-bold text-[color:var(--app-ink)]">2 sporcun</span> sahnede.
-                  İlk düdük az kaldı.
+                  Sporcularını destekle, yolculuklarını takip et.
                 </p>
-              </div>
-
-              <div className="inline-flex items-center gap-3 self-start rounded-full border border-coral/25 bg-[color:var(--app-bg-soft)] px-4 py-2 shadow-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-coral" />
-                </span>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-coral">Şu an canlı</span>
-                <span className="text-xs text-[color:var(--app-ink-soft)]">
-                  {featuredPair.map((m) => m.athleteName.split(" ")[0]).join(" · ")}
-                </span>
               </div>
 
               <div className="flex items-center gap-4">
@@ -437,7 +432,7 @@ function DashboardPage() {
                 ))
               : followed.slice(0, 3).map((a, i) => (
               <Link
-                key={a.slug}
+                key={a.id}
                 to="/sporcu/$slug"
                 params={{ slug: a.slug }}
                 className="group relative block aspect-[3/4] cursor-pointer overflow-hidden rounded-3xl transition-transform active:scale-[0.97]"
