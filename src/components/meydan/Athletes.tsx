@@ -26,7 +26,7 @@ export function Athletes() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
               <span className="h-1.5 w-1.5 rounded-full bg-violet" />
@@ -57,7 +57,7 @@ export function Athletes() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
               whileHover={{ y: -4 }}
               className="group relative cursor-pointer overflow-hidden rounded-3xl border border-foreground/8 bg-foreground/[0.04] transition-all duration-500 hover:border-foreground/15 hover:bg-foreground/[0.07]"
             >

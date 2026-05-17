@@ -115,7 +115,7 @@ function AthleteDiaryPage() {
         <motion.header
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as const }}
           className="mt-8 space-y-3"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet">
@@ -191,7 +191,7 @@ function AthleteDiaryPage() {
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.45, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.45, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] as const }}
                   className="soft-card-strong rounded-3xl p-5 sm:p-6"
                 >
                   {/* head */}

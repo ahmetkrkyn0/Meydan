@@ -41,7 +41,7 @@ export function Features() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-sky/25 bg-sky/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-sky">
               <span className="h-1.5 w-1.5 rounded-full bg-sky" />

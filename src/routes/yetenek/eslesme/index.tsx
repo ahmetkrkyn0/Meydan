@@ -215,7 +215,7 @@ function MatchCard({
     <motion.article
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 + index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.4 + index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
       className="soft-card-strong relative flex flex-col overflow-hidden rounded-3xl"
     >
       {/* Header: athlete (sol) + score circle (sağ) */}
@@ -254,7 +254,7 @@ function MatchCard({
               className="text-emerald-600"
               initial={{ strokeDasharray: `0 ${circumference}` }}
               animate={{ strokeDasharray: `${dash} ${circumference}` }}
-              transition={{ duration: 1.1, delay: 0.5 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.1, delay: 0.5 + index * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">

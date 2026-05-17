@@ -20,7 +20,7 @@ export const Route = createFileRoute("/rozetlerim/ilk-adim")({
 
 const fadeUp = {
   hidden: { opacity: 0, y: 14 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
 
@@ -151,7 +151,7 @@ function IlkAdimPage() {
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
               className="h-full rounded-full bg-gradient-to-r from-violet to-sky"
             />
           </div>

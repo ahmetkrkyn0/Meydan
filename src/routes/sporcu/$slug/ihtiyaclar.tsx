@@ -45,7 +45,7 @@ function NeedCard({ need, index }: { need: Need; index: number }) {
     <motion.article
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] as const }}
       className="soft-card-strong group relative flex flex-col gap-5 rounded-3xl p-6"
     >
       {/* head row */}
@@ -98,7 +98,7 @@ function NeedCard({ need, index }: { need: Need; index: number }) {
               initial={{ width: 0 }}
               whileInView={{ width: `${pct}%` }}
               viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] as const }}
               className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet to-sky"
             />
           </div>
@@ -216,7 +216,7 @@ function AthleteNeedsPage() {
         <motion.header
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as const }}
           className="mt-8 grid gap-6 sm:grid-cols-[1.5fr_1fr] sm:items-end"
         >
           <div className="space-y-3">
