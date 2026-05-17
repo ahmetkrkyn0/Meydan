@@ -1,12 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, Radio, Sparkles, Activity, Zap, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { type Match } from "@/lib/mock-data";
-import { listProfiles } from "@/lib/api";
-import { liveMatchesWithProfiles } from "@/lib/api-mappers";
+import { Skeleton } from "@/components/ui/skeleton";
+import { liveMatches, type Match } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/canli/")({
   component: CanliListPage,
@@ -21,19 +19,26 @@ const fadeUp: Variants = {
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
 function CanliListPage() {
-  const profilesQuery = useQuery({
-    queryKey: ["profiles", "sporcu"],
-    queryFn: () => listProfiles({ role: "sporcu" }),
-    retry: 1,
-  });
-  const all = useMemo(
-    () => liveMatchesWithProfiles(profilesQuery.data?.profiles),
-    [profilesQuery.data?.profiles],
-  );
-  const matches = all.filter((m) => m.status === "live");
-  const ended = all.filter((m) => m.status === "ended");
+  const [dataReady] = useState(true); // gerçek API bağlandığında useQuery.isLoading ile değiştir
+  const matches = liveMatches.filter((m) => m.status === "live");
+  const ended = liveMatches.filter((m) => m.status === "ended");
   const featured = matches[0];
   const rest = matches.slice(1);
+
+  if (!dataReady) {
+    return (
+      <AppShell role="fan">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+          <Skeleton className="h-10 w-48 rounded-full" />
+          <Skeleton className="h-[380px] rounded-3xl" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Skeleton className="h-48 rounded-3xl" />
+            <Skeleton className="h-48 rounded-3xl" />
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell role="fan">

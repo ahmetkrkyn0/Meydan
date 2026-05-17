@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Heart,
   UserPlus,
@@ -46,12 +57,12 @@ const fade = {
 };
 
 function formatNumber(n: number): string {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "B";
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "K";
   return n.toLocaleString("tr-TR");
 }
 
 function formatCurrency(n: number): string {
-  if (n >= 1000) return "₺" + (n / 1000).toFixed(1).replace(/\.0$/, "") + "B";
+  if (n >= 1000) return "₺" + (n / 1000).toFixed(1).replace(/\.0$/, "") + "K";
   return "₺" + n.toLocaleString("tr-TR");
 }
 
@@ -86,6 +97,8 @@ function AthleteProfilePage() {
 
   const isFollowing = followStatusQuery.data?.is_following ?? false;
 
+  const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
+
   const followMutation = useMutation({
     mutationFn: () => {
       if (!activeFan.profile?.id || !athleteProfile?.id) {
@@ -98,7 +111,9 @@ function AthleteProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["follows"] });
+      toast.success(`${a?.name ?? "Sporcu"} takip listene eklendi.`);
     },
+    onError: () => toast.error("Takip işlemi başarısız, tekrar dene."),
   });
 
   const unfollowMutation = useMutation({
@@ -113,7 +128,9 @@ function AthleteProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["follows"] });
+      toast.success(`${a?.name ?? "Sporcu"} takip listenden çıkarıldı.`);
     },
+    onError: () => toast.error("İşlem başarısız, tekrar dene."),
   });
 
   const canFollow = Boolean(activeFan.profile?.id && athleteProfile?.id);
@@ -121,8 +138,11 @@ function AthleteProfilePage() {
 
   function handleFollowToggle() {
     if (!canFollow || followPending) return;
-    if (isFollowing) unfollowMutation.mutate();
-    else followMutation.mutate();
+    if (isFollowing) {
+      setShowUnfollowDialog(true);
+    } else {
+      followMutation.mutate();
+    }
   }
 
   const stats = [
@@ -417,7 +437,9 @@ function AthleteProfilePage() {
                   : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
               }`}
             >
-              {isFollowing ? (
+              {followPending ? (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : isFollowing ? (
                 <>
                   <UserCheck className="h-3.5 w-3.5" strokeWidth={2} /> Takiptesin
                 </>
@@ -439,7 +461,9 @@ function AthleteProfilePage() {
                   : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
               }`}
             >
-              {isFollowing ? (
+              {followPending ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : isFollowing ? (
                 <UserCheck className="h-4 w-4" strokeWidth={2} />
               ) : (
                 <UserPlus className="h-4 w-4" strokeWidth={2} />
@@ -451,6 +475,26 @@ function AthleteProfilePage() {
           </div>
         </motion.div>
       </div>
+
+      <AlertDialog open={showUnfollowDialog} onOpenChange={setShowUnfollowDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Takibi bırak?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {a?.name ?? "Sporcu"} takip listenden çıkarılacak. İstediğin zaman tekrar takip edebilirsin.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Vazgeç</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => unfollowMutation.mutate()}
+              className="bg-coral text-white hover:bg-coral/90"
+            >
+              Takibi bırak
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppShell>
   );
 }

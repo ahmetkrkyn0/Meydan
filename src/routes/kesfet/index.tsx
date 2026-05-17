@@ -63,6 +63,7 @@ function KesfetPage() {
   const [activeSport, setActiveSport] = useState<string | null>(null);
   const [city, setCity] = useState<string>("Tüm Türkiye");
   const [onlyRising, setOnlyRising] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const profilesQuery = useQuery({
     queryKey: ["profiles", "sporcu"],
     queryFn: () => listProfiles({ role: "sporcu" }),
@@ -79,9 +80,10 @@ function KesfetPage() {
       if (activeSport && a.sport !== activeSport) return false;
       if (city !== "Tüm Türkiye" && a.city !== city) return false;
       if (onlyRising && trendValue(a) < 15) return false;
+      if (searchQuery.trim() && !a.name.toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
       return true;
     });
-  }, [activeSport, athleteList, city, onlyRising]);
+  }, [activeSport, athleteList, city, onlyRising, searchQuery]);
 
   const rising = useMemo(
     () => [...athleteList].sort((a, b) => trendValue(b) - trendValue(a)).slice(0, 6),
@@ -272,19 +274,45 @@ function KesfetPage() {
 
         {/* ─── Filter bar ─── */}
         <section
-          className="sticky top-16 z-20 rounded-3xl border border-[color:var(--app-line)] bg-white/90 px-4 py-4 shadow-sm backdrop-blur-xl"
+          className="sticky top-20 z-20 rounded-3xl border border-[color:var(--app-line)] bg-white/90 px-4 py-4 shadow-sm backdrop-blur-xl"
         >
           <div className="mb-3 flex items-baseline justify-between">
-            <div className="flex items-baseline gap-3">
+            <div className="flex items-baseline gap-2">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
               <h2 className="font-display text-lg font-bold tracking-tight text-[color:var(--app-ink)]">
                 Filtrele
               </h2>
+              {activeFilters.length > 0 && (
+                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-violet px-1.5 text-[10px] font-bold text-white">
+                  {activeFilters.length}
+                </span>
+              )}
             </div>
             <span className="inline-flex items-center gap-1.5 text-xs text-[color:var(--app-ink-mute)]">
               <Search className="h-3.5 w-3.5" />
               <span className="font-mono tabular-nums">{filtered.length} sporcu</span>
             </span>
+          </div>
+
+          {/* Sporcu adı arama */}
+          <div className="relative mb-3">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[color:var(--app-ink-mute)]" />
+            <input
+              type="text"
+              placeholder="Sporcu adı ara…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 w-full rounded-xl border border-[color:var(--app-line)] bg-white pl-9 pr-3 text-sm text-[color:var(--app-ink)] placeholder:text-[color:var(--app-ink-mute)] focus:border-violet/40 focus:outline-none focus:ring-2 focus:ring-violet/15"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                aria-label="Aramayı temizle"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -604,7 +632,8 @@ function AthleteCard({ a, index }: { a: Athlete; index: number }) {
     <motion.article
       variants={fadeUp}
       whileHover={{ y: -4 }}
-      className="soft-card group relative flex flex-col overflow-hidden rounded-3xl transition-shadow hover:shadow-lg"
+      whileTap={{ scale: 0.98 }}
+      className="soft-card group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl transition-shadow hover:shadow-lg"
     >
       <Link to="/sporcu/$slug" params={{ slug: a.slug }} className="block">
         <div className="relative aspect-square overflow-hidden bg-violet/8">
