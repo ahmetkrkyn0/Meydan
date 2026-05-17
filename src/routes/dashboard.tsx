@@ -187,13 +187,13 @@ function DashboardPage() {
 
               <div className="flex items-end justify-between gap-4">
                 <div className="hidden flex-col gap-1 sm:flex">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
                     Bugünkü tribün
                   </p>
-                  <p className="font-display text-3xl font-bold text-[color:var(--app-ink)] tabular-nums">
+                  <p className="font-display text-3xl font-bold text-white tabular-nums">
                     <CountUp to={3420} />
                   </p>
-                  <p className="text-[11px] text-[color:var(--app-ink-soft)]">
+                  <p className="text-[11px] text-white/75">
                     izleyici · <CountUp to={860} duration={1.4} /> tezahürat
                   </p>
                 </div>
