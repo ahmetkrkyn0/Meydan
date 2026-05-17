@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Calendar,
-  ChevronRight,
   Compass,
   MapPin,
   MessageCircle,
