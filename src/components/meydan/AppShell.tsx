@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { motion } from "framer-motion";
 import {
   Home,
   Compass,
@@ -164,24 +163,27 @@ export function AppShell({
 
   return (
     <div className="app-surface app-ambient relative flex min-h-screen w-full">
-      {/* ── Sidebar ── */}
-      <aside className="sidebar-glass fixed left-0 top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden border-r border-[color:var(--app-line)] lg:flex">
-        <Link to="/" className="flex shrink-0 items-center gap-2.5 px-6 py-5">
-          <span className="relative inline-flex h-9 w-9 items-center justify-center">
-            <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet via-indigo to-sky opacity-95" />
-            <span className="relative font-display text-base font-bold text-white">M</span>
+      {/* ── Sidebar (Premium Redesign) ── */}
+      <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden bg-[#FAFAFA] border-r border-[color:var(--app-line-soft)] lg:flex">
+        {/* Subtle top gradient for depth */}
+        <div className="absolute left-0 right-0 top-0 h-32 bg-gradient-to-b from-white to-transparent pointer-events-none" />
+
+        <Link to="/" className="relative z-10 flex shrink-0 items-center gap-3 px-6 py-6">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-b from-white to-slate-50 border border-slate-200 shadow-sm">
+            <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet/10 to-sky/10 opacity-50" />
+            <span className="relative font-display text-lg font-bold text-violet">M</span>
           </span>
-          <div>
-            <p className="font-display text-lg font-bold leading-none tracking-tight text-[color:var(--app-ink)]">
+          <div className="flex flex-col">
+            <span className="font-display text-[17px] font-bold leading-tight tracking-tight text-[color:var(--app-ink)]">
               Meydan
-            </p>
-            <p className="mt-1 text-[10px] text-[color:var(--app-ink-mute)]">
+            </span>
+            <span className="text-[10px] font-medium text-[color:var(--app-ink-mute)]">
               Her sporun bir meydanı
-            </p>
+            </span>
           </div>
         </Link>
 
-        <nav className="sidebar-scroll min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2">
+        <nav className="sidebar-scroll relative z-10 flex-1 space-y-1.5 overflow-y-auto px-4 pt-4 pb-6">
           {nav.map((item) => {
             const active =
               loc.pathname === item.to ||
@@ -191,22 +193,20 @@ export function AppShell({
                 key={item.to}
                 to={item.to}
                 title={item.tooltip}
-                className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
+                className={`group relative flex items-center justify-between rounded-[14px] px-3.5 py-2.5 text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 ${
                   active
-                    ? "bg-[color:oklch(0.60_0.22_252/0.10)] text-[color:oklch(0.45_0.22_252)]"
-                    : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
+                    ? "bg-white text-[color:var(--app-ink)] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.06)] border border-slate-200/60"
+                    : "text-[color:var(--app-ink-soft)] hover:bg-slate-200/40 hover:text-[color:var(--app-ink)] border border-transparent"
                 }`}
               >
-                {active && (
-                  <motion.span
-                    layoutId="app-nav-pill"
-                    className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-violet"
-                  />
-                )}
-                <item.icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.2 : 1.7} />
-                <span className="flex-1">{item.label}</span>
+                <div className="flex items-center gap-3.5">
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-300 ${active ? 'bg-violet/10 text-violet' : 'bg-transparent text-[color:var(--app-ink-mute)] group-hover:text-[color:var(--app-ink)]'}`}>
+                    <item.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.2 : 1.8} />
+                  </span>
+                  <span className={active ? "font-semibold" : ""}>{item.label}</span>
+                </div>
                 {item.badge && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-coral/85 px-1.5 text-[10px] font-bold text-white">
+                  <span className="flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-coral px-1.5 text-[11px] font-bold text-white shadow-sm shadow-coral/20">
                     {item.badge}
                   </span>
                 )}
@@ -215,62 +215,71 @@ export function AppShell({
           })}
         </nav>
 
-        {/* Mode switcher — demo: ilgili roldeki ilk profile login yapar */}
-        <div className="mx-3 mb-3 mt-3 shrink-0 rounded-2xl border border-[color:var(--app-line)] bg-white/80 p-2 backdrop-blur">
-          <p className="px-2 pt-1 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-            Demo rol
-          </p>
-          <div className="mt-1.5 grid grid-cols-3 gap-1">
-            {(["fan", "athlete", "brand"] as AppRole[]).map((r) => {
-              const isActive = role === r;
-              const isLoading = demoLoading === r;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => void handleRoleSwitch(r)}
-                  disabled={Boolean(demoLoading)}
-                  className={`rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
-                    isActive
-                      ? "bg-[color:var(--app-ink)] text-white"
-                      : "text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]"
-                  }`}
-                >
-                  {isLoading
-                    ? "…"
-                    : r === "fan"
-                      ? "Taraftar"
-                      : r === "athlete"
-                        ? "Sporcu"
-                        : "Marka"}
-                </button>
-              );
-            })}
+        <div className="relative z-10 px-4 pb-4">
+          {/* Mode switcher — Segmented Control Style */}
+          <div className="mb-4 flex flex-col gap-2 rounded-[18px] bg-slate-200/50 p-1.5">
+            <div className="flex w-full items-center justify-between px-2 pt-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Demo Rol
+              </span>
+            </div>
+            <div className="relative flex w-full gap-1 rounded-xl bg-transparent">
+              {(["fan", "athlete", "brand"] as AppRole[]).map((r) => {
+                const isActive = role === r;
+                const isLoading = demoLoading === r;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => void handleRoleSwitch(r)}
+                    disabled={Boolean(demoLoading)}
+                    className={`relative flex-1 rounded-xl py-2 text-[11px] font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60 ${
+                      isActive
+                        ? "bg-white text-[color:var(--app-ink)] shadow-sm border border-slate-200/60"
+                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent"
+                    }`}
+                  >
+                    {isLoading
+                      ? "…"
+                      : r === "fan"
+                        ? "Taraftar"
+                        : r === "athlete"
+                          ? "Sporcu"
+                          : "Marka"}
+                  </button>
+                );
+              })}
+            </div>
+            {demoError && (
+              <p className="px-2 pb-1 text-[10px] font-semibold text-coral">{demoError}</p>
+            )}
           </div>
-          {demoError && (
-            <p className="mt-1.5 px-2 text-[10px] font-semibold text-coral">{demoError}</p>
-          )}
-        </div>
 
-        {/* User card */}
-        <div className="m-3 mt-0 flex shrink-0 items-center gap-3 rounded-2xl border border-[color:var(--app-line)] bg-white/85 p-2.5 backdrop-blur">
-          <img
-            src={session.profile?.avatar_url ?? okculukImg}
-            alt=""
-            className="h-9 w-9 rounded-xl object-cover object-top"
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-[color:var(--app-ink)]">
-              {effectiveName}
-            </p>
-            <p className="text-[10px] text-[color:var(--app-ink-mute)]">{effectiveCity}</p>
-          </div>
+          {/* User card — Clean and minimal */}
           <button
-            aria-label="Kullanıcı menüsü"
-            className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 focus-visible:rounded-lg"
+            onClick={() => setMenuOpen((v) => !v)}
+            className="group flex w-full items-center gap-3 rounded-[18px] border border-transparent bg-transparent p-2 transition-all hover:bg-slate-200/50 hover:border-slate-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50"
           >
-            <ChevronDown className="h-3.5 w-3.5" />
+            <div className="relative shrink-0">
+              <img
+                src={session.profile?.avatar_url ?? okculukImg}
+                alt=""
+                className="h-10 w-10 rounded-full object-cover object-top ring-2 ring-white shadow-sm"
+              />
+              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+            </div>
+            <div className="min-w-0 flex-1 text-left">
+              <p className="truncate text-[13px] font-semibold leading-tight text-[color:var(--app-ink)] group-hover:text-violet transition-colors">
+                {effectiveName}
+              </p>
+              <p className="truncate text-[11px] font-medium text-[color:var(--app-ink-mute)]">
+                {effectiveCity || "Hesap Ayarları"}
+              </p>
+            </div>
+            <ChevronDown className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" />
           </button>
+          
+          {/* User Menu Dropdown (Moved to be near the trigger if it was in the bottom, but the topbar already has the menu. Wait, the sidebar doesn't have a dropdown menu. The old code just had a chevron button but did nothing with it! Let me keep it just as a visual or hook it up to top menu) */}
         </div>
       </aside>
 

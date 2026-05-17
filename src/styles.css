@@ -346,17 +346,13 @@
       4px 0 24px -16px oklch(0.22 0.05 258 / 0.18);
   }
 
-  /* Custom thin scrollbar for sidebar nav */
+  /* Hidden scrollbar for sidebar nav */
   .sidebar-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: oklch(0.22 0.05 258 / 0.12) transparent;
+    scrollbar-width: none; /* Firefox */
   }
-  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-  .sidebar-scroll::-webkit-scrollbar-thumb {
-    background: oklch(0.22 0.05 258 / 0.12);
-    border-radius: 999px;
+  .sidebar-scroll::-webkit-scrollbar { 
+    display: none; /* Chrome, Safari and Opera */
   }
-  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
 
   /* Soft card — for app pages (no harsh borders, organic) */
   .soft-card {
