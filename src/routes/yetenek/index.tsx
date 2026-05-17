@@ -182,7 +182,8 @@ function TalentPage() {
 
   return (
     <AppShell role="fan">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1fr_280px]">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
+        <div className="grid gap-10 lg:grid-cols-[1fr_280px]">
         {/* ═══ SOL KOLON ═══ */}
         <div className="flex min-w-0 flex-col gap-10">
           {/* ─── HERO ─── */}
@@ -349,16 +350,18 @@ function TalentPage() {
             <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
               Ekstra not (opsiyonel)
             </p>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value.slice(0, 240))}
-              rows={3}
-              placeholder="Deneyimini, beklentini veya kısıtını birkaç cümleyle anlat. AI eşleşmesi için kullanılır."
-              className="mt-3 w-full resize-none rounded-2xl border border-[color:var(--app-line)] bg-white px-4 py-3 text-sm leading-relaxed text-[color:var(--app-ink)] outline-none transition-all focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/15"
-            />
-            <p className="mt-1 text-right font-mono text-[10px] tabular-nums text-[color:var(--app-ink-mute)]">
-              {note.length}/240
-            </p>
+            <div className="relative mt-3">
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value.slice(0, 240))}
+                rows={3}
+                placeholder="Deneyimini, beklentini veya kısıtını birkaç cümleyle anlat. AI eşleşmesi için kullanılır."
+                className="w-full resize-none rounded-2xl border border-[color:var(--app-line)] bg-white px-4 py-3 pb-7 text-sm leading-relaxed text-[color:var(--app-ink)] outline-none transition-all focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/15"
+              />
+              <p className="pointer-events-none absolute bottom-2 right-3 font-mono text-[10px] tabular-nums text-[color:var(--app-ink-mute)]">
+                {note.length}/240
+              </p>
+            </div>
           </div>
 
           {/* ─ Action row ─ */}
@@ -417,6 +420,44 @@ function TalentPage() {
             )}
           </AnimatePresence>
         </motion.section>
+        </div>
+
+        {/* ═══ SAĞ KOLON · Dikey timeline ═══ */}
+        <motion.aside
+          variants={fade}
+          initial="hidden"
+          animate="show"
+          custom={1}
+          aria-label="Nasıl çalışır"
+          className="hidden lg:flex lg:pt-56"
+        >
+          <div className="sticky top-24 flex w-full flex-col gap-4">
+            {steps.map((s, i) => (
+              <div key={s.n} className="flex flex-col items-stretch">
+                <div className="soft-card flex flex-col gap-2.5 rounded-2xl bg-white/80 px-5 py-5 shadow-sm">
+                  <p className="font-mono text-base font-extrabold uppercase tracking-[0.22em] text-emerald-700">
+                    Adım {s.n}
+                  </p>
+                  <p className="font-display text-2xl font-extrabold leading-[1.1] tracking-tight text-[color:var(--app-ink)]">
+                    {s.t}
+                  </p>
+                  <p className="text-xs leading-relaxed text-[color:var(--app-ink-soft)]">
+                    {s.d}
+                  </p>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="flex justify-center py-1.5" aria-hidden>
+                    <ArrowDown
+                      className="h-5 w-5 text-emerald-700/60"
+                      strokeWidth={2.2}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.aside>
+        </div>
 
         {/* ─── Aktif ihtiyaçlar (taraftarın görsel motivasyonu) ─── */}
         <motion.section variants={fade} initial="hidden" animate="show" custom={4}>
@@ -441,30 +482,30 @@ function TalentPage() {
               </p>
             </div>
           ) : (
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {talentNeeds.map((n) => (
                 <article
                   key={n.id}
-                  className="soft-card flex flex-col gap-3 rounded-2xl p-4"
+                  className="soft-card flex flex-col gap-2.5 rounded-2xl p-3.5"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <img
                       src={n.athleteImg}
                       alt=""
-                      className="h-12 w-12 rounded-xl object-cover object-top"
+                      className="h-10 w-10 shrink-0 rounded-xl object-cover object-top"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-[color:var(--app-ink)]">
+                      <p className="truncate text-xs font-bold text-[color:var(--app-ink)]">
                         {n.athleteName}
                       </p>
-                      <p className="truncate text-[11px] text-[color:var(--app-ink-soft)]">
+                      <p className="truncate text-[10px] text-[color:var(--app-ink-soft)]">
                         {n.city}
                       </p>
                     </div>
                     {n.urgent && <span className="chip chip-coral">Acil</span>}
                   </div>
-                  <p className="text-sm font-semibold text-[color:var(--app-ink)]">{n.title}</p>
-                  <p className="line-clamp-2 text-xs text-[color:var(--app-ink-soft)]">
+                  <p className="text-sm font-semibold leading-snug text-[color:var(--app-ink)]">{n.title}</p>
+                  <p className="line-clamp-2 text-[11px] leading-relaxed text-[color:var(--app-ink-soft)]">
                     {n.description}
                   </p>
                   <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -480,43 +521,6 @@ function TalentPage() {
             </div>
           )}
         </motion.section>
-        </div>
-
-        {/* ═══ SAĞ KOLON · Dikey timeline ═══ */}
-        <motion.aside
-          variants={fade}
-          initial="hidden"
-          animate="show"
-          custom={1}
-          aria-label="Nasıl çalışır"
-          className="hidden lg:flex lg:pt-56"
-        >
-          <div className="sticky top-24 flex w-full flex-col gap-4">
-            {steps.map((s, i) => (
-              <div key={s.n} className="flex flex-col items-stretch">
-                <div className="soft-card flex flex-col gap-2.5 rounded-2xl bg-white/80 px-5 py-5 shadow-sm">
-                  <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-emerald-700">
-                    Adım {s.n}
-                  </p>
-                  <p className="font-display text-2xl font-extrabold leading-[1.1] tracking-tight text-[color:var(--app-ink)]">
-                    {s.t}
-                  </p>
-                  <p className="text-xs leading-relaxed text-[color:var(--app-ink-soft)]">
-                    {s.d}
-                  </p>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="flex justify-center py-1.5" aria-hidden>
-                    <ArrowDown
-                      className="h-5 w-5 text-emerald-700/60"
-                      strokeWidth={2.2}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </motion.aside>
       </div>
     </AppShell>
   );

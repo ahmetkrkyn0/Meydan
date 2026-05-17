@@ -25,12 +25,6 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
 type Result = (typeof matchResults.b1)[number];
 
-function RiskBadge({ score }: { score: number }) {
-  const label = score < 10 ? "Düşük" : score < 20 ? "Orta" : "Yüksek";
-  const tone = score < 10 ? "chip-emerald" : score < 20 ? "chip" : "chip-coral";
-  return <span className={`chip ${tone}`}>{label} risk</span>;
-}
-
 function MatchCard({ m, expanded, onToggle }: { m: Result; expanded: boolean; onToggle: () => void }) {
   return (
     <motion.article
@@ -38,13 +32,55 @@ function MatchCard({ m, expanded, onToggle }: { m: Result; expanded: boolean; on
       className="soft-card overflow-hidden rounded-3xl"
       layout
     >
-      <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-[200px_1fr_200px] md:p-6">
-        <div className="flex items-center gap-4 md:flex-col md:items-start md:gap-3">
+      <div className="flex flex-col gap-5 p-5 md:p-6">
+        {/* ─ Üst: foto + stat üçlüsü ─ */}
+        <div className="grid grid-cols-[140px_minmax(0,1fr)] gap-5 md:grid-cols-[180px_minmax(0,1fr)]">
           <img
             src={m.athleteImg}
             alt={m.athleteName}
-            className="h-20 w-20 rounded-2xl object-cover object-top md:h-44 md:w-44"
+            className="aspect-square w-full rounded-2xl object-cover object-top"
           />
+          {(() => {
+            const riskTone =
+              m.riskScore < 10
+                ? { bg: "bg-emerald-500/10 border-emerald-500/25", icon: "text-emerald-700", value: "text-emerald-700" }
+                : m.riskScore < 20
+                  ? { bg: "bg-amber-500/10 border-amber-500/25", icon: "text-amber-700", value: "text-amber-700" }
+                  : { bg: "bg-coral/10 border-coral/25", icon: "text-coral", value: "text-coral" };
+            return (
+              <div className="grid grid-cols-3 gap-2 self-start md:gap-3">
+                <div className={`rounded-xl border p-3 ${riskTone.bg}`}>
+                  <div className={`flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider ${riskTone.icon}`}>
+                    <ShieldCheck className="h-3 w-3" strokeWidth={2.2} /> Risk
+                  </div>
+                  <p className={`mt-1 font-display text-lg font-bold ${riskTone.value}`}>
+                    {m.riskScore < 10 ? "Düşük" : m.riskScore < 20 ? "Orta" : "Yüksek"}
+                  </p>
+                  <p className="text-[10px] text-[color:var(--app-ink-mute)]">skor {m.riskScore}/100</p>
+                </div>
+                <div className="rounded-xl border border-sky/25 bg-sky/10 p-3">
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-sky">
+                    <TrendingUp className="h-3 w-3" strokeWidth={2.2} /> Tahmini ROI
+                  </div>
+                  <p className="mt-1 font-display text-lg font-bold text-sky">
+                    {m.estROI}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-violet/25 bg-violet/10 p-3">
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-violet">
+                    <Sparkles className="h-3 w-3" strokeWidth={2.2} /> Büyüme
+                  </div>
+                  <p className="mt-1 font-display text-lg font-bold text-violet">
+                    {m.growth}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* ─ Alt: isim/şehir · Neden uygun · % skor ─ */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-[160px_1fr_140px] md:items-center">
           <div>
             <p className="font-display text-lg font-bold text-[color:var(--app-ink)]">
               {m.athleteName}
@@ -56,19 +92,8 @@ function MatchCard({ m, expanded, onToggle }: { m: Result; expanded: boolean; on
                 : m.athleteSlug === "seda-yilmaz" ? "İzmit" : "Bursa"}
             </p>
           </div>
-        </div>
 
-        <div className="flex flex-col justify-between gap-4">
-          <div className="flex items-baseline gap-3">
-            <span className="font-display text-5xl font-bold tracking-tight text-sky">
-              {m.fitScore}%
-            </span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-              uyum skoru
-            </span>
-          </div>
-
-          <div>
+          <div className="rounded-2xl bg-[color:var(--app-line-soft)]/60 p-4">
             <p className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-violet">
               <Sparkles className="h-3 w-3" strokeWidth={2.2} /> Neden uygun?
             </p>
@@ -90,33 +115,14 @@ function MatchCard({ m, expanded, onToggle }: { m: Result; expanded: boolean; on
               </p>
             )}
           </div>
-        </div>
 
-        <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-3">
-          <div className="rounded-xl bg-[color:var(--app-line-soft)] p-3">
-            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-              <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Risk
-            </div>
-            <p className="mt-1 font-display text-lg font-bold text-[color:var(--app-ink)]">
-              {m.riskScore < 10 ? "Düşük" : "Orta"}
-            </p>
-            <p className="text-[10px] text-[color:var(--app-ink-mute)]">skor {m.riskScore}/100</p>
-          </div>
-          <div className="rounded-xl bg-[color:var(--app-line-soft)] p-3">
-            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-              <TrendingUp className="h-3 w-3" strokeWidth={2} /> Tahmini ROI
-            </div>
-            <p className="mt-1 font-display text-lg font-bold text-[color:var(--app-ink)]">
-              {m.estROI}
-            </p>
-          </div>
-          <div className="rounded-xl bg-[color:var(--app-line-soft)] p-3">
-            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-              <Sparkles className="h-3 w-3" strokeWidth={2} /> Büyüme
-            </div>
-            <p className="mt-1 font-display text-lg font-bold text-[color:var(--app-ink)]">
-              {m.growth}
-            </p>
+          <div className="flex flex-col items-center justify-center md:items-end md:text-right">
+            <span className="font-display text-5xl font-bold leading-none tracking-tight text-sky">
+              {m.fitScore}%
+            </span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+              uyum skoru
+            </span>
           </div>
         </div>
       </div>
