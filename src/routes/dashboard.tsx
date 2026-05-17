@@ -24,6 +24,7 @@ import { useSession } from "@/lib/session";
 import { badges, liveMatches } from "@/lib/mock-data";
 import heroAthlete from "@/assets/athlete-gures-erkek.png";
 import spotlightAthlete from "@/assets/athlete-voleybol-kadin.png";
+import landingImg from "@/assets/landing.jpeg";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -116,7 +117,7 @@ function DashboardPage() {
   const badgePct = Math.round((earnedCount / totalBadges) * 100);
 
   return (
-    <AppShell role="fan">
+    <AppShell role="fan" hideSearch topbarOverlay>
       <motion.div
         initial="hidden"
         animate="show"
@@ -128,51 +129,56 @@ function DashboardPage() {
           variants={fadeUp}
           className="stage-bleed relative -mt-6 overflow-hidden sm:-mt-8"
         >
-          <div className="grid grid-cols-[1fr_45%] sm:grid-cols-[1fr_48%]">
-            {/* Sol: içerik, sayfa rengi */}
-            <div className="flex flex-col justify-center gap-6 bg-[color:var(--app-bg)] py-12 pl-6 pr-8 sm:py-16 sm:pl-10 sm:pr-12">
+          <div className="relative min-h-[600px] sm:min-h-[680px]">
+            <img
+              src={landingImg}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
+            {/* Fotoğrafın çok az karartılması veya sadece metinlerin altına gölge */}
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, rgba(0,0,0,0.4) 0%, transparent 40%)",
+              }}
+            />
+
+            <div className="relative z-10 flex min-h-[600px] max-w-xl flex-col justify-center gap-6 px-6 pb-8 pt-24 drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] sm:min-h-[680px] sm:px-10 sm:pb-10 sm:pt-28">
               <div className="flex items-center gap-3">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-white">
                   {formatTodayTR()}
                 </p>
-                <span className="h-px w-12 bg-[color:var(--app-line)]" />
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-violet">
+                <span className="h-px w-12 bg-white/50" />
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-sky">
                   Ana Sahne
                 </p>
               </div>
 
               <div>
-                <h1 className="font-display max-w-[12ch] text-[2.45rem] font-bold leading-[0.95] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
-                  <span className="block">Hoş geldin,</span>
+                <h1 className="font-display max-w-[12ch] text-[2.45rem] font-bold leading-[0.95] tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] sm:text-5xl">
+                  <span className="block text-white">Hoş geldin,</span>
                   <span className="mt-2 block break-words text-sky">
                     {greetingName}
                   </span>
                 </h1>
-                <p className="mt-4 text-sm leading-relaxed text-[color:var(--app-ink-soft)] sm:text-base">
+                <p className="mt-4 text-sm font-medium leading-relaxed text-white drop-shadow-md sm:text-base">
                   Sporcularını destekle, yolculuklarını takip et.
                 </p>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="mt-2 flex items-center gap-4">
                 <Link
                   to="/canli"
-                  className="btn-primary-light inline-flex items-center gap-2 rounded-full py-3 pl-3 pr-5 text-xs font-bold"
+                  className="inline-flex items-center gap-2 rounded-full bg-sky px-6 py-3.5 text-xs font-bold text-white shadow-lg shadow-sky/30 transition hover:bg-sky/90"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25">
-                    <Play className="h-3.5 w-3.5 fill-white text-white" />
-                  </span>
+                  <Play className="h-4 w-4 fill-white" />
                   Tribüne katıl
                 </Link>
               </div>
             </div>
-
-            {/* Sağ: fotoğraf, hiç overlay yok */}
-            <img
-              src={heroAthlete}
-              alt=""
-              aria-hidden
-              className="h-full w-full object-cover object-top"
-            />
           </div>
         </motion.header>
 
