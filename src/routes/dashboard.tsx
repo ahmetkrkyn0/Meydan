@@ -117,7 +117,7 @@ function DashboardPage() {
         {/* ─── Cinematic hero ─── */}
         <motion.header
           variants={fadeUp}
-          className="relative -mx-5 -mt-6 overflow-hidden sm:-mx-8 sm:-mt-8 sm:rounded-b-[2.5rem]"
+          className="relative -mx-5 -mt-6 overflow-hidden sm:-mx-[calc(50vw-50%)] sm:-mt-8 lg:-mx-[calc(50vw-8rem-50%)]"
         >
           <div className="relative h-[480px] sm:h-[560px]">
             {/* Background portrait */}
