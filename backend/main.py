@@ -432,6 +432,20 @@ def get_events(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/events/nearby")
+def get_nearby_events(
+    city: str | None = None,
+    branch: str | None = None,
+):
+    """Yaklaşan spor etkinliklerini şehir ve branş filtresiyle listeler."""
+    try:
+        events = supabase_service.list_nearby_events(city=city, branch=branch)
+        return {"events": events}
+    except Exception as e:
+        print(f"/events/nearby listeleme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/events/{event_id}")
 def get_event(event_id: str):
     """Tek bir etkinliği id ile getirir."""
