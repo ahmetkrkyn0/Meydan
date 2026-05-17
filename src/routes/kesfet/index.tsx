@@ -267,9 +267,8 @@ function KesfetPage() {
         )}
 
         {/* ─── Filter bar ─── */}
-        <motion.section
-          variants={fadeUp}
-          className="sticky top-16 z-10 rounded-3xl border border-[color:var(--app-line)] bg-white/85 px-4 py-4 shadow-sm backdrop-blur-xl"
+        <section
+          className="sticky top-16 z-20 rounded-3xl border border-[color:var(--app-line)] bg-white/90 px-4 py-4 shadow-sm backdrop-blur-xl"
         >
           <div className="mb-3 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
