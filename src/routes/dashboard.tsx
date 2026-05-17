@@ -51,7 +51,7 @@ function CountUp({ to, duration = 1.6 }: { to: number; duration?: number }) {
     if (!inView) return;
     const controls = animate(0, to, {
       duration,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
       onUpdate: (v) => setDisplay(Math.round(v).toLocaleString("tr-TR")),
     });
     return () => controls.stop();

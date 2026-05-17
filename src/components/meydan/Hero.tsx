@@ -16,7 +16,7 @@ export function Hero() {
       <motion.picture
         initial={{ opacity: 0, scale: 1.04 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] as const }}
         className="absolute inset-x-0 bottom-0 top-16 -z-20 w-full"
       >
         <source type="image/avif" srcSet={heroAvifSet} sizes="100vw" />
@@ -59,7 +59,7 @@ export function Hero() {
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.0, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 1.0, delay: 0.55, ease: [0.22, 1, 0.36, 1] as const }}
                   className="font-display mt-5 text-[2.8rem] leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-[5rem]"
                 >
                   Her sporun

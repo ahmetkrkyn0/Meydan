@@ -58,7 +58,7 @@ export function Problem() {
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet/8 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-violet">
               <span className="h-1.5 w-1.5 rounded-full bg-violet" />
@@ -96,7 +96,7 @@ export function Problem() {
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
               className="group grid cursor-default grid-cols-12 items-center gap-4 rounded-2xl px-4 py-10 transition-colors hover:bg-foreground/[0.03] sm:gap-8"
             >
               <div className="col-span-2 sm:col-span-1">

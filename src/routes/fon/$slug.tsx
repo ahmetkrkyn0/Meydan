@@ -56,7 +56,7 @@ function AnimatedNumber({ value }: { value: number }) {
   useEffect(() => {
     const controls = animate(motionValue, value, {
       duration: 1.4,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
     });
     return controls.stop;
   }, [value, motionValue]);
@@ -135,7 +135,7 @@ function FundPage() {
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
-              transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] as const }}
               className="h-full rounded-full bg-gradient-to-r from-violet to-sky"
             />
           </div>

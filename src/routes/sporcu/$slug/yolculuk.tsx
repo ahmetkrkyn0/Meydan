@@ -106,7 +106,7 @@ function AthleteJourneyPage() {
         <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
           className="mt-8 space-y-4"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet">
@@ -135,7 +135,7 @@ function AthleteJourneyPage() {
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.55, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.55, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] as const }}
               className="relative"
             >
               {/* node */}

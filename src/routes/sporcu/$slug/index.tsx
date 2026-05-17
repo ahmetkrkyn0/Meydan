@@ -41,7 +41,7 @@ const fade = {
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.06, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    transition: { delay: i * 0.06, duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -225,7 +225,7 @@ function AthleteProfilePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.92, rotate: -3 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const }}
               className="relative flex items-center justify-center"
             >
               <div className="absolute inset-8 rounded-full bg-gradient-to-br from-violet/25 via-sky/15 to-transparent blur-2xl" />
@@ -390,7 +390,7 @@ function AthleteProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
           className="fixed bottom-20 left-1/2 z-40 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 lg:bottom-6"
         >
           <div className="flex items-center gap-2 rounded-full border border-[color:var(--app-line)] bg-white/95 p-1.5 shadow-[0_20px_50px_-12px_rgba(80,60,150,0.25)] backdrop-blur-xl">
