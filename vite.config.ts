@@ -13,10 +13,9 @@ export default defineConfig({
   },
   vite: {
     plugins: [imagetools()],
-    // Leaflet SSR'da window'a dokunuyor; SSR bundler'ından dışla. Sayfa
-    // tarafında zaten `mounted` flag ile sadece client'ta mount ediyoruz.
+    // Leaflet sayfa tarafında dinamik import ediliyor; SSR bundle'a özel bir
+    // external ayarı Cloudflare Vite plugin tarafından desteklenmiyor.
     ssr: {
-      external: ["leaflet"],
       noExternal: ["@turf/boolean-point-in-polygon"],
     },
   },
