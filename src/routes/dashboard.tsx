@@ -431,7 +431,7 @@ function DashboardPage() {
             </p>
           )}
 
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
             {profilesQuery.isLoading
               ? Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="aspect-[3/4] rounded-3xl" />
@@ -483,26 +483,6 @@ function DashboardPage() {
               </Link>
             ))}
 
-            {/* "+N more" tile — sadece yükleme bitmişse göster */}
-            <Link
-              to="/kesfet"
-              className="group relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-3xl border border-dashed border-[color:var(--app-line)] bg-gradient-to-br from-violet/5 via-white to-sky/5 p-5 transition-all hover:border-violet/40 hover:shadow-lg"
-            >
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-violet">
-                +
-              </span>
-              <div>
-                <p className="font-display text-3xl font-bold leading-none text-[color:var(--app-ink)]">
-                  +{Math.max(followed.length - 3, 12)}
-                </p>
-                <p className="mt-2 text-xs font-semibold text-[color:var(--app-ink-soft)]">
-                  sporcu daha
-                </p>
-                <div className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-violet">
-                  Keşfet <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </div>
-              </div>
-            </Link>
           </div>
         </motion.section>
 
@@ -567,9 +547,8 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Dark block: Keşfet modu ─── */}
-        <motion.section variants={fadeUp} className="stage-bleed">
-          <Link to="/kesfet/mod" className="block">
-            <article className="group relative overflow-hidden bg-[color:var(--app-ink)]">
+        <motion.section variants={fadeUp} className="stage-bleed -mb-24 sm:-mb-8">
+            <article className="relative overflow-hidden bg-[color:var(--app-ink)] pb-24 sm:pb-8">
               {/* Aurora glow */}
               <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet/30 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-sky/20 blur-3xl" />
@@ -620,44 +599,10 @@ function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-[color:var(--app-ink)] transition-transform group-hover:scale-110">
-                    <ArrowUpRight className="h-5 w-5" />
-                  </span>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-white/70">
-                    Aç
-                  </span>
-                </div>
               </div>
             </article>
-          </Link>
         </motion.section>
-        <motion.section variants={fadeUp} className="stage-bleed px-5 sm:px-8">
-          <Link to="/rozetlerim" className="block">
-            <div className="flex items-center gap-4 rounded-2xl border border-[color:var(--app-line-soft)] bg-white/60 px-5 py-4 transition-colors hover:bg-white">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-coral/12 text-coral">
-                <Trophy className="h-4 w-4" />
-              </span>
-              <div className="flex-1">
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-sm font-semibold text-[color:var(--app-ink)]">İlk Adım rozet yolculuğun</p>
-                  <p className="font-mono text-xs font-bold text-[color:var(--app-ink-soft)]">
-                    {earnedCount}/{totalBadges}
-                  </p>
-                </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--app-line)]">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${badgePct}%` }}
-                    transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
-                    className="h-full rounded-full bg-gradient-to-r from-violet to-sky"
-                  />
-                </div>
-              </div>
-              <Sparkles className="h-4 w-4 shrink-0 text-[color:var(--app-ink-mute)]" />
-            </div>
-          </Link>
-        </motion.section>
+
       </motion.div>
     </AppShell>
   );
