@@ -40,14 +40,19 @@ def get_cheers_for_match(athlete_id: str, match_date: str) -> list[dict]:
 
 
 def find_matching_talents(query_embedding: list[float], athlete_id: str) -> list[dict]:
-    """pgvector ile en yakın taraftar yeteneklerini bulur."""
+    """pgvector ile en yakın taraftar yeteneklerini bulur.
+
+    Threshold 0.65: Gemini 768-dim retrieval embedding'lerde bu değerin
+    altı alâkasız çıkıyor (şehir/müsaitlik gibi ortak meta kelimeler
+    yüzünden 0.3'le video editör ihtiyacına şoför eşleşiyordu).
+    """
     try:
         response = supabase.rpc(
             "match_talents",
             {
                 "query_embedding": query_embedding,
-                "match_threshold": 0.3,
-                "match_count": 3,
+                "match_threshold": 0.65,
+                "match_count": 5,
             },
         ).execute()
         return response.data

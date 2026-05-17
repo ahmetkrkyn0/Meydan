@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   AtSign,
   Camera,
   Image as ImageIcon,
+  Loader2,
   MessageCircle,
   Plus,
   Save,
@@ -13,6 +15,9 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug } from "@/lib/mock-data";
+import { updateProfile } from "@/lib/api";
+import { useSession } from "@/lib/session";
+import { BRANCH_OPTIONS, CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/sporcu-panel/profil")({
   component: AthleteProfilePage,
@@ -40,22 +45,65 @@ const VALUE_TAGS = [
 const SPORTS = ["Okçuluk", "Tenis", "Bilardo", "Boks", "Atıcılık", "Atletizm", "Güreş", "Yelken"];
 
 function AthleteProfilePage() {
-  const me = athleteBySlug("mete-gazoz");
+  const session = useSession();
+  const queryClient = useQueryClient();
+  // Görsel/mock fallback — gerçek profil alanlarında değer yoksa kullanılır.
+  const mock = athleteBySlug("mete-gazoz");
+
+  const profile = session.profile;
+  const initial = useMemo(
+    () => ({
+      name: profile?.full_name ?? mock.name,
+      sport: profile?.branch ?? mock.sport,
+      city: profile?.city ?? mock.city,
+      bio: profile?.bio ?? mock.bio,
+      values: profile?.value_tags?.length ? profile.value_tags : mock.values,
+    }),
+    [profile, mock],
+  );
 
   const [active, setActive] = useState("temel");
-  const [name, setName] = useState(me.name);
-  const [sport, setSport] = useState(me.sport);
-  const [city, setCity] = useState(me.city);
-  const [club, setClub] = useState(me.club);
-  const [age, setAge] = useState(me.age);
-  const [bio, setBio] = useState(me.bio);
-  const [values, setValues] = useState<string[]>(me.values);
-  const [achievements, setAchievements] = useState(me.achievements);
+  const [name, setName] = useState(initial.name);
+  const [sport, setSport] = useState(initial.sport);
+  const [city, setCity] = useState(initial.city);
+  const [club, setClub] = useState(mock.club);
+  const [age, setAge] = useState(mock.age);
+  const [bio, setBio] = useState(initial.bio);
+  const [values, setValues] = useState<string[]>(initial.values);
+  const [achievements, setAchievements] = useState(mock.achievements);
   const [newYear, setNewYear] = useState("");
   const [newTitle, setNewTitle] = useState("");
-  const [instagram, setInstagram] = useState(me.socials.instagram ?? "");
-  const [twitter, setTwitter] = useState(me.socials.twitter ?? "");
-  const [youtube, setYoutube] = useState(me.socials.youtube ?? "");
+  const [instagram, setInstagram] = useState(mock.socials.instagram ?? "");
+  const [twitter, setTwitter] = useState(mock.socials.twitter ?? "");
+  const [youtube, setYoutube] = useState(mock.socials.youtube ?? "");
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  // Session yüklendiğinde / değiştiğinde form state'ini güncelle.
+  useEffect(() => {
+    setName(initial.name);
+    setSport(initial.sport);
+    setCity(initial.city);
+    setBio(initial.bio);
+    setValues(initial.values);
+  }, [initial]);
+
+  const saveMutation = useMutation({
+    mutationFn: () => {
+      if (!profile?.id) throw new Error("Önce giriş yap.");
+      return updateProfile(profile.id, {
+        full_name: name,
+        branch: sport,
+        city,
+        bio,
+        value_tags: values,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["session", "me"] });
+      setSavedFlash(true);
+      setTimeout(() => setSavedFlash(false), 2500);
+    },
+  });
 
   const addAchievement = () => {
     if (!newYear || !newTitle) return;
@@ -70,8 +118,27 @@ function AthleteProfilePage() {
   const toggleValue = (v: string) =>
     values.includes(v) ? setValues(values.filter((x) => x !== v)) : setValues([...values, v]);
 
+  // Auth gate
+  if (!session.isLoading && !session.isAuthenticated) {
+    return (
+      <AppShell role="athlete">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-16 text-center">
+          <p className="font-display text-2xl font-bold text-[color:var(--app-ink)]">
+            Profilini görmek için giriş yap
+          </p>
+          <Link
+            to="/giris"
+            className="btn-primary-light inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold"
+          >
+            Giriş Yap
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
+    <AppShell role="athlete">
       <motion.div
         initial="hidden"
         animate="show"
@@ -121,7 +188,7 @@ function AthleteProfilePage() {
                   </label>
                   <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[color:var(--app-line)] bg-white p-3">
                     <img
-                      src={me.img}
+                      src={profile?.avatar_url ?? mock.img}
                       alt=""
                       className="h-16 w-16 rounded-xl object-cover object-top"
                     />
@@ -151,8 +218,18 @@ function AthleteProfilePage() {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Field label="İsim" value={name} onChange={setName} />
-                <Field label="Branş" value={sport} onChange={setSport} select={SPORTS} />
-                <Field label="Şehir" value={city} onChange={setCity} />
+                <Field
+                  label="Branş"
+                  value={sport}
+                  onChange={setSport}
+                  select={BRANCH_OPTIONS.map((b) => b.value)}
+                />
+                <Field
+                  label="Şehir"
+                  value={city}
+                  onChange={setCity}
+                  select={[...CITY_OPTIONS]}
+                />
                 <Field label="Kulüp" value={club} onChange={setClub} />
                 <Field
                   label="Yaş"
@@ -160,6 +237,38 @@ function AthleteProfilePage() {
                   onChange={(v) => setAge(Number(v) || 0)}
                   type="number"
                 />
+              </div>
+
+              {/* Save button */}
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+                {saveMutation.isError && (
+                  <p className="rounded-full bg-coral/10 px-3 py-1.5 text-[11px] font-semibold text-coral">
+                    {saveMutation.error instanceof Error
+                      ? saveMutation.error.message
+                      : "Kaydedilemedi"}
+                  </p>
+                )}
+                {savedFlash && (
+                  <p className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-700">
+                    ✓ Profil güncellendi
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending || !profile?.id}
+                  className="btn-primary-light inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {saveMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Kaydediliyor...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-3.5 w-3.5" /> Profili Kaydet
+                    </>
+                  )}
+                </button>
               </div>
             </motion.section>
 
@@ -259,7 +368,7 @@ function AthleteProfilePage() {
               </div>
               <div className="-mt-10 flex flex-col items-center px-5 pb-5">
                 <img
-                  src={me.img}
+                  src={profile?.avatar_url ?? mock.img}
                   alt={name}
                   className="h-20 w-20 rounded-2xl border-4 border-white object-cover object-top shadow-md"
                 />
@@ -283,7 +392,7 @@ function AthleteProfilePage() {
                 <div className="mt-4 grid w-full grid-cols-3 gap-2 text-center">
                   <div className="rounded-xl bg-[color:var(--app-line-soft)] py-2">
                     <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
-                      {me.followers.toLocaleString("tr-TR")}
+                      0
                     </p>
                     <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">takipçi</p>
                   </div>
@@ -295,7 +404,7 @@ function AthleteProfilePage() {
                   </div>
                   <div className="rounded-xl bg-[color:var(--app-line-soft)] py-2">
                     <p className="font-display text-sm font-bold text-[color:var(--app-ink)]">
-                      {me.supporters}
+                      0
                     </p>
                     <p className="text-[9px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">destekçi</p>
                   </div>

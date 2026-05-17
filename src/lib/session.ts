@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  demoLogin,
   fetchCurrentProfile,
   loginUser,
   logoutUser,
@@ -17,28 +19,49 @@ const SESSION_QUERY_KEY = ["session", "me"] as const;
 export type SessionState = {
   profile: BackendProfile | null;
   role: ProfileRole | null;
+  /** Hydration tamamlandı + (varsa) session fetch'i tamamlandı mı? */
   isLoading: boolean;
   isAuthenticated: boolean;
   isError: boolean;
+  /** Client-side mount oldu mu? false ise SSR'da veya ilk hydrate öncesindeyiz. */
+  hydrated: boolean;
 };
 
+/**
+ * Hydration-safe session hook.
+ *
+ * Server'da localStorage yok, bu yüzden token bilgisini SSR'da kullanırsak
+ * hydration mismatch oluşur. Çözüm: mount olana kadar token'ı null kabul
+ * et; mount sonrası gerçek değeri oku ve session fetch'ini tetikle.
+ */
 export function useSession(): SessionState {
-  const token = typeof window === "undefined" ? null : readAuthToken();
+  const [hydrated, setHydrated] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(readAuthToken());
+    setHydrated(true);
+  }, []);
 
   const query = useQuery({
     queryKey: SESSION_QUERY_KEY,
     queryFn: () => fetchCurrentProfile().then((r) => r.profile),
-    enabled: Boolean(token),
+    // Hydration tamamlanmadan istek atma — SSR'da fetch çalışmaz, sadece
+    // ilk client render'da çalışsın.
+    enabled: hydrated && Boolean(token),
     retry: false,
   });
 
-  const profile = token ? query.data ?? null : null;
+  const profile = hydrated && token ? query.data ?? null : null;
+
   return {
     profile,
     role: (profile?.role as ProfileRole | undefined) ?? null,
-    isLoading: Boolean(token) && query.isLoading,
+    // Hydration olana kadar yükleniyor say; sonra query loading'i izle.
+    isLoading: !hydrated || (Boolean(token) && query.isLoading),
     isAuthenticated: Boolean(profile),
     isError: query.isError && !(query.error instanceof UnauthorizedError),
+    hydrated,
   };
 }
 
@@ -81,6 +104,16 @@ export function useLogout() {
     writeAuthToken(null);
     queryClient.setQueryData(SESSION_QUERY_KEY, null);
     queryClient.removeQueries();
+  };
+}
+
+export function useDemoLogin() {
+  const queryClient = useQueryClient();
+  return async (role: ProfileRole): Promise<AuthResponse> => {
+    const result = await demoLogin(role);
+    writeAuthToken(result.token);
+    queryClient.setQueryData(SESSION_QUERY_KEY, result.profile);
+    return result;
   };
 }
 

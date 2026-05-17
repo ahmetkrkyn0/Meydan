@@ -55,6 +55,24 @@ def _generate_token() -> str:
     return secrets.token_urlsafe(48)
 
 
+def _extract_talent_semantic_text(offered_talent: str) -> str:
+    """Frontend offered_talent'i "Yetenekler: X · Şehir: Y · Müsaitlik: Z · Not: W"
+    formatında gönderir. Embedding için sadece anlamsal kısımları (yetenekler + not)
+    bırakırız — şehir/müsaitlik DB kolonlarında zaten var, embedding'e girince
+    alâkasız profilleri yakınlaştırıyordu (örn. aynı şehirdeki şoför ile video
+    editör ihtiyacı %70+ skor alıyordu)."""
+    if not offered_talent:
+        return ""
+    kept: list[str] = []
+    for segment in offered_talent.split(" · "):
+        key, _, value = segment.partition(":")
+        if key.strip() in ("Yetenekler", "Not"):
+            cleaned = value.strip()
+            if cleaned:
+                kept.append(cleaned)
+    return ". ".join(kept) if kept else offered_talent
+
+
 def get_current_profile(authorization: str | None = Header(default=None)) -> dict:
     """Authorization header'ından token okuyup profil döner. Geçersizse 401."""
     if not authorization or not authorization.lower().startswith("bearer "):
@@ -323,6 +341,29 @@ def auth_me(current: dict = Depends(get_current_profile)):
     return {"profile": current}
 
 
+@app.post("/auth/demo-login")
+def auth_demo_login(role: Literal["sporcu", "taraftar", "marka"]):
+    """Demo amaçlı: verilen role göre backend'deki ilk profili bulup
+    yeni token üretir. Gerçek bir kullanıcı doğrulaması yapmaz —
+    UI'daki rol picker bunu çağırarak demo oturumu açar."""
+    try:
+        profiles = supabase_service.list_profiles(role=role)
+        if not profiles:
+            raise HTTPException(
+                status_code=404,
+                detail=f"{role} rolünde demo profil bulunamadı",
+            )
+        target = profiles[0]
+        token = _generate_token()
+        updated = supabase_service.update_profile(target["id"], {"auth_token": token})
+        return {"token": token, "profile": updated}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/auth/demo-login hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/cheers")
 def post_cheer(body: CheerRequest, current: dict = Depends(get_current_profile)):
     """Taraftar tezahüratını toksisite kontrolünden geçirip kaydeder."""
@@ -385,7 +426,8 @@ def match_need(body: NeedMatchRequest):
 @app.get("/needs/{need_id}/matches")
 def get_need_matches(need_id: str, current_user: dict = Depends(get_current_profile)):
     """Bir ihtiyaç için kayıtlı embedding'i kullanarak en uygun taraftar
-    yeteneklerini bulur. Sadece ihtiyacın sahibi sporcu çağırabilir."""
+    yeteneklerini bulur. Sadece ihtiyacın sahibi sporcu çağırabilir.
+    Response need detayını da döner — frontend tek istekle her şeyi alır."""
     try:
         need = supabase_service.get_need_with_embedding(need_id)
         if need is None:
@@ -400,7 +442,15 @@ def get_need_matches(need_id: str, current_user: dict = Depends(get_current_prof
             embedding = gemini_service.generate_embedding(metin.strip())
 
         matches = supabase_service.find_matching_talents(embedding, need["athlete_id"])
-        return {"need_id": need_id, "matches": matches}
+
+        # Need'in embedding'sini ayıklayıp frontend'e safe versiyonu döndür.
+        need_safe = {k: v for k, v in need.items() if not k.endswith("_embedding")}
+
+        return {
+            "need_id": need_id,
+            "need": need_safe,
+            "matches": matches,
+        }
     except HTTPException:
         raise
     except Exception as e:
@@ -566,7 +616,9 @@ def patch_profile(
 
         if role == "taraftar" and "offered_talent" in data:
             data["talent_embedding"] = (
-                gemini_service.generate_embedding(data["offered_talent"])
+                gemini_service.generate_embedding(
+                    _extract_talent_semantic_text(data["offered_talent"])
+                )
                 if data["offered_talent"]
                 else None
             )
