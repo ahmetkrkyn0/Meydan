@@ -34,7 +34,7 @@ const EXTRA_MATCHES = [
   {
     id: "tm3",
     needId: "n5",
-    athleteName: "Buse Naz Çakıroğlu",
+    athleteName: "Seda Yılmaz",
     athleteImg: boksImg,
     talentName: "Selen Y.",
     talentCity: "İzmit",
@@ -45,7 +45,7 @@ const EXTRA_MATCHES = [
   {
     id: "tm4",
     needId: "n2",
-    athleteName: "Zeynep Sönmez",
+    athleteName: "Defne Arslan",
     athleteImg: tenisImg,
     talentName: "Mehmet K.",
     talentCity: "Ankara",

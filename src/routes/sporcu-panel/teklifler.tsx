@@ -67,7 +67,7 @@ function AthleteOffersPage() {
   };
 
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
+    <AppShell role="athlete" userName="Nisan Çelik" userCity="İstanbul">
       <motion.div
         initial="hidden"
         animate="show"

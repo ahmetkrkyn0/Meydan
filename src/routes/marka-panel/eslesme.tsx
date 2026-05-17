@@ -52,8 +52,8 @@ function MatchCard({ m, expanded, onToggle }: { m: Result; expanded: boolean; on
             <p className="mt-0.5 text-xs text-[color:var(--app-ink-soft)]">{m.sport}</p>
             <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-[color:var(--app-ink-mute)]">
               <MapPin className="h-3 w-3" strokeWidth={1.9} />
-              {m.athleteSlug === "mete-gazoz" ? "İstanbul"
-                : m.athleteSlug === "buse-naz-cakiroglu" ? "İzmit" : "Bursa"}
+              {m.athleteSlug === "nisan-celik" ? "İstanbul"
+                : m.athleteSlug === "seda-yilmaz" ? "İzmit" : "Bursa"}
             </p>
           </div>
         </div>

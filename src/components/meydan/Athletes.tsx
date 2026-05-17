@@ -6,9 +6,9 @@ import boksImg     from "@/assets/athlete-boks-kadin.png";
 import satrancImg  from "@/assets/athlete-satranc-erkek.png";
 
 const athletes = [
-  { img: okculukImg, name: "Mete Gazoz",           sport: "Okçuluk", rank: "#3 Dünya",     supporters: "2.1K", featured: false },
+  { img: okculukImg, name: "Nisan Çelik",           sport: "Okçuluk", rank: "#3 Dünya",     supporters: "2.1K", featured: false },
   { img: guresImg,   name: "Taha Akgül",            sport: "Güreş",   rank: "#1 Ulusal",    supporters: "2.4K", featured: true  },
-  { img: boksImg,    name: "Buse Naz Çakıroğlu",    sport: "Boks",    rank: "#2 Dünya",     supporters: "1.5K", featured: false },
+  { img: boksImg,    name: "Seda Yılmaz",    sport: "Boks",    rank: "#2 Dünya",     supporters: "1.5K", featured: false },
   { img: satrancImg, name: "Emre Can Özkan",        sport: "Satranç", rank: "#7 Avrupa",    supporters: "760",  featured: false },
 ];
 

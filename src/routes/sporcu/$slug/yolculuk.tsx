@@ -27,27 +27,27 @@ function buildTimeline(
   slug: string,
 ): Milestone[] {
   const memoryBank: Record<string, { year: string; age: number; title: string; emotion: string }[]> = {
-    "mete-gazoz": [
+    "nisan-celik": [
       { year: "2015", age: 17, title: "İlk milli takım çağrısı", emotion: "Telefon Bursa'dan geldi, otobüsteydim. Telefonu kapadım, kimseye söyleyemedim. Sadece annemi aradım." },
       { year: "2019", age: 21, title: "Olimpiyat kotası", emotion: "Kotayı aldığım gün babam ilk kez ağladı. Ondan sonra benim de gözlerim doldu." },
     ],
-    "zeynep-sonmez": [
+    "defne-arslan": [
       { year: "2016", age: 15, title: "İlk uluslararası tur", emotion: "Bursa'dan tek başına çıktığım ilk gündü. Valizin yarısı raket, yarısı sucuktu." },
       { year: "2021", age: 20, title: "İlk ITF finali", emotion: "Maçtan sonra koridorda yere oturdum. Üç dakika hiçbir şey düşünmedim. Sadece nefes." },
     ],
-    "sureyya-demir": [
+    "tayfun-keskin": [
       { year: "2014", age: 19, title: "Babamın masasında ilk seri", emotion: "Pencere açıktı, dışarıda yağmur vardı. 12. atışta dedim ki — bu iş bana göre." },
       { year: "2022", age: 27, title: "İlk Avrupa madalyası", emotion: "Annem maçı izlemedi, içeride bekledi. Salondan çıkınca beni öpmeden 'tebrikler oğlum' dedi. O yetti." },
     ],
-    "yusuf-dikec": [
+    "emre-sahin": [
       { year: "1999", age: 26, title: "İlk milli takım kampı", emotion: "O yıllar tüm maaşımı mermilere veriyordum. Eve para götürdüğüm gün annem hiç sormadı, sadece çorba doldurdu." },
       { year: "2008", age: 35, title: "İlk olimpiyat", emotion: "Pekin'de uçaktan inerken — 'Cebim boş, hedefim dolu' demiştim kendime. O söz hâlâ duruyor." },
     ],
-    "buse-naz-cakiroglu": [
+    "seda-yilmaz": [
       { year: "2015", age: 19, title: "Ringe ilk çıkış", emotion: "Eldivenleri ilk taktığım gün ellerim titriyordu. Hocam — 'titreyen el de yumruktur' dedi." },
       { year: "2021", age: 25, title: "Tokyo'da ilk olimpiyat", emotion: "Maçtan önce kulaklığımda annemin sesi vardı. 'Korkma' diyordu. Korkmadım." },
     ],
-    "necati-er": [
+    "alp-karadeniz": [
       { year: "2018", age: 21, title: "Eskişehir'de keşfedildi", emotion: "Pist tozluydu, ben paslıydım. Hocam tribünden bağırdı — 'çocuk üç adımı bilmiyor ama ritmi var.'" },
       { year: "2022", age: 25, title: "Akdeniz Oyunları", emotion: "Madalyayı boynuma takarken annemi düşündüm. O yıl pisti sabah dörtte süpürürdü." },
     ],

@@ -39,7 +39,7 @@ export function Problem() {
     <section id="problem" ref={ref} className="relative isolate overflow-hidden py-28 sm:py-36">
       <FloatingAthlete
         src={meteGazozImg}
-        alt="Mete Gazoz"
+        alt="Nisan Çelik"
         side="right"
         mirror
         scale={1.25}

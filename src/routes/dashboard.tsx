@@ -171,7 +171,7 @@ function DashboardPage() {
                   </span>
                   <span className="text-[color:var(--app-ink-mute)]">·</span>
                   <span className="text-xs text-[color:var(--app-ink-soft)]">
-                    Buse Naz · Boks · R3
+                    Seda Yılmaz · Boks · R3
                   </span>
                 </div>
               </div>

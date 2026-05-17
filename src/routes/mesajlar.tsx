@@ -43,7 +43,7 @@ type Conversation = {
 const conversations: Conversation[] = [
   {
     id: "c1",
-    name: "Mete Gazoz",
+    name: "Nisan Çelik",
     subtitle: "Okçuluk · İstanbul",
     avatar: okculukImg,
     lastMessage: "Budapeşte yolu için sesli not bırakacağım.",
@@ -62,7 +62,7 @@ const conversations: Conversation[] = [
   },
   {
     id: "c2",
-    name: "Zeynep Sönmez",
+    name: "Defne Arslan",
     subtitle: "Tenis · Ankara",
     avatar: tenisImg,
     lastMessage: "Grip değişimi hafta sonu gelirse harika olur.",
@@ -98,7 +98,7 @@ const conversations: Conversation[] = [
   },
   {
     id: "c4",
-    name: "Süreyya Demir",
+    name: "Tayfun Keskin",
     subtitle: "Bilardo · İzmir",
     avatar: bilardoImg,
     lastMessage: "Antalya yolu için planı yarın yazıyorum.",
@@ -118,7 +118,7 @@ const conversations: Conversation[] = [
     name: "Dr. Elif Aksoy",
     subtitle: "Yetenek eşleşmesi · Beslenme",
     avatar: atletizmImg,
-    lastMessage: "Necati ile ilk görüşme için cuma uygun mu?",
+    lastMessage: "Alp ile ilk görüşme için cuma uygun mu?",
     lastTime: "Dün",
     unread: 0,
     status: "offline",
@@ -126,9 +126,9 @@ const conversations: Conversation[] = [
     accent: "violet",
     messages: [
       { id: "m1", from: "other", text: "Eşleşme için detayları gönderdiğin için teşekkürler.", time: "Pzt" },
-      { id: "m2", from: "me", text: "Necati 3 ay haftalık takip istiyor, müsait misiniz?", time: "Pzt" },
+      { id: "m2", from: "me", text: "Alp 3 ay haftalık takip istiyor, müsait misiniz?", time: "Pzt" },
       { id: "m3", from: "other", text: "Eskişehir'de olduğum için sahaya da gelebilirim.", time: "Sal" },
-      { id: "m4", from: "other", text: "Necati ile ilk görüşme için cuma uygun mu?", time: "Sal" },
+      { id: "m4", from: "other", text: "Alp ile ilk görüşme için cuma uygun mu?", time: "Sal" },
     ],
   },
 ];

@@ -48,7 +48,7 @@ function AthleteProfilePage() {
   const session = useSession();
   const queryClient = useQueryClient();
   // Görsel/mock fallback — gerçek profil alanlarında değer yoksa kullanılır.
-  const mock = athleteBySlug("mete-gazoz");
+  const mock = athleteBySlug("nisan-celik");
 
   const profile = session.profile;
   const initial = useMemo(

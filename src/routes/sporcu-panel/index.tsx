@@ -28,7 +28,7 @@ const fadeUp = {
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
 function AthletePanelHome() {
-  const myNeeds = needs.filter((n) => n.athleteSlug === "mete-gazoz");
+  const myNeeds = needs.filter((n) => n.athleteSlug === "nisan-celik");
   const offers = brandOffers.slice(0, 2);
 
   const stats = [
@@ -82,7 +82,7 @@ function AthletePanelHome() {
   ];
 
   return (
-    <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
+    <AppShell role="athlete" userName="Nisan Çelik" userCity="İstanbul">
       <motion.div
         initial="hidden"
         animate="show"
