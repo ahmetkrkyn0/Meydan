@@ -319,15 +319,15 @@ function Stat({
           ? "bg-coral/10 text-coral"
           : "bg-emerald-500/10 text-emerald-700";
   return (
-    <div className="flex items-center gap-3 px-4 py-3.5 sm:px-5">
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${iconBg}`}>
-        <Icon className="h-4 w-4" strokeWidth={2} />
+    <div className="flex items-center gap-3.5 px-5 py-5 sm:px-6 sm:py-6">
+      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${iconBg}`}>
+        <Icon className="h-5 w-5" strokeWidth={2} />
       </span>
       <div className="min-w-0">
-        <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
+        <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
           {label}
         </p>
-        <p className={`mt-0.5 font-display text-xl font-bold leading-none ${toneClass}`}>
+        <p className={`mt-1 font-display text-2xl font-bold leading-none ${toneClass} sm:text-3xl`}>
           {value}
         </p>
       </div>

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowRight,
+  ArrowDown,
   Calendar,
   Check,
   CheckCircle2,
@@ -174,56 +174,39 @@ function TalentPage() {
   const canSave =
     isAuthenticated && isFan && picked.size > 0 && !saveMutation.isPending;
 
+  const steps = [
+    { n: "01", t: "Yeteneğini söyle", d: "Hangi konuda destek olabilirsin?" },
+    { n: "02", t: "AI ihtiyaçlarla eşler", d: "Sporcu ihtiyaç oluşturduğunda yakın yeteneklere ulaşır." },
+    { n: "03", t: "Sporcunun ekibi yazar", d: "Mesaj kutusunda devam edersin." },
+  ];
+
   return (
     <AppShell role="fan">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
-        {/* ─── HERO ─── */}
-        <motion.header
-          variants={fade}
-          initial="hidden"
-          animate="show"
-          custom={0}
-          className="flex flex-col gap-3"
-        >
-          <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-emerald-700">
-            Yetenek Bağışı · Yardımlaşma
-          </p>
-          <h1 className="font-display text-5xl font-bold leading-[1] tracking-tight text-[color:var(--app-ink)] sm:text-6xl">
-            Para değil,{" "}
-            <span className="italic text-emerald-700">beceri</span> bağışla.
-          </h1>
-          <p className="max-w-2xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
-            Türkiye'de sporcunun ihtiyacı her zaman para değil. Bazen{" "}
-            <span className="font-semibold text-[color:var(--app-ink)]">bir terzi</span>,
-            bazen <span className="font-semibold text-[color:var(--app-ink)]">bir şoför</span>,
-            bazen <span className="font-semibold text-[color:var(--app-ink)]">bir İngilizce öğretmeni</span>.
-          </p>
-        </motion.header>
-
-        {/* ─── HOW IT WORKS (3 step) ─── */}
-        <motion.section variants={fade} initial="hidden" animate="show" custom={1}>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { n: "01", t: "Yeteneğini söyle", d: "Hangi konuda destek olabilirsin?" },
-              { n: "02", t: "AI ihtiyaçlarla eşler", d: "Sporcu ihtiyaç oluşturduğunda yakın yeteneklere ulaşır." },
-              { n: "03", t: "Sporcunun ekibi yazar", d: "Mesaj kutusunda devam edersin." },
-            ].map((s, i) => (
-              <div
-                key={s.n}
-                className="relative flex flex-col gap-2 rounded-3xl bg-white/70 px-5 py-5"
-              >
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-emerald-700">
-                  Adım {s.n}
-                </p>
-                <p className="font-display text-lg font-bold text-[color:var(--app-ink)]">{s.t}</p>
-                <p className="text-xs text-[color:var(--app-ink-soft)]">{s.d}</p>
-                {i < 2 && (
-                  <ArrowRight className="absolute -right-2 top-1/2 hidden h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)] sm:block" />
-                )}
-              </div>
-            ))}
-          </div>
-        </motion.section>
+      <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1fr_280px]">
+        {/* ═══ SOL KOLON ═══ */}
+        <div className="flex min-w-0 flex-col gap-10">
+          {/* ─── HERO ─── */}
+          <motion.header
+            variants={fade}
+            initial="hidden"
+            animate="show"
+            custom={0}
+            className="flex flex-col gap-3"
+          >
+            <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-emerald-700">
+              Yetenek Bağışı · Yardımlaşma
+            </p>
+            <h1 className="font-display text-5xl font-bold leading-[1] tracking-tight text-[color:var(--app-ink)] sm:text-6xl">
+              Para değil,{" "}
+              <span className="italic text-emerald-700">beceri</span> bağışla.
+            </h1>
+            <p className="max-w-2xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
+              Türkiye'de sporcunun ihtiyacı her zaman para değil. Bazen{" "}
+              <span className="font-semibold text-[color:var(--app-ink)]">bir terzi</span>,
+              bazen <span className="font-semibold text-[color:var(--app-ink)]">bir şoför</span>,
+              bazen <span className="font-semibold text-[color:var(--app-ink)]">bir İngilizce öğretmeni</span>.
+            </p>
+          </motion.header>
 
         {/* ─── AUTH GATE banner ─── */}
         {(!isAuthenticated || !isFan) && (
@@ -497,6 +480,43 @@ function TalentPage() {
             </div>
           )}
         </motion.section>
+        </div>
+
+        {/* ═══ SAĞ KOLON · Dikey timeline ═══ */}
+        <motion.aside
+          variants={fade}
+          initial="hidden"
+          animate="show"
+          custom={1}
+          aria-label="Nasıl çalışır"
+          className="hidden lg:flex lg:pt-56"
+        >
+          <div className="sticky top-24 flex w-full flex-col gap-4">
+            {steps.map((s, i) => (
+              <div key={s.n} className="flex flex-col items-stretch">
+                <div className="soft-card flex flex-col gap-2.5 rounded-2xl bg-white/80 px-5 py-5 shadow-sm">
+                  <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-emerald-700">
+                    Adım {s.n}
+                  </p>
+                  <p className="font-display text-2xl font-extrabold leading-[1.1] tracking-tight text-[color:var(--app-ink)]">
+                    {s.t}
+                  </p>
+                  <p className="text-xs leading-relaxed text-[color:var(--app-ink-soft)]">
+                    {s.d}
+                  </p>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="flex justify-center py-1.5" aria-hidden>
+                    <ArrowDown
+                      className="h-5 w-5 text-emerald-700/60"
+                      strokeWidth={2.2}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.aside>
       </div>
     </AppShell>
   );
