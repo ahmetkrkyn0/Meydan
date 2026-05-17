@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { ArrowUpRight, Plus, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { ActiveAthletePicker } from "@/components/meydan/ActiveAthletePicker";
 import { type Need } from "@/lib/mock-data";
@@ -321,10 +321,22 @@ function NeedRow({ n, index }: { n: Need; index: number }) {
           <p>{n.city}</p>
           <p className="mt-1 text-[color:var(--app-ink)]">Son: {n.deadline}</p>
         </div>
-        <button className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet">
-          Detay
-          <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
-        </button>
+        {n.type === "talent" ? (
+          <Link
+            to="/sporcu-panel/ihtiyaclar/$id/eslesme"
+            params={{ id: n.id }}
+            className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-700 hover:text-emerald-800"
+          >
+            <Sparkles className="h-3 w-3" strokeWidth={2.5} />
+            AI Eşleşme
+            <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
+          </Link>
+        ) : (
+          <button className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet">
+            Detay
+            <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
+          </button>
+        )}
       </div>
     </motion.article>
   );

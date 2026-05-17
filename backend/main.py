@@ -369,7 +369,9 @@ def get_cheer_summary(athlete_id: str, match_date: str):
 
 @app.post("/needs/match")
 def match_need(body: NeedMatchRequest):
-    """Sporcu ihtiyacını taraftar yetenekleriyle eşleştirir."""
+    """[Eski API] Sporcu ihtiyacını title+description'tan yeni embedding üretip
+    taraftar yetenekleriyle eşleştirir. Daha verimli olan
+    /needs/{need_id}/matches kullanılması önerilir."""
     try:
         metin = body.title + ". " + body.description
         embedding = gemini_service.generate_embedding(metin)
@@ -377,6 +379,32 @@ def match_need(body: NeedMatchRequest):
         return {"matches": matches}
     except Exception as e:
         print(f"/needs/match hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/needs/{need_id}/matches")
+def get_need_matches(need_id: str, current_user: dict = Depends(get_current_profile)):
+    """Bir ihtiyaç için kayıtlı embedding'i kullanarak en uygun taraftar
+    yeteneklerini bulur. Sadece ihtiyacın sahibi sporcu çağırabilir."""
+    try:
+        need = supabase_service.get_need_with_embedding(need_id)
+        if need is None:
+            raise HTTPException(status_code=404, detail="İhtiyaç bulunamadı")
+        if need.get("athlete_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Bu ihtiyaç sana ait değil")
+
+        embedding = need.get("need_embedding")
+        if not embedding:
+            # Embedding yoksa title+description'tan üret.
+            metin = (need.get("title") or "") + ". " + (need.get("description") or "")
+            embedding = gemini_service.generate_embedding(metin.strip())
+
+        matches = supabase_service.find_matching_talents(embedding, need["athlete_id"])
+        return {"need_id": need_id, "matches": matches}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"/needs/{need_id}/matches hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

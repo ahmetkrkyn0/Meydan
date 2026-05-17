@@ -284,6 +284,25 @@ def get_need(need_id: str) -> dict | None:
         raise
 
 
+def get_need_with_embedding(need_id: str) -> dict | None:
+    """Tek bir ihtiyacı embedding alanıyla beraber getirir. Sadece backend
+    içi AI eşleştirme için kullanılır; response'a dökme."""
+    try:
+        response = (
+            supabase.table("needs")
+            .select("*")
+            .eq("id", need_id)
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            return None
+        return response.data[0]
+    except Exception as e:
+        print(f"İhtiyaç (embedding) getirme hatası: {e}")
+        raise
+
+
 def update_need(need_id: str, data: dict) -> dict | None:
     """İhtiyaç kaydını günceller ve güncel kaydı döner."""
     try:

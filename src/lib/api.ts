@@ -190,6 +190,30 @@ export function getProfile(profileId: string) {
   return apiRequest<BackendProfile>(`/profiles/${profileId}`);
 }
 
+export function updateProfile(
+  profileId: string,
+  data: Partial<{
+    role: ProfileRole;
+    full_name: string;
+    branch: string | null;
+    city: string | null;
+    bio: string | null;
+    ranking: string | null;
+    value_tags: string[] | null;
+    offered_talent: string | null;
+    brand_budget: number | null;
+    brand_values: string | null;
+  }>,
+) {
+  return apiRequest<{ status: "updated"; profile: BackendProfile }>(
+    `/profiles/${profileId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    },
+  );
+}
+
 export function listNeeds(athleteId?: string | null) {
   return apiRequest<{ needs: BackendNeed[] }>("/needs", {
     query: { athlete_id: athleteId },
@@ -243,6 +267,22 @@ export function listNearbyEvents(params: {
 
 export function getEvent(eventId: string) {
   return apiRequest<BackendEvent>(`/events/${eventId}`);
+}
+
+// --- AI Talent Match ---
+
+export type TalentMatchResult = {
+  id: string;
+  full_name: string;
+  city?: string | null;
+  offered_talent?: string | null;
+  similarity?: number;
+};
+
+export function matchNeedById(needId: string) {
+  return apiRequest<{ need_id: string; matches: TalentMatchResult[] }>(
+    `/needs/${needId}/matches`,
+  );
 }
 
 // --- Donations ---
