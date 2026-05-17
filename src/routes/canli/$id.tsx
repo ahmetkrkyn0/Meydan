@@ -7,7 +7,6 @@ import {
   Eye,
   Send,
   Sparkles,
-  Shield,
   ShieldAlert,
   ShieldCheck,
   Loader2,
@@ -17,10 +16,9 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { createCheer, getCheerSummary, listProfiles, type CheerSummary } from "@/lib/api";
-import { findProfileBySlug } from "@/lib/api-mappers";
+import { findProfileBySlug, liveMatchesWithProfiles } from "@/lib/api-mappers";
 import { useSession } from "@/lib/session";
 import {
-  liveMatches,
   recentCheers,
   cheerTemplates,
   tribuneNames,
@@ -181,7 +179,6 @@ type ComposerStatus =
   | { kind: "checking" }
   | { kind: "sent" }
   | { kind: "blocked" }
-  | { kind: "offline" }
   | { kind: "error"; message: string };
 
 function todayISO(): string {
@@ -190,7 +187,6 @@ function todayISO(): string {
 
 function LiveMatchPage() {
   const { id } = Route.useParams();
-  const match = liveMatches.find((m) => m.id === id) ?? liveMatches[0];
   const session = useSession();
 
   // Sporcu UUID — backend'den eşleştir
@@ -199,6 +195,11 @@ function LiveMatchPage() {
     queryFn: () => listProfiles({ role: "sporcu" }),
     retry: 1,
   });
+  const hydrated = useMemo(
+    () => liveMatchesWithProfiles(profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles],
+  );
+  const match = hydrated.find((m) => m.id === id) ?? hydrated[0];
   const athleteProfile = useMemo(
     () =>
       findProfileBySlug(match.athleteSlug, profilesQuery.data?.profiles),
@@ -332,21 +333,15 @@ function LiveMatchPage() {
     if (!message) return;
     if (status.kind === "checking") return;
 
-    // Backend yoksa: offline mode, mesajı feed'e ekle ama AI rozeti yok
+    // Backend hazır değilse: hata göster, mesajı gönderme. Gemini her zaman aktif.
     if (!backendReady) {
-      const item: FeedItem = {
-        id: `local-${Date.now()}`,
-        from: "Sen",
-        message,
-        time: "şimdi",
-        mine: true,
-        aiCleared: false,
-      };
-      setFeed((f) => [...f, item].slice(-14));
-      setDraft("");
-      setSent((s) => s + 1);
-      setStatus({ kind: "offline" });
-      setTimeout(() => setStatus({ kind: "idle" }), 2000);
+      setStatus({
+        kind: "error",
+        message: session.profile?.id
+          ? "Sporcu profili eşleşmedi."
+          : "Mesaj göndermek için giriş yap.",
+      });
+      setTimeout(() => setStatus({ kind: "idle" }), 3000);
       return;
     }
 
@@ -949,17 +944,7 @@ function LivePulse() {
   );
 }
 
-function AIShieldBadge({ ready }: { ready: boolean }) {
-  if (!ready) {
-    return (
-      <span
-        title="AI bağlı değil — mesajlar denetlenmiyor."
-        className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[color:var(--app-ink-mute)]"
-      >
-        <Shield className="h-2.5 w-2.5" /> AI off
-      </span>
-    );
-  }
+function AIShieldBadge({ ready: _ready }: { ready: boolean }) {
   return (
     <span
       title="Mesajların Gemini AI tarafından küfür/hakarete karşı kontrol edilir."
@@ -998,13 +983,6 @@ function ComposerStatusLine({
       <span className="inline-flex items-center gap-1 text-coral">
         <ShieldAlert className="h-2.5 w-2.5" />
         <span className="font-semibold">AI engelledi — mesajı düzelt</span>
-      </span>
-    );
-  }
-  if (status.kind === "offline") {
-    return (
-      <span className="text-[color:var(--app-ink-mute)]">
-        Çevrimdışı · mesaj yerel feed'e eklendi
       </span>
     );
   }

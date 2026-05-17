@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Eye, Radio, Sparkles, Activity, Zap, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { liveMatches, type Match } from "@/lib/mock-data";
+import { type Match } from "@/lib/mock-data";
+import { listProfiles } from "@/lib/api";
+import { liveMatchesWithProfiles } from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/canli/")({
   component: CanliListPage,
@@ -18,8 +21,17 @@ const fadeUp: Variants = {
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 
 function CanliListPage() {
-  const matches = liveMatches.filter((m) => m.status === "live");
-  const ended = liveMatches.filter((m) => m.status === "ended");
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const all = useMemo(
+    () => liveMatchesWithProfiles(profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles],
+  );
+  const matches = all.filter((m) => m.status === "live");
+  const ended = all.filter((m) => m.status === "ended");
   const featured = matches[0];
   const rest = matches.slice(1);
 
