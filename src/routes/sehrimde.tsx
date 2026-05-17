@@ -11,6 +11,7 @@ import {
 import { AppShell } from "@/components/meydan/AppShell";
 import { listNearbyEvents } from "@/lib/api";
 import { backendEventToEvent as backendEventToEventLocal } from "@/lib/api-mappers";
+import { CITY_OPTIONS } from "@/lib/form-options";
 import { events, sports, type Event } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/sehrimde")({
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/sehrimde")({
 });
 
 const ALL_CITIES = "Tüm şehirler";
-const cities = [ALL_CITIES, "İstanbul", "Ankara", "İzmir", "Bursa", "Eskişehir", "Bodrum"];
+// Hızlı erişim için chip olarak gösterilecek popüler şehirler.
+const FEATURED_CITIES = [ALL_CITIES, "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Eskişehir"];
 
 type Range = "all" | "week" | "month";
 
@@ -126,7 +128,7 @@ function SehrimdePage() {
           )}
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            {cities.map((c) => {
+            {FEATURED_CITIES.map((c) => {
               const on = c === city;
               return (
                 <button
@@ -138,6 +140,22 @@ function SehrimdePage() {
                 </button>
               );
             })}
+            {/* Diğer iller için dropdown */}
+            <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white px-2.5 py-1 text-xs">
+              <MapPin className="h-3 w-3 text-[color:var(--app-ink-mute)]" />
+              <select
+                value={FEATURED_CITIES.includes(city) ? "" : city}
+                onChange={(e) => {
+                  if (e.target.value) setCity(e.target.value);
+                }}
+                className="bg-transparent text-xs font-medium text-[color:var(--app-ink)] focus:outline-none"
+              >
+                <option value="">Diğer il...</option>
+                {CITY_OPTIONS.filter((c) => !FEATURED_CITIES.includes(c)).map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </motion.header>
 

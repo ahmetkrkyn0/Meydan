@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, ArrowLeft, Mail, User, Trophy, Heart, ShieldCheck, Check, Lock, Eye, EyeOff, MapPin } from "lucide-react";
 import { useRegister } from "@/lib/session";
 import { defaultRouteForRole } from "@/lib/session";
+import { BRANCH_OPTIONS, CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/kayit")({
   component: RegisterPage,
@@ -45,6 +46,14 @@ function RegisterPage() {
       setError("Ad ve email zorunlu");
       return;
     }
+    if (!city) {
+      setError("Şehir seç");
+      return;
+    }
+    if (role === "sporcu" && !branch) {
+      setError("Branş seç");
+      return;
+    }
     if (password.length < 6) {
       setError("Şifre en az 6 karakter olmalı");
       return;
@@ -60,8 +69,8 @@ function RegisterPage() {
         password,
         full_name: fullName.trim(),
         role,
-        city: city.trim() || undefined,
-        branch: role === "sporcu" && branch.trim() ? branch.trim() : undefined,
+        city,
+        branch: role === "sporcu" ? branch : undefined,
       });
       navigate({ to: defaultRouteForRole(result.profile.role) }).catch(() => undefined);
     } catch (err) {
@@ -238,20 +247,22 @@ function RegisterPage() {
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
               />
-              <Field
-                icon={User}
-                type="text"
-                placeholder="Şehir (opsiyonel)"
+              <SelectField
+                icon={MapPin}
+                placeholder="Şehir seç"
+                options={CITY_OPTIONS}
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={setCity}
+                required
               />
               {role === "sporcu" && (
-                <Field
+                <SelectField
                   icon={Trophy}
-                  type="text"
-                  placeholder="Branş (örn. Okçuluk)"
+                  placeholder="Branş seç"
+                  options={BRANCH_OPTIONS}
                   value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
+                  onChange={setBranch}
+                  required
                 />
               )}
 
@@ -303,6 +314,50 @@ function Field({
         className="h-12 w-full rounded-2xl border border-[color:var(--app-line)] bg-white pl-11 pr-12 text-sm text-[color:var(--app-ink)] placeholder:text-[color:var(--app-ink-mute)] transition-colors focus:border-[color:var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color:oklch(0.60_0.22_252/0.20)]"
       />
       {suffix && <span className="absolute right-4 top-1/2 -translate-y-1/2">{suffix}</span>}
+    </label>
+  );
+}
+
+function SelectField({
+  icon: Icon,
+  placeholder,
+  options,
+  value,
+  onChange,
+  required,
+}: {
+  icon: typeof Mail;
+  placeholder: string;
+  options: readonly (string | { value: string; emoji?: string })[];
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <label className="group relative block">
+      <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)] transition-colors group-focus-within:text-[color:var(--violet)]" />
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+        className="h-12 w-full appearance-none rounded-2xl border border-[color:var(--app-line)] bg-white pl-11 pr-10 text-sm text-[color:var(--app-ink)] transition-colors focus:border-[color:var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color:oklch(0.60_0.22_252/0.20)]"
+      >
+        <option value="" disabled>
+          {placeholder}
+        </option>
+        {options.map((opt) => {
+          const v = typeof opt === "string" ? opt : opt.value;
+          const label = typeof opt === "string" ? opt : `${opt.emoji ?? ""} ${opt.value}`.trim();
+          return (
+            <option key={v} value={v}>
+              {label}
+            </option>
+          );
+        })}
+      </select>
+      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[color:var(--app-ink-mute)]">
+        ▾
+      </span>
     </label>
   );
 }

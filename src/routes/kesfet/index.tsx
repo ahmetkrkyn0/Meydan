@@ -7,6 +7,7 @@ import { AppShell } from "@/components/meydan/AppShell";
 import { listProfiles } from "@/lib/api";
 import { profilesToAthletes } from "@/lib/api-mappers";
 import { sports, type Athlete } from "@/lib/mock-data";
+import { CITY_OPTIONS } from "@/lib/form-options";
 
 export const Route = createFileRoute("/kesfet/")({
   component: KesfetPage,
@@ -20,7 +21,7 @@ const fadeUp: Variants = {
 };
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 
-const CITIES = ["Tüm Türkiye", "İstanbul", "Ankara", "İzmir", "Bursa", "İzmit", "Eskişehir"];
+const CITIES = ["Tüm Türkiye", ...CITY_OPTIONS] as const;
 
 function trendValue(a: Athlete) {
   const n = parseFloat(a.trend.replace("%", "").replace("+", ""));
