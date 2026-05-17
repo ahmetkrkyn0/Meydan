@@ -96,7 +96,7 @@ export function AppShell({
   role = "fan",
   userName,
   userCity,
-  hideSearch = false,
+  hideSearch = true,
   topbarOverlay = false,
 }: {
   children: ReactNode;
