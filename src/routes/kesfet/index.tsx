@@ -288,71 +288,189 @@ function KesfetPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setActiveSport(null)}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                activeSport === null
-                  ? "bg-[color:var(--app-ink)] text-white"
-                  : "chip"
-              }`}
-            >
-              Tümü
-            </button>
-            {sports.map((s) => {
-              const active = activeSport === s.name;
-              return (
+            {/* Branş dropdown */}
+            <Popover>
+              <PopoverTrigger asChild>
                 <button
-                  key={s.id}
-                  onClick={() => setActiveSport(active ? null : s.name)}
-                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    active ? "bg-[color:var(--app-ink)] text-white" : "chip"
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    activeSport
+                      ? "border-violet/40 bg-violet/10 text-violet"
+                      : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
                   }`}
                 >
-                  <span className="mr-1">{s.emoji}</span> {s.name}
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Branş</span>
+                  <span className="font-mono text-[10px] text-[color:var(--app-ink-mute)]">
+                    {activeSport ?? "Tümü"}
+                  </span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
                 </button>
-              );
-            })}
-          </div>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-72 p-2">
+                <div className="mb-1 flex items-center justify-between px-2 pt-1">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                    Branş seç
+                  </span>
+                  {activeSport && (
+                    <button
+                      onClick={() => setActiveSport(null)}
+                      className="text-[10px] font-semibold text-violet hover:underline"
+                    >
+                      Temizle
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-72 overflow-y-auto">
+                  <button
+                    onClick={() => setActiveSport(null)}
+                    className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
+                      activeSport === null ? "font-bold text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-soft)]"
+                    }`}
+                  >
+                    <span>Tümü</span>
+                    {activeSport === null && <Check className="h-3.5 w-3.5 text-violet" />}
+                  </button>
+                  {sports.map((s) => {
+                    const active = activeSport === s.name;
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => setActiveSport(active ? null : s.name)}
+                        className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
+                          active ? "font-bold text-violet" : "text-[color:var(--app-ink-soft)]"
+                        }`}
+                      >
+                        <span>
+                          <span className="mr-1.5">{s.emoji}</span>
+                          {s.name}
+                        </span>
+                        {active && <Check className="h-3.5 w-3.5 text-violet" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-[color:var(--app-line-soft)] pt-3">
-            <label className="flex items-center gap-2">
-              <MapPin className="h-3.5 w-3.5 text-[color:var(--app-ink-soft)]" />
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="rounded-lg border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 text-xs font-medium text-[color:var(--app-ink)] focus:border-violet/40 focus:outline-none focus:ring-2 focus:ring-violet/15"
-              >
-                {CITIES.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </label>
+            {/* Şehir dropdown */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    city !== "Tüm Türkiye"
+                      ? "border-sky/40 bg-sky/10 text-sky"
+                      : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
+                  }`}
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>Şehir</span>
+                  <span className="font-mono text-[10px] text-[color:var(--app-ink-mute)]">{city}</span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-64 p-2">
+                <div className="mb-1 flex items-center justify-between px-2 pt-1">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                    Şehir seç
+                  </span>
+                  {city !== "Tüm Türkiye" && (
+                    <button
+                      onClick={() => setCity("Tüm Türkiye")}
+                      className="text-[10px] font-semibold text-sky hover:underline"
+                    >
+                      Temizle
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-72 overflow-y-auto">
+                  {CITIES.map((c) => {
+                    const active = city === c;
+                    return (
+                      <button
+                        key={c}
+                        onClick={() => setCity(c)}
+                        className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
+                          active ? "font-bold text-sky" : "text-[color:var(--app-ink-soft)]"
+                        }`}
+                      >
+                        <span>{c}</span>
+                        {active && <Check className="h-3.5 w-3.5 text-sky" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-            <button
-              onClick={() => setOnlyRising((v) => !v)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
-                onlyRising
-                  ? "bg-coral/15 text-coral"
-                  : "border border-[color:var(--app-line)] text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
-              }`}
-            >
-              <Flame className="h-3.5 w-3.5" />
-              Yeni yükselen
-            </button>
+            {/* Trend dropdown */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    onlyRising
+                      ? "border-coral/40 bg-coral/10 text-coral"
+                      : "border-[color:var(--app-line)] bg-white text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
+                  }`}
+                >
+                  <Flame className="h-3.5 w-3.5" />
+                  <span>Trend</span>
+                  <span className="font-mono text-[10px] text-[color:var(--app-ink-mute)]">
+                    {onlyRising ? "Yeni yükselen" : "Hepsi"}
+                  </span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-56 p-2">
+                <button
+                  onClick={() => setOnlyRising(false)}
+                  className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
+                    !onlyRising ? "font-bold text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-soft)]"
+                  }`}
+                >
+                  <span>Hepsi</span>
+                  {!onlyRising && <Check className="h-3.5 w-3.5 text-[color:var(--app-ink)]" />}
+                </button>
+                <button
+                  onClick={() => setOnlyRising(true)}
+                  className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-[color:var(--app-line-soft)] ${
+                    onlyRising ? "font-bold text-coral" : "text-[color:var(--app-ink-soft)]"
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <TrendingUp className="h-3 w-3" /> Yeni yükselen (%15+)
+                  </span>
+                  {onlyRising && <Check className="h-3.5 w-3.5 text-coral" />}
+                </button>
+              </PopoverContent>
+            </Popover>
 
             {activeFilters.length > 0 && (
-              <div className="ml-auto flex flex-wrap items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
-                  Filtre:
-                </span>
-                {activeFilters.map((f) => (
-                  <span key={f} className="chip chip-violet">
-                    {f}
-                  </span>
-                ))}
-              </div>
+              <button
+                onClick={() => {
+                  setActiveSport(null);
+                  setCity("Tüm Türkiye");
+                  setOnlyRising(false);
+                }}
+                className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+              >
+                <X className="h-3 w-3" />
+                Sıfırla
+              </button>
             )}
           </div>
+
+          {activeFilters.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-[color:var(--app-line-soft)] pt-3">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+                Aktif:
+              </span>
+              {activeFilters.map((f) => (
+                <span key={f} className="chip chip-violet">
+                  {f}
+                </span>
+              ))}
+            </div>
+          )}
 
           {(profilesQuery.isLoading || profilesQuery.isError) && (
             <p className="mt-3 text-[11px] text-[color:var(--app-ink-mute)]">
