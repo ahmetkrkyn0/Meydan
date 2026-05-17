@@ -204,8 +204,8 @@ function DashboardPage() {
         </motion.header>
 
         {/* ─── Dark spotlight: Sessiz Tezahürat ─── */}
-        <motion.section variants={fadeUp} className="-mx-5 sm:-mx-8">
-          <div className="relative overflow-hidden sm:rounded-3xl">
+        <motion.section variants={fadeUp} className="-mx-5 -mt-14 sm:-mx-[calc(50vw-50%)] lg:-mx-[calc(50vw-8rem-50%)]">
+          <div className="relative overflow-hidden">
             <img
               src={spotlightAthlete}
               alt=""
