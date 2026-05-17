@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import {
@@ -8,6 +9,8 @@ import {
   Filter,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { listNearbyEvents } from "@/lib/api";
+import { backendEventsToEvents } from "@/lib/api-mappers";
 import { events, sports, type Event } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/sehrimde")({
@@ -30,19 +33,30 @@ function SehrimdePage() {
   const [freeOnly, setFreeOnly] = useState(false);
   const [range, setRange] = useState<"week" | "month">("week");
   const [activeId, setActiveId] = useState<string | null>(events[0]?.id ?? null);
+  const eventsQuery = useQuery({
+    queryKey: ["events", "nearby", city, sportFilter],
+    queryFn: () => listNearbyEvents({ city, branch: sportFilter }),
+    retry: 1,
+  });
+
+  const eventList = useMemo(
+    () => backendEventsToEvents(eventsQuery.data?.events),
+    [eventsQuery.data?.events],
+  );
 
   const filtered = useMemo(() => {
-    return events.filter((e) => {
+    return eventList.filter((e) => {
+      if (city && e.city !== city) return false;
       if (sportFilter && e.sport !== sportFilter) return false;
       if (freeOnly && !e.free) return false;
       return true;
     });
-  }, [sportFilter, freeOnly]);
+  }, [city, eventList, sportFilter, freeOnly]);
 
   const sportsInCity = useMemo(() => {
-    const set = new Set(events.map((e) => e.sport));
+    const set = new Set(eventList.filter((e) => e.city === city).map((e) => e.sport));
     return Array.from(set);
-  }, []);
+  }, [city, eventList]);
 
   const active = filtered.find((e) => e.id === activeId) ?? filtered[0];
 
@@ -64,6 +78,14 @@ function SehrimdePage() {
           <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
             Yakınında olan tek bir maç bile tribünün başlangıcıdır. {filtered.length} etkinlik bulundu.
           </p>
+
+          {(eventsQuery.isLoading || eventsQuery.isError) && (
+            <p className="text-xs text-[color:var(--app-ink-mute)]">
+              {eventsQuery.isLoading
+                ? "Yaklaşan etkinlikler backend'den yükleniyor..."
+                : "Backend'e ulaşılamadı; demo etkinlikleri gösteriliyor."}
+            </p>
+          )}
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {cities.map((c) => {

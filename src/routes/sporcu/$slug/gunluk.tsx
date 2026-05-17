@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowLeft,
   Play,
@@ -12,6 +13,12 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug, diaryEntries, type DiaryEntry } from "@/lib/mock-data";
+import { listJournals, listProfiles } from "@/lib/api";
+import {
+  backendJournalsToDiary,
+  findAthleteBySlug,
+  findProfileBySlug,
+} from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/sporcu/$slug/gunluk")({
   component: AthleteDiaryPage,
@@ -48,13 +55,37 @@ function timeSince(d: string): string {
 
 function AthleteDiaryPage() {
   const { slug } = Route.useParams();
-  const a = athleteBySlug(slug);
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const profile = useMemo(
+    () => findProfileBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+  const a = useMemo(
+    () => findAthleteBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
+  const journalsQuery = useQuery({
+    queryKey: ["journals", profile?.id],
+    queryFn: () => listJournals(profile!.id),
+    enabled: Boolean(profile?.id),
+    retry: 1,
+  });
   const [filter, setFilter] = useState<Filter>("all");
   const [playing, setPlaying] = useState<string | null>(null);
 
-  let entries: DiaryEntry[] = diaryEntries.filter((d) => d.athleteSlug === slug);
-  const isEmpty = entries.length === 0;
-  if (isEmpty) {
+  const hasBackendJournals = Boolean(journalsQuery.data);
+  let entries: DiaryEntry[] = hasBackendJournals
+    ? backendJournalsToDiary(journalsQuery.data?.journals).map((entry) => ({
+        ...entry,
+        athleteSlug: slug,
+      }))
+    : diaryEntries.filter((d) => d.athleteSlug === slug);
+  const isPlaceholder = !hasBackendJournals && entries.length === 0;
+  if (isPlaceholder) {
     entries = PLACEHOLDERS.map((p) => ({ ...p, athleteSlug: slug }));
   }
 
@@ -135,7 +166,7 @@ function AthleteDiaryPage() {
         </motion.div>
 
         {/* Empty hint */}
-        {isEmpty && (
+        {isPlaceholder && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

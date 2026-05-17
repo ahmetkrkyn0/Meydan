@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion, type Variants } from "framer-motion";
 import { useState } from "react";
 import {
@@ -12,6 +13,8 @@ import {
   Clock,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { getEvent } from "@/lib/api";
+import { backendEventToEvent } from "@/lib/api-mappers";
 import { events, athletes } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/etkinlik/$id")({
@@ -28,7 +31,13 @@ const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0
 
 function EventDetailPage() {
   const { id } = Route.useParams();
-  const event = events.find((e) => e.id === id) ?? events[0];
+  const eventQuery = useQuery({
+    queryKey: ["event", id],
+    queryFn: () => getEvent(id),
+    retry: 1,
+  });
+  const fallbackEvent = events.find((e) => e.id === id) ?? events[0];
+  const event = eventQuery.data ? backendEventToEvent(eventQuery.data) : fallbackEvent;
   const [going, setGoing] = useState(false);
 
   const relatedAthletes = athletes

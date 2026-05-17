@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -10,7 +11,8 @@ import {
   Wrench,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { needs } from "@/lib/mock-data";
+import { listNeeds, listProfiles } from "@/lib/api";
+import { backendNeedsToNeedsWithProfiles } from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/yetenek/")({
   component: TalentPage,
@@ -48,6 +50,16 @@ function TalentPage() {
   const [picked, setPicked] = useState<Set<string>>(new Set(["Dil dersi"]));
   const [city, setCity] = useState<string>("İstanbul");
   const [avail, setAvail] = useState<string>("Hafta sonu");
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const needsQuery = useQuery({
+    queryKey: ["needs"],
+    queryFn: () => listNeeds(),
+    retry: 1,
+  });
 
   const togglePick = (t: string) => {
     setPicked((prev) => {
@@ -57,7 +69,14 @@ function TalentPage() {
     });
   };
 
-  const talentNeeds = needs.filter((n) => n.type === "talent");
+  const needList = useMemo(
+    () => backendNeedsToNeedsWithProfiles(needsQuery.data?.needs, profilesQuery.data?.profiles),
+    [needsQuery.data?.needs, profilesQuery.data?.profiles],
+  );
+  const talentNeeds = useMemo(
+    () => needList.filter((n) => n.type === "talent"),
+    [needList],
+  );
 
   return (
     <AppShell role="fan">

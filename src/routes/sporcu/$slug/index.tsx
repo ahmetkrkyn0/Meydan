@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 import {
   Heart,
   UserPlus,
@@ -17,6 +19,8 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { athleteBySlug } from "@/lib/mock-data";
+import { listProfiles } from "@/lib/api";
+import { findAthleteBySlug } from "@/lib/api-mappers";
 
 export const Route = createFileRoute("/sporcu/$slug/")({
   component: AthleteProfilePage,
@@ -46,7 +50,15 @@ function formatCurrency(n: number): string {
 
 function AthleteProfilePage() {
   const { slug } = Route.useParams();
-  const a = athleteBySlug(slug);
+  const profilesQuery = useQuery({
+    queryKey: ["profiles", "sporcu"],
+    queryFn: () => listProfiles({ role: "sporcu" }),
+    retry: 1,
+  });
+  const a = useMemo(
+    () => findAthleteBySlug(slug, profilesQuery.data?.profiles),
+    [profilesQuery.data?.profiles, slug],
+  );
 
   const stats = [
     { label: "Takipçi", value: formatNumber(a.followers) },
