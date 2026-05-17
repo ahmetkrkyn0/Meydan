@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
@@ -13,8 +14,9 @@ import {
   Wrench,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
-import { brandOffers, needs } from "@/lib/mock-data";
+import { brandOffers } from "@/lib/mock-data";
 import { useSession } from "@/lib/session";
+import { listNeeds } from "@/lib/api";
 import archeryFieldImg from "@/assets/okçulukalan.png";
 
 export const Route = createFileRoute("/sporcu-panel/")({
@@ -34,7 +36,13 @@ function AthletePanelHome() {
   const firstName = profile?.full_name ? profile.full_name.split(" ")[0] : "Sporcu";
   const city = profile?.city || "Şehir Belirtilmedi";
   
-  const myNeeds = needs.filter((n) => n.athleteSlug === "nisan-celik");
+  const { data: needsData } = useQuery({
+    queryKey: ["needs", profile?.id],
+    queryFn: () => listNeeds(profile?.id),
+    enabled: !!profile?.id,
+  });
+  const myNeeds = needsData?.needs || [];
+  
   const offers = brandOffers.slice(0, 2);
 
   const stats = [
@@ -151,192 +159,184 @@ function AthletePanelHome() {
           })}
         </motion.section>
 
-        {/* ─── HERO: Bu haftaki taraftar sesi (kartsız, editorial) ─── */}
-        <motion.section variants={fadeUp} className="grid gap-8 px-6 sm:px-10 md:grid-cols-[1.1fr_1fr] md:gap-12">
-          {/* Sol: Sayı + AI özet */}
-          <div className="flex flex-col gap-5">
+        {/* ─── NEEDS (İhtiyaç Kartların) ─── */}
+        <motion.section variants={fadeUp} className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Mic className="h-4 w-4 text-violet" strokeWidth={1.9} />
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-violet">
-                Bu haftaki taraftar sesi
-              </p>
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/10 text-violet">
+                <Wrench className="h-4 w-4" strokeWidth={2} />
+              </span>
+              <h2 className="font-display text-xl font-bold tracking-tight text-slate-900">
+                İhtiyaç Kartların
+              </h2>
+              <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                {myNeeds.length} Aktif
+              </span>
             </div>
-
-            <h2 className="font-display text-3xl font-bold leading-tight tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
-              Sahnede <span className="italic text-violet">yalnız değilsin</span>.
-            </h2>
-
-            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
-              <div>
-                <p className="font-display text-5xl font-bold leading-none text-violet sm:text-6xl">
-                  {matchRecaps.reduce((s, m) => s + m.cheers, 0).toLocaleString("tr-TR")}
-                </p>
-                <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                  Sessiz tezahürat
-                </p>
-              </div>
-              <div>
-                <p className="font-display text-4xl font-bold leading-none text-[color:var(--app-ink)] sm:text-5xl">
-                  {matchRecaps.length}
-                </p>
-                <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-                  Maç sonrası
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
-              Bu haftaki mesajlarda <span className="font-semibold text-[color:var(--app-ink)]">sabır</span>,{" "}
-              <span className="font-semibold text-[color:var(--app-ink)]">aile</span> ve{" "}
-              <span className="font-semibold text-[color:var(--app-ink)]">Türkiye</span> kelimeleri öne çıktı.
-              24 kişi sana özel bir not bıraktı.
-            </p>
+            <Link
+              to="/sporcu-panel/ihtiyaclar"
+              className="group flex items-center gap-1 text-[13px] font-semibold text-violet transition-colors hover:text-indigo-600"
+            >
+              Tümünü gör <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
 
-          {/* Sağ: Maç özetleri listesi — divider ile, kartsız satırlar */}
-          <div className="flex flex-col">
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
-              Son maçların
-            </p>
-            <ul className="divide-y divide-[color:var(--app-line)]">
-              {matchRecaps.map((m) => (
-                <li key={m.id}>
-                  <Link
-                    to="/tezahurat/$matchId/ozet"
-                    params={{ matchId: m.id }}
-                    className="group flex items-center gap-3 py-3 transition-colors hover:text-violet"
-                  >
-                    <span className="chip chip-violet shrink-0">{m.score}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[color:var(--app-ink)] group-hover:text-violet">
-                        {m.title}
-                      </p>
-                      <p className="text-[11px] text-[color:var(--app-ink-mute)]">
-                        {m.date} · {m.city} · {m.cheers.toLocaleString("tr-TR")} tezahürat
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-[color:var(--app-ink-mute)] transition-all group-hover:translate-x-0.5 group-hover:text-violet" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {myNeeds.slice(0, 3).map((n) => {
+              const pct = n.target_amount && n.collected_amount
+                ? Math.round((n.collected_amount / n.target_amount) * 100)
+                : 0;
+              return (
+                <div key={n.id} className="group relative flex flex-col gap-3 rounded-[24px] bg-white border border-slate-200/60 p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:border-violet/30 hover:-translate-y-1">
+                  <div className="flex items-start justify-between">
+                    <span className="inline-flex rounded-lg bg-violet/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-violet">
+                      {n.category}
+                    </span>
+                    {n.is_urgent && (
+                      <span className="flex h-2 w-2 rounded-full bg-coral shadow-[0_0_8px_rgba(244,63,94,0.6)]" title="Acil" />
+                    )}
+                  </div>
+                  <p className="line-clamp-2 text-[15px] font-bold leading-snug text-slate-900">
+                    {n.title}
+                  </p>
+                  <div className="mt-auto pt-2">
+                    {n.need_type === "money" && n.target_amount ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-between text-[11px] font-medium text-slate-500">
+                          <span>{pct}% tamamlandı</span>
+                          <span>{n.deadline}</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full rounded-full bg-gradient-to-r from-violet to-indigo-500" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
+                        <Users className="h-3.5 w-3.5 text-indigo-400" /> Yetenek desteği · {n.deadline}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {myNeeds.length < 3 && (
+              <Link
+                to="/sporcu-panel/ihtiyac-olustur"
+                className="group flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-[24px] border-2 border-dashed border-slate-200 bg-slate-50/50 p-5 text-center transition-all hover:border-violet/40 hover:bg-violet/5"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm transition-colors group-hover:bg-violet group-hover:text-white">
+                  <Plus className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-[14px] font-bold text-slate-700 group-hover:text-violet">Yeni İhtiyaç Ekle</p>
+                  <p className="text-[11px] text-slate-500">Topluluğa sesini duyur</p>
+                </div>
+              </Link>
+            )}
           </div>
         </motion.section>
 
-        {/* ─── ALT: Marka teklifleri + İhtiyaç kartları (2 kolon, dikey ayraç) ─── */}
-        <motion.section variants={fadeUp} className="grid gap-8 px-6 sm:px-10 lg:grid-cols-2 lg:gap-0 lg:divide-x lg:divide-[color:var(--app-line)]">
-          {/* Marka teklifleri */}
-          <div className="flex flex-col gap-3 lg:pr-8">
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display inline-flex items-center gap-2 text-lg font-bold text-[color:var(--app-ink)]">
-                Marka teklifleri
-                <Bell className="h-4 w-4 text-coral" strokeWidth={1.9} />
-              </h2>
-              <p className="text-[11px] text-[color:var(--app-ink-mute)]">
-                AI uyum skoruna göre dizildi · {offers.length} yeni
-              </p>
+        {/* ─── BENTO GRID: Teklifler & Taraftar Sesi ─── */}
+        <motion.section variants={fadeUp} className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+          
+          {/* Sol: Marka Teklifleri */}
+          <div className="flex flex-col gap-4 rounded-[32px] bg-white border border-slate-200/60 p-6 sm:p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-sky-500">
+                  <Bell className="h-4 w-4" strokeWidth={2} />
+                </span>
+                <h2 className="font-display text-xl font-bold tracking-tight text-slate-900">
+                  Marka Teklifleri
+                </h2>
+              </div>
+              <Link to="/sporcu-panel/teklifler" className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900">
+                <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
+              </Link>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {offers.map((o) => (
-                <div key={o.id} className="soft-card flex flex-col gap-3 rounded-2xl p-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky/14 font-display text-sm font-bold text-sky">
-                      {o.brandName.slice(0, 2).toUpperCase()}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[color:var(--app-ink)]">
-                        {o.brandName}
-                      </p>
-                      <p className="truncate text-[11px] text-[color:var(--app-ink-mute)]">
-                        {o.brandSector}
-                      </p>
+            <div className="flex flex-col gap-3">
+              {brandOffers.slice(0, 3).map((o) => (
+                <div key={o.id} className="group relative flex flex-col gap-2 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md hover:border-sky-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 text-xs font-bold text-white shadow-sm">
+                        {o.brandName.slice(0, 2).toUpperCase()}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-[14px] font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{o.brandName}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-slate-500">{o.brandSector}</span>
+                      </div>
                     </div>
-                    <span className="chip chip-sky shrink-0">{o.fitScore}%</span>
+                    <span className="inline-flex rounded-lg bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-600 border border-emerald-100">
+                      % {o.fitScore} Uyum
+                    </span>
                   </div>
-                  <div className="flex items-baseline justify-between">
-                    <p className="font-display text-xl font-bold text-[color:var(--app-ink)]">
-                      ₺ {o.amount.toLocaleString("tr-TR")}
-                    </p>
-                    <p className="text-[11px] text-[color:var(--app-ink-soft)]">{o.duration}</p>
+                  <div className="mt-1 flex items-baseline justify-between pl-12">
+                    <span className="font-display text-lg font-bold text-slate-900">₺{o.amount.toLocaleString("tr-TR")}</span>
+                    <span className="text-[11px] font-medium text-slate-500">{o.duration}</span>
                   </div>
                 </div>
               ))}
             </div>
-
-            <Link
-              to="/sporcu-panel/teklifler"
-              className="btn-ghost-light inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-semibold"
-            >
-              Tümünü görüntüle <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
 
-          {/* İhtiyaç kartları */}
-          <div className="flex flex-col gap-3 lg:pl-8">
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display inline-flex items-center gap-2 text-lg font-bold text-[color:var(--app-ink)]">
-                İhtiyaç kartların
-                <Wrench className="h-4 w-4 text-violet" strokeWidth={1.9} />
-              </h2>
-              <p className="text-[11px] text-[color:var(--app-ink-mute)]">
-                Topluluk seni duyuyor · {myNeeds.length} aktif
-              </p>
-            </div>
+          {/* Sağ: Taraftar Sesi & Son Maçlar */}
+          <div className="flex flex-col rounded-[32px] bg-white border border-slate-200/60 p-6 sm:p-8 shadow-sm">
+            
+            <div className="flex flex-col gap-6">
+              {/* Header */}
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 text-violet-600">
+                  <Mic className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <h2 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+                  Taraftarın Sesi
+                </h2>
+              </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {myNeeds.slice(0, 2).map((n) => {
-                const pct = n.targetAmount && n.collectedAmount
-                  ? Math.round((n.collectedAmount / n.targetAmount) * 100)
-                  : 0;
-                return (
-                  <div key={n.id} className="soft-card flex flex-col gap-2 rounded-2xl p-4">
-                    <div className="flex items-baseline justify-between">
-                      <span className="chip chip-violet">{n.category}</span>
-                      {n.urgent && <span className="chip chip-coral">acil</span>}
-                    </div>
-                    <p className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--app-ink)]">
-                      {n.title}
-                    </p>
-                    {n.type === "money" && n.targetAmount ? (
-                      <>
-                        <div className="mt-auto h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--app-line-soft)]">
-                          <div className="h-full rounded-full bg-violet" style={{ width: `${pct}%` }} />
+              {/* Title & Subtitle */}
+              <div className="flex flex-col gap-3">
+                <h3 className="font-display text-[36px] sm:text-[42px] font-bold leading-tight tracking-tight text-slate-900">
+                  Sahnede <span className="text-violet-600 italic">yalnız değilsin</span>.
+                </h3>
+                <p className="text-[15px] leading-relaxed text-slate-500">
+                  Bu haftaki mesajlarda <span className="font-bold text-slate-900">sabır</span>, <span className="font-bold text-slate-900">aile</span> ve <span className="font-bold text-slate-900">Türkiye</span> kelimeleri öne çıktı. 24 kişi sana özel bir not bıraktı.
+                </p>
+              </div>
+
+              {/* Son Maçların Kartı */}
+              <div className="mt-2 flex flex-col rounded-[24px] bg-slate-50 border border-slate-100 p-5 sm:p-6">
+                <p className="mb-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Son Maçların</p>
+                <ul className="flex flex-col gap-3">
+                  {matchRecaps.map((m) => (
+                    <li key={m.id}>
+                      <Link
+                        to="/tezahurat/$matchId/ozet"
+                        params={{ matchId: m.id }}
+                        className="group flex items-center justify-between rounded-[20px] bg-white border border-slate-100 px-5 py-4 shadow-sm transition-all hover:border-violet-200 hover:shadow-md"
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="inline-flex h-9 min-w-[36px] items-center justify-center rounded-xl bg-violet-100 px-2.5 text-[14px] font-bold text-violet-700">
+                            {m.score}
+                          </span>
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[15px] font-bold text-slate-900 group-hover:text-violet-600 transition-colors">{m.title}</span>
+                            <span className="text-[13px] text-slate-500">{m.date} · {m.city}</span>
+                          </div>
                         </div>
-                        <p className="text-[11px] text-[color:var(--app-ink-soft)]">
-                          %{pct} · son {n.deadline}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="mt-auto text-[11px] text-[color:var(--app-ink-soft)]">
-                        Yetenek aranıyor · {n.deadline}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-
-              {myNeeds.length < 2 && (
-                <Link
-                  to="/sporcu-panel/ihtiyac-olustur"
-                  className="group flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[color:var(--app-line)] bg-white/40 p-4 text-center transition-all hover:border-violet/40 hover:bg-violet/5"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-violet/12 text-violet transition-colors group-hover:bg-violet group-hover:text-white">
-                    <Plus className="h-5 w-5" />
-                  </span>
-                  <p className="text-sm font-semibold text-[color:var(--app-ink)]">Yeni ihtiyaç</p>
-                  <p className="text-[11px] text-[color:var(--app-ink-mute)]">Topluluğa söyle</p>
-                </Link>
-              )}
+                        <div className="flex items-center gap-1.5 text-emerald-600">
+                          <span className="text-[15px] font-bold tracking-wide">{m.cheers.toLocaleString("tr-TR")}</span>
+                          <Heart className="h-4 w-4 fill-emerald-500 text-emerald-500" />
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-
-            <Link
-              to="/sporcu-panel/ihtiyaclar"
-              className="btn-ghost-light inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-semibold"
-            >
-              Tümünü görüntüle <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
+
         </motion.section>
       </motion.div>
     </AppShell>
