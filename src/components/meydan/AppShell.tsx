@@ -106,7 +106,7 @@ export function AppShell({
   return (
     <div className="app-surface app-ambient relative flex min-h-screen w-full">
       {/* ── Sidebar ── */}
-      <aside className="sidebar-glass sticky top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden border-r border-[color:var(--app-line)] lg:flex">
+      <aside className="sidebar-glass fixed left-0 top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden border-r border-[color:var(--app-line)] lg:flex">
         <Link to="/" className="flex shrink-0 items-center gap-2.5 px-6 py-5">
           <span className="relative inline-flex h-9 w-9 items-center justify-center">
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet via-indigo to-sky opacity-95" />
@@ -201,7 +201,7 @@ export function AppShell({
       </aside>
 
       {/* ── Main column ── */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:ml-64">
         {/* Topbar */}
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[color:var(--app-line-soft)] bg-white/75 px-5 backdrop-blur-xl sm:px-8">
           {/* Mobile logo */}

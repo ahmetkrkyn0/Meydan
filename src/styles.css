@@ -281,7 +281,8 @@
   }
 
   /* Ensure content stays above grain layer */
-  .app-ambient > * { position: relative; z-index: 1; }
+  .app-ambient > *:not(aside):not(.app-ambient-fixed) { position: relative; z-index: 1; }
+  .app-ambient > aside, .app-ambient > .app-ambient-fixed { z-index: 30; }
 
   /* ─────────────────────────────────────────────────────
    * SIDEBAR GLASS — sticky sidebar with depth + aurora veil
