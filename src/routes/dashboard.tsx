@@ -362,7 +362,7 @@ function DashboardPage() {
                       <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-coral/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-coral backdrop-blur">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral" />
                         Canlı
-                      </span>
+                      </div>
                     </div>
 
                     <div className="flex flex-1 flex-col gap-4 p-5">
