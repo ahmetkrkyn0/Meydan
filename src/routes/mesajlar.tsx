@@ -180,7 +180,7 @@ function MesajlarPage() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="soft-card-strong grid h-[640px] grid-cols-1 overflow-hidden rounded-3xl md:grid-cols-[minmax(0,0.32fr)_minmax(0,0.68fr)]"
+          className="soft-card-strong grid h-[min(640px,calc(100dvh-10rem))] grid-cols-1 overflow-hidden rounded-3xl md:grid-cols-[minmax(0,0.32fr)_minmax(0,0.68fr)]"
         >
           <aside className="flex flex-col border-r border-[color:var(--app-line)]">
             <div className="border-b border-[color:var(--app-line-soft)] p-4">
@@ -256,13 +256,13 @@ function MesajlarPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <button className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]">
+                <button aria-label="Sesli ara" className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50">
                   <Phone className="h-4 w-4" strokeWidth={1.8} />
                 </button>
-                <button className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]">
+                <button aria-label="Görüntülü ara" className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50">
                   <Video className="h-4 w-4" strokeWidth={1.8} />
                 </button>
-                <button className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)]">
+                <button aria-label="Daha fazla" className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50">
                   <MoreHorizontal className="h-4 w-4" strokeWidth={1.8} />
                 </button>
               </div>

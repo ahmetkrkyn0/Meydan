@@ -259,7 +259,7 @@ function MatchCard({
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <p className="font-display text-base font-bold leading-none text-emerald-700">%{pct}</p>
-            <p className="mt-0.5 text-[8px] font-mono uppercase tracking-wider text-[color:var(--app-ink-mute)]">uyum</p>
+            <p className="mt-0.5 text-[10px] font-mono uppercase tracking-wider text-[color:var(--app-ink-mute)]">uyum</p>
           </div>
         </div>
       </div>

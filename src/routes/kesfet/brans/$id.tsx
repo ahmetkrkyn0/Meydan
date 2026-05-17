@@ -145,7 +145,7 @@ function BranchPage() {
                   >
                     <div className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-violet/10 py-2 text-violet">
                       <span className="font-display text-lg font-bold leading-none">{e.day}</span>
-                      <span className="mt-1 text-[9px] font-bold uppercase tracking-wider">{e.month}</span>
+                      <span className="mt-1 text-[10px] font-bold uppercase tracking-wider">{e.month}</span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-[color:var(--app-ink)]">{e.title}</p>
