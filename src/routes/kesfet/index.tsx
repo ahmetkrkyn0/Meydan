@@ -4,6 +4,8 @@ import { animate, motion, useInView, type Variants } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
+  Check,
+  ChevronDown,
   Compass,
   Flame,
   MapPin,
@@ -11,8 +13,10 @@ import {
   Sparkles,
   TrendingUp,
   Users,
+  X,
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { listProfiles } from "@/lib/api";
 import { profilesToAthletes } from "@/lib/api-mappers";
 import { sports, type Athlete } from "@/lib/mock-data";
