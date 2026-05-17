@@ -220,6 +220,15 @@
     --app-line:      oklch(0.22 0.05 258 / 0.10);
     --app-line-soft: oklch(0.22 0.05 258 / 0.06);
 
+    /* ── Stage palette: hero ↔ spotlight akış renkleri ── */
+    --stage-ink:        var(--app-ink);
+    --stage-veil-light: linear-gradient(to right, #fff, oklch(1 0 0 / 0.85) 45%, transparent 100%);
+    --stage-veil-tint:  linear-gradient(to top right, oklch(0.55 0.22 262 / 0.15), transparent 50%, oklch(0.65 0.20 18 / 0.10));
+    --stage-merge-down: linear-gradient(to top, var(--stage-ink), oklch(0.22 0.05 258 / 0.80) 40%, transparent 100%);
+    --stage-merge-glow: radial-gradient(ellipse at 30% 100%, oklch(0.55 0.22 262 / 0.35), transparent 70%);
+    --stage-dark-veil:  linear-gradient(to right, var(--stage-ink), oklch(0.22 0.05 258 / 0.95) 40%, oklch(0.22 0.05 258 / 0.60));
+    --stage-dark-glow:  radial-gradient(circle at 30% 50%, oklch(0.55 0.22 262 / 0.28), transparent 60%);
+
     background-color: var(--app-bg);
     color: var(--app-ink);
   }
@@ -283,6 +292,32 @@
   /* Ensure content stays above grain layer */
   .app-ambient > *:not(aside):not(.app-ambient-fixed) { position: relative; z-index: 1; }
   .app-ambient > aside, .app-ambient > .app-ambient-fixed { z-index: 30; }
+
+  /* ── Stage veil utilities (hero + spotlight akış) ── */
+  .stage-veil-light  { background: var(--stage-veil-light); }
+  .stage-veil-tint   { background: var(--stage-veil-tint); }
+  .stage-merge-down  { background: var(--stage-merge-down); }
+  .stage-merge-glow  { background: var(--stage-merge-glow); }
+  .stage-dark-veil   { background: var(--stage-dark-veil); }
+  .stage-dark-glow   { background: var(--stage-dark-glow); }
+
+  /* Full-bleed: sidebar → sağ ekran kenarına uzanır */
+  .stage-bleed {
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+  }
+  @media (min-width: 640px) {
+    .stage-bleed {
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+  }
+  @media (min-width: 1024px) {
+    .stage-bleed {
+      margin-left: calc(50% + 8rem - 50vw);
+      margin-right: calc(50% + 8rem - 50vw);
+    }
+  }
 
   /* ─────────────────────────────────────────────────────
    * SIDEBAR GLASS — sticky sidebar with depth + aurora veil

@@ -117,7 +117,7 @@ function DashboardPage() {
         {/* ─── Cinematic hero ─── */}
         <motion.header
           variants={fadeUp}
-          className="relative -mx-5 -mt-6 overflow-hidden sm:-mx-[calc(50vw-50%)] sm:-mt-8 lg:-mx-[calc(50vw-8rem-50%)]"
+          className="stage-bleed relative -mt-6 overflow-hidden sm:-mt-8"
         >
           <div className="relative h-[480px] sm:h-[560px]">
             {/* Background portrait */}
@@ -187,13 +187,13 @@ function DashboardPage() {
 
               <div className="flex items-end justify-between gap-4">
                 <div className="hidden flex-col gap-1 sm:flex">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
                     Bugünkü tribün
                   </p>
-                  <p className="font-display text-3xl font-bold text-[color:var(--app-ink)] tabular-nums">
+                  <p className="font-display text-3xl font-bold text-white tabular-nums">
                     <CountUp to={3420} />
                   </p>
-                  <p className="text-[11px] text-[color:var(--app-ink-soft)]">
+                  <p className="text-[11px] text-white/75">
                     izleyici · <CountUp to={860} duration={1.4} /> tezahürat
                   </p>
                 </div>
@@ -213,7 +213,7 @@ function DashboardPage() {
         </motion.header>
 
         {/* ─── Dark spotlight: Sessiz Tezahürat ─── */}
-        <motion.section variants={fadeUp} className="-mx-5 -mt-14 sm:-mx-[calc(50vw-50%)] lg:-mx-[calc(50vw-8rem-50%)]">
+        <motion.section variants={fadeUp} className="stage-bleed -mt-14">
           <div className="relative overflow-hidden">
             <img
               src={spotlightAthlete}
@@ -272,7 +272,7 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Asymmetric editorial: featured + side ─── */}
-        <motion.section variants={fadeUp} aria-labelledby="bugun-mac">
+        <motion.section variants={fadeUp} aria-labelledby="bugun-mac" className="stage-bleed px-5 sm:px-8">
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">01</span>
@@ -448,7 +448,7 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Portrait towers: followed athletes ─── */}
-        <motion.section variants={fadeUp} aria-labelledby="senin-sporcular">
+        <motion.section variants={fadeUp} aria-labelledby="senin-sporcular" className="stage-bleed px-5 sm:px-8">
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
@@ -543,7 +543,7 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Timeline: upcoming events ─── */}
-        <motion.section variants={fadeUp} aria-labelledby="yakinda-etkinlik">
+        <motion.section variants={fadeUp} aria-labelledby="yakinda-etkinlik" className="stage-bleed px-5 sm:px-8">
           <div className="mb-5 flex items-baseline justify-between">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">03</span>
@@ -599,9 +599,9 @@ function DashboardPage() {
         </motion.section>
 
         {/* ─── Dark block: Keşfet modu ─── */}
-        <motion.section variants={fadeUp} className="-mx-5 sm:-mx-8">
+        <motion.section variants={fadeUp} className="stage-bleed">
           <Link to="/kesfet/mod" className="block">
-            <article className="group relative overflow-hidden bg-[color:var(--app-ink)] sm:rounded-3xl">
+            <article className="group relative overflow-hidden bg-[color:var(--app-ink)]">
               {/* Aurora glow */}
               <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet/30 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-sky/20 blur-3xl" />
@@ -664,7 +664,7 @@ function DashboardPage() {
             </article>
           </Link>
         </motion.section>
-        <motion.section variants={fadeUp}>
+        <motion.section variants={fadeUp} className="stage-bleed px-5 sm:px-8">
           <Link to="/rozetlerim" className="block">
             <div className="flex items-center gap-4 rounded-2xl border border-[color:var(--app-line-soft)] bg-white/60 px-5 py-4 transition-colors hover:bg-white">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-coral/12 text-coral">
