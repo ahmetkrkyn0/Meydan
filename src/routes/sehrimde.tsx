@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { listNearbyEvents } from "@/lib/api";
-import { backendEventsToEvents } from "@/lib/api-mappers";
+import { backendEventToEvent as backendEventToEventLocal } from "@/lib/api-mappers";
 import { events, sports, type Event } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/sehrimde")({
@@ -18,7 +18,10 @@ export const Route = createFileRoute("/sehrimde")({
   head: () => ({ meta: [{ title: "Şehrimde Ne Var? — Meydan" }] }),
 });
 
-const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Eskişehir", "Bodrum"];
+const ALL_CITIES = "Tüm şehirler";
+const cities = [ALL_CITIES, "İstanbul", "Ankara", "İzmir", "Bursa", "Eskişehir", "Bodrum"];
+
+type Range = "all" | "week" | "month";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp: Variants = {
@@ -28,46 +31,59 @@ const fadeUp: Variants = {
 const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
 
 function SehrimdePage() {
-  const [city, setCity] = useState("İstanbul");
+  const [city, setCity] = useState<string>(ALL_CITIES);
   const [sportFilter, setSportFilter] = useState<string | null>(null);
   const [freeOnly, setFreeOnly] = useState(false);
-  const [range, setRange] = useState<"week" | "month">("week");
+  const [range, setRange] = useState<Range>("all");
   const [activeId, setActiveId] = useState<string | null>(events[0]?.id ?? null);
+  const cityParam = city === ALL_CITIES ? null : city;
+  const rangeParam = range === "all" ? null : range;
   const eventsQuery = useQuery({
-    queryKey: ["events", "nearby", city, sportFilter, freeOnly, range],
+    queryKey: ["events", "nearby", cityParam, sportFilter, freeOnly, rangeParam],
     queryFn: () =>
       listNearbyEvents({
-        city,
+        city: cityParam,
         branch: sportFilter,
         is_free: freeOnly ? true : null,
-        range,
+        range: rangeParam,
       }),
     retry: 1,
   });
 
-  const hasBackendEvents = Boolean(eventsQuery.data?.events?.length);
-  const eventList = useMemo(
-    () => backendEventsToEvents(eventsQuery.data?.events),
-    [eventsQuery.data?.events],
-  );
+  // Backend response geldi mi? İçi boş bile olsa "geldi" sayılır — mock fallback'e
+  // düşmek sadece backend gerçekten hata verdiğinde olmalı, "şehirde etkinlik yok"
+  // durumunda değil.
+  const backendResponded = !eventsQuery.isLoading && !eventsQuery.isError;
+  const backendEvents = eventsQuery.data?.events ?? [];
 
-  // Backend dolu döndüyse filtreleme zaten serverda yapıldı — sadece şehri olmayanları
-  // (frontend mock fallback) ayıkla. Aksi halde mock fallback üzerinde client filtre uygula.
+  const eventList = useMemo(() => {
+    if (backendResponded) {
+      return backendEvents.length
+        ? backendEvents.map((event, index) => backendEventToEventLocal(event, index))
+        : [];
+    }
+    return events;
+  }, [backendResponded, backendEvents]);
+
+  // Backend cevabı geldiyse filtreleme zaten serverda yapıldı, client filtre yok.
+  // Backend hata verirse mock fallback üzerinde client filtre uygula.
   const filtered = useMemo(() => {
-    if (hasBackendEvents) return eventList;
+    if (backendResponded) return eventList;
     return eventList.filter((e) => {
-      if (city && e.city !== city) return false;
+      if (cityParam && e.city !== cityParam) return false;
       if (sportFilter && e.sport !== sportFilter) return false;
       if (freeOnly && !e.free) return false;
       return true;
     });
-  }, [city, eventList, hasBackendEvents, sportFilter, freeOnly]);
+  }, [cityParam, eventList, backendResponded, sportFilter, freeOnly]);
 
   const sportsInCity = useMemo(() => {
-    const source = hasBackendEvents ? eventList : eventList.filter((e) => e.city === city);
+    const source = backendResponded || !cityParam
+      ? eventList
+      : eventList.filter((e) => e.city === cityParam);
     const set = new Set(source.map((e) => e.sport));
     return Array.from(set);
-  }, [city, eventList, hasBackendEvents]);
+  }, [cityParam, eventList, backendResponded]);
 
   const active = filtered.find((e) => e.id === activeId) ?? filtered[0];
 
@@ -84,7 +100,10 @@ function SehrimdePage() {
             Şehrimde Ne Var?
           </p>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-[color:var(--app-ink)] sm:text-5xl">
-            Bu hafta <span className="italic text-violet">{city}'da</span>
+            {range === "week" ? "Bu hafta" : range === "month" ? "Bu ay" : "Yaklaşan etkinlikler"}{" "}
+            <span className="italic text-violet">
+              {city === ALL_CITIES ? "Türkiye'de" : `${city}'da`}
+            </span>
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-[color:var(--app-ink-soft)]">
             Yakınında olan tek bir maç bile tribünün başlangıcıdır. {filtered.length} etkinlik bulundu.
@@ -95,6 +114,14 @@ function SehrimdePage() {
               {eventsQuery.isLoading
                 ? "Yaklaşan etkinlikler backend'den yükleniyor..."
                 : "Backend'e ulaşılamadı; demo etkinlikleri gösteriliyor."}
+            </p>
+          )}
+          {backendResponded && backendEvents.length === 0 && (
+            <p className="text-xs text-[color:var(--app-ink-mute)]">
+              {city === ALL_CITIES ? "Türkiye genelinde " : `${city} için `}
+              {range === "week" ? "bu hafta " : range === "month" ? "bu ay " : ""}
+              {sportFilter ? `${sportFilter} branşında ` : ""}
+              henüz etkinlik yok.
             </p>
           )}
 
@@ -152,6 +179,7 @@ function SehrimdePage() {
 
             <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--app-line)] bg-white p-0.5">
               {([
+                ["all", "Hepsi"],
                 ["week", "Bu hafta"],
                 ["month", "Bu ay"],
               ] as const).map(([k, l]) => (
