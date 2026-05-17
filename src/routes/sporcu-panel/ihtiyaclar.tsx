@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, type Variants } from "framer-motion";
 import { useState } from "react";
-import { Plus, Wrench, Banknote, MapPin, Clock, AlertCircle, MoreHorizontal, Trash2, Pencil } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 import { AppShell } from "@/components/meydan/AppShell";
 import { needs, type Need } from "@/lib/mock-data";
 
@@ -12,10 +12,10 @@ export const Route = createFileRoute("/sporcu-panel/ihtiyaclar")({
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, y: 10 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
-const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+const stagger: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
 
 type Tab = "all" | "active" | "completed";
 
@@ -28,7 +28,6 @@ function NeedsPage() {
   }));
 
   const [tab, setTab] = useState<Tab>("all");
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const list = tab === "all" ? myNeeds : tab === "active" ? myNeeds.slice(0, 3) : myNeeds.slice(3);
 
@@ -41,185 +40,256 @@ function NeedsPage() {
 
   return (
     <AppShell role="athlete" userName="Mete Gazoz" userCity="İstanbul">
-      <motion.div
-        initial="hidden"
-        animate="show"
-        variants={stagger}
-        className="mx-auto flex w-full max-w-6xl flex-col gap-7"
-      >
-        {/* Header */}
-        <motion.header variants={fadeUp} className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-violet">İhtiyaç kartlarım</p>
-            <h1 className="font-display mt-1.5 text-3xl font-bold tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
-              Topluluğa neye ihtiyacın olduğunu söyle.
-            </h1>
-            <p className="mt-2 max-w-md text-sm text-[color:var(--app-ink-soft)]">
-              Para ya da yetenek. Açık olduğunda yardım daha hızlı geliyor.
-            </p>
-          </div>
-          <Link
-            to="/sporcu-panel/ihtiyac-olustur"
-            className="btn-primary-light inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
-          >
-            <Plus className="h-4 w-4" />
-            Yeni İhtiyaç
-          </Link>
-        </motion.header>
-
-        {/* Stat strip */}
-        <motion.section
-          variants={fadeUp}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+      {/* Swiss surface — pure white, hard rules, mono accents */}
+      <div className="-mx-5 -my-6 min-h-screen bg-white sm:-mx-8 sm:-my-8">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={stagger}
+          className="mx-auto w-full max-w-6xl px-6 py-12 sm:px-12 sm:py-16"
+          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
         >
-          {[
-            { k: "Aktif kart",       v: String(myNeeds.length) },
-            { k: "Toplanan",         v: `₺ ${totalCollected.toLocaleString("tr-TR")}` },
-            { k: "Hedef",            v: `₺ ${totalTarget.toLocaleString("tr-TR")}` },
-            { k: "Yetenek başvuru",  v: "7" },
-          ].map((s) => (
-            <div key={s.k} className="rounded-2xl border border-[color:var(--app-line)] bg-white px-5 py-4">
-              <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">{s.k}</p>
-              <p className="font-display mt-2 text-3xl font-bold leading-none text-[color:var(--app-ink)]">{s.v}</p>
-            </div>
-          ))}
-        </motion.section>
-
-        {/* Tabs */}
-        <motion.div variants={fadeUp} className="flex items-center gap-1.5 rounded-full border border-[color:var(--app-line)] bg-white p-1 self-start">
-          {(["all", "active", "completed"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`relative rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-                tab === t ? "text-white" : "text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
-              }`}
-            >
-              {tab === t && (
-                <motion.span
-                  layoutId="needs-tab"
-                  className="absolute inset-0 -z-10 rounded-full bg-[color:var(--app-ink)]"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                />
-              )}
-              {t === "all" ? "Hepsi" : t === "active" ? "Aktif" : "Tamamlanan"}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Need cards grid */}
-        <motion.section variants={fadeUp} className="grid gap-4 md:grid-cols-2">
-          {list.map((n) => {
-            const pct = n.targetAmount && n.collectedAmount
-              ? Math.round((n.collectedAmount / n.targetAmount) * 100)
-              : 0;
-
-            return (
-              <motion.article
-                key={n.id}
-                variants={fadeUp}
-                className="relative flex flex-col gap-3 rounded-3xl border border-[color:var(--app-line)] bg-white p-5"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className={`chip ${n.type === "money" ? "chip-violet" : "chip-emerald"}`}>
-                      {n.type === "money" ? <Banknote className="h-3 w-3" /> : <Wrench className="h-3 w-3" />}
-                      {n.category}
-                    </span>
-                    {n.urgent && (
-                      <span className="chip chip-coral">
-                        <AlertCircle className="h-3 w-3" />
-                        Acil
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative">
-                    <button
-                      onClick={() => setOpenMenu(openMenu === n.id ? null : n.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full text-[color:var(--app-ink-mute)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]"
-                      aria-label="Menü"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
-                    {openMenu === n.id && (
-                      <div className="absolute right-0 top-9 z-10 w-36 rounded-xl border border-[color:var(--app-line)] bg-white p-1 shadow-lg">
-                        <button className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[color:var(--app-ink-soft)] hover:bg-[color:var(--app-line-soft)] hover:text-[color:var(--app-ink)]">
-                          <Pencil className="h-3.5 w-3.5" /> Düzenle
-                        </button>
-                        <button className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-coral hover:bg-coral/8">
-                          <Trash2 className="h-3.5 w-3.5" /> Kapat
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <h3 className="font-display text-lg font-bold leading-tight text-[color:var(--app-ink)]">
-                  {n.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-[color:var(--app-ink-soft)]">
-                  {n.description}
-                </p>
-
-                {n.type === "money" && (
-                  <div className="mt-1">
-                    <div className="flex items-baseline justify-between">
-                      <p className="font-display text-base font-bold text-[color:var(--app-ink)]">
-                        ₺ {n.collectedAmount?.toLocaleString("tr-TR")}
-                        <span className="ml-1 text-xs font-medium text-[color:var(--app-ink-mute)]">
-                          / ₺ {n.targetAmount?.toLocaleString("tr-TR")}
-                        </span>
-                      </p>
-                      <span className="text-xs font-semibold text-violet">%{pct}</span>
-                    </div>
-                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[color:var(--app-line-soft)]">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${pct}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.0, ease: EASE }}
-                        className="h-full rounded-full bg-gradient-to-r from-violet to-sky"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {n.type === "talent" && n.talentNeeded && (
-                  <div className="mt-1 rounded-2xl border border-[color:oklch(0.70_0.16_152/0.20)] bg-[color:oklch(0.70_0.16_152/0.06)] px-3 py-2">
-                    <p className="text-[10px] uppercase tracking-wider text-[color:oklch(0.40_0.14_152)]">Aranan</p>
-                    <p className="text-sm font-semibold text-[color:var(--app-ink)]">{n.talentNeeded}</p>
-                  </div>
-                )}
-
-                <div className="mt-auto flex items-center justify-between border-t border-[color:var(--app-line-soft)] pt-3 text-[11px] text-[color:var(--app-ink-mute)]">
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {n.city}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Son tarih: {n.deadline}
-                  </span>
-                </div>
-              </motion.article>
-            );
-          })}
-        </motion.section>
-
-        {list.length === 0 && (
+          {/* ── Top meta bar ── */}
           <motion.div
             variants={fadeUp}
-            className="rounded-3xl border border-dashed border-[color:var(--app-line)] bg-white px-6 py-12 text-center"
+            className="flex items-center justify-between border-b border-[color:var(--app-ink)] pb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[color:var(--app-ink)]"
           >
-            <p className="text-sm text-[color:var(--app-ink-soft)]">Bu sekmede ihtiyaç kartın yok.</p>
+            <div className="flex items-center gap-4">
+              <span>İhtiyaç Kartları</span>
+              <span className="hidden text-[color:var(--app-ink-mute)] sm:inline">/ Sporcu Paneli</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-[color:var(--app-ink-mute)]">N° 04</span>
+              <span>2026.05</span>
+            </div>
+          </motion.div>
+
+          {/* ── Headline grid: 12-col, asymmetric ── */}
+          <motion.section
+            variants={fadeUp}
+            className="mt-10 grid grid-cols-12 items-end gap-6"
+          >
+            <h1
+              className="col-span-12 text-[3.5rem] font-black leading-[0.92] tracking-[-0.02em] text-[color:var(--app-ink)] md:col-span-9 md:text-[5rem]"
+              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+            >
+              Topluluğa neye<br />
+              ihtiyacın olduğunu<br />
+              <span className="italic font-light">söyle.</span>
+            </h1>
+            <div className="col-span-12 md:col-span-3">
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                İlke
+              </div>
+              <p className="mt-2 text-[13px] leading-[1.5] text-[color:var(--app-ink-soft)]">
+                Para ya da yetenek. Açık olduğunda, yardım daha hızlı geliyor. Net ol, somut ol.
+              </p>
+            </div>
+          </motion.section>
+
+          {/* ── Stat row: hard rule above, mono labels, numeric data ── */}
+          <motion.section
+            variants={fadeUp}
+            className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-[color:var(--app-ink)] pt-8 sm:grid-cols-4"
+          >
+            {[
+              { n: "01", k: "Aktif kart",       v: String(myNeeds.length).padStart(2, "0"), unit: "kart" },
+              { n: "02", k: "Toplanan",         v: totalCollected.toLocaleString("tr-TR"),  unit: "₺" },
+              { n: "03", k: "Hedef",            v: totalTarget.toLocaleString("tr-TR"),     unit: "₺" },
+              { n: "04", k: "Yetenek başvuru",  v: "07",                                     unit: "kişi" },
+            ].map((s) => (
+              <div key={s.k} className="flex flex-col">
+                <div className="flex items-baseline justify-between">
+                  <span className="font-mono text-[10px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                    {s.n} —
+                  </span>
+                  <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                    {s.unit}
+                  </span>
+                </div>
+                <p
+                  className="mt-3 text-[2.5rem] font-black leading-none tracking-[-0.02em] text-[color:var(--app-ink)]"
+                  style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+                >
+                  {s.v}
+                </p>
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)]">
+                  {s.k}
+                </p>
+              </div>
+            ))}
+          </motion.section>
+
+          {/* ── Toolbar: filter pills (rectangular, no chrome) + primary action ── */}
+          <motion.section
+            variants={fadeUp}
+            className="mt-20 flex items-center justify-between border-b border-[color:var(--app-ink)] pb-3"
+          >
+            <div className="flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.22em]">
+              <span className="text-[color:var(--app-ink-mute)]">Filtre</span>
+              {(["all", "active", "completed"] as Tab[]).map((t) => {
+                const active = tab === t;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`relative pb-1 transition-colors ${
+                      active ? "text-[color:var(--app-ink)]" : "text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                    }`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="swiss-tab"
+                        className="absolute -bottom-[14px] left-0 right-0 h-[3px] bg-violet"
+                      />
+                    )}
+                    {t === "all" ? "Hepsi" : t === "active" ? "Aktif" : "Tamamlanan"}
+                  </button>
+                );
+              })}
+            </div>
             <Link
               to="/sporcu-panel/ihtiyac-olustur"
-              className="btn-primary-light mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold"
+              className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet"
             >
-              <Plus className="h-4 w-4" /> Yeni İhtiyaç
+              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+              Yeni İhtiyaç Ekle
+              <span className="inline-block h-[1px] w-6 bg-current transition-all group-hover:w-10" />
             </Link>
-          </motion.div>
-        )}
-      </motion.div>
+          </motion.section>
+
+          {/* ── Needs list: rule-separated rows (no cards) ── */}
+          <motion.section variants={fadeUp} className="mt-0">
+            {list.map((n, i) => (
+              <NeedRow key={n.id} n={n} index={i} />
+            ))}
+            {list.length === 0 && (
+              <div className="py-20 text-center">
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+                  Bu sekmede ihtiyaç yok
+                </p>
+              </div>
+            )}
+          </motion.section>
+
+          {/* ── Footer rule ── */}
+          <motion.footer
+            variants={fadeUp}
+            className="mt-20 flex items-center justify-between border-t border-[color:var(--app-ink)] pt-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[color:var(--app-ink-mute)]"
+          >
+            <span>Meydan / İhtiyaç Kartları</span>
+            <span>{list.length} / {myNeeds.length}</span>
+          </motion.footer>
+        </motion.div>
+      </div>
     </AppShell>
+  );
+}
+
+function NeedRow({ n, index }: { n: Need; index: number }) {
+  const pct = n.targetAmount && n.collectedAmount
+    ? Math.round((n.collectedAmount / n.targetAmount) * 100)
+    : 0;
+  const num = String(index + 1).padStart(2, "0");
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.45 }}
+      className="grid grid-cols-12 items-start gap-x-6 border-b border-[color:var(--app-line)] py-8 sm:py-10"
+    >
+      {/* Index number — large, mono, fades */}
+      <div className="col-span-12 sm:col-span-1">
+        <p className="font-mono text-[11px] tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+          № {num}
+        </p>
+      </div>
+
+      {/* Title + description */}
+      <div className="col-span-12 sm:col-span-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-violet">
+            {n.type === "money" ? "Para" : "Yetenek"}
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+            / {n.category}
+          </span>
+          {n.urgent && (
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-coral">
+              / Acil
+            </span>
+          )}
+        </div>
+        <h3
+          className="mt-2 text-[1.625rem] font-bold leading-[1.1] tracking-[-0.01em] text-[color:var(--app-ink)] sm:text-[2rem]"
+          style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+        >
+          {n.title}
+        </h3>
+        <p className="mt-3 max-w-lg text-sm leading-[1.55] text-[color:var(--app-ink-soft)]">
+          {n.description}
+        </p>
+      </div>
+
+      {/* Metric / progress */}
+      <div className="col-span-12 sm:col-span-3">
+        {n.type === "money" && n.targetAmount ? (
+          <>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+              Toplanan
+            </p>
+            <p
+              className="mt-2 text-[1.75rem] font-black leading-none tracking-[-0.02em] text-[color:var(--app-ink)]"
+              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+            >
+              ₺ {n.collectedAmount?.toLocaleString("tr-TR")}
+            </p>
+            <p className="mt-1 font-mono text-[10px] tracking-[0.15em] text-[color:var(--app-ink-mute)]">
+              / ₺ {n.targetAmount?.toLocaleString("tr-TR")}
+            </p>
+            <div className="mt-3 h-[3px] w-full bg-[color:var(--app-line)]">
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${pct}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                className="h-full bg-violet"
+              />
+            </div>
+            <p className="mt-2 font-mono text-[10px] tracking-[0.22em] text-violet">
+              %{pct} TAMAMLANDI
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)]">
+              Aranan
+            </p>
+            <p
+              className="mt-2 text-[1.25rem] font-bold leading-tight text-[color:var(--app-ink)]"
+              style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
+            >
+              {n.talentNeeded}
+            </p>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-700">
+              Yetenek bağışı
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Meta + action */}
+      <div className="col-span-12 flex flex-col items-start gap-3 sm:col-span-2 sm:items-end">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink-mute)] sm:text-right">
+          <p>{n.city}</p>
+          <p className="mt-1 text-[color:var(--app-ink)]">Son: {n.deadline}</p>
+        </div>
+        <button className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[color:var(--app-ink)] hover:text-violet">
+          Detay
+          <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
+        </button>
+      </div>
+    </motion.article>
   );
 }
