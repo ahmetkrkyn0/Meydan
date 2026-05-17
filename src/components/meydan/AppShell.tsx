@@ -106,8 +106,8 @@ export function AppShell({
   return (
     <div className="app-surface app-ambient relative flex min-h-screen w-full">
       {/* ── Sidebar ── */}
-      <aside className="sticky top-0 z-30 hidden h-screen w-64 shrink-0 flex-col border-r border-[color:var(--app-line)] bg-white/70 backdrop-blur-xl lg:flex">
-        <Link to="/" className="flex items-center gap-2.5 px-6 py-5">
+      <aside className="sidebar-glass sticky top-0 z-30 hidden h-screen w-64 shrink-0 flex-col overflow-hidden border-r border-[color:var(--app-line)] lg:flex">
+        <Link to="/" className="flex shrink-0 items-center gap-2.5 px-6 py-5">
           <span className="relative inline-flex h-9 w-9 items-center justify-center">
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet via-indigo to-sky opacity-95" />
             <span className="relative font-display text-base font-bold text-white">M</span>
