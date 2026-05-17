@@ -510,3 +510,109 @@ function AthleteCard({ a, index }: { a: Athlete; index: number }) {
     </motion.article>
   );
 }
+
+function FiltersHeader({ count }: { count: number }) {
+  return (
+    <div className="mb-3 flex items-baseline justify-between">
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-[11px] font-bold text-[color:var(--app-ink-mute)]">02</span>
+        <h2 className="font-display text-lg font-bold tracking-tight text-[color:var(--app-ink)]">
+          Filtrele
+        </h2>
+      </div>
+      <span className="inline-flex items-center gap-1.5 text-xs text-[color:var(--app-ink-mute)]">
+        <Search className="h-3.5 w-3.5" />
+        <span className="font-mono tabular-nums">{count} sporcu</span>
+      </span>
+    </div>
+  );
+}
+
+type FiltersBodyProps = {
+  activeSport: string | null;
+  setActiveSport: (v: string | null) => void;
+  city: string;
+  setCity: (v: string) => void;
+  onlyRising: boolean;
+  setOnlyRising: (updater: (v: boolean) => boolean) => void;
+  activeFilters: string[];
+};
+
+function FiltersBody({
+  activeSport,
+  setActiveSport,
+  city,
+  setCity,
+  onlyRising,
+  setOnlyRising,
+  activeFilters,
+}: FiltersBodyProps) {
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setActiveSport(null)}
+          className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+            activeSport === null ? "bg-[color:var(--app-ink)] text-white" : "chip"
+          }`}
+        >
+          Tümü
+        </button>
+        {sports.map((s) => {
+          const active = activeSport === s.name;
+          return (
+            <button
+              key={s.id}
+              onClick={() => setActiveSport(active ? null : s.name)}
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                active ? "bg-[color:var(--app-ink)] text-white" : "chip"
+              }`}
+            >
+              <span className="mr-1">{s.emoji}</span> {s.name}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-[color:var(--app-line-soft)] pt-3">
+        <label className="flex items-center gap-2">
+          <MapPin className="h-3.5 w-3.5 text-[color:var(--app-ink-soft)]" />
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="rounded-lg border border-[color:var(--app-line)] bg-white px-2.5 py-1.5 text-xs font-medium text-[color:var(--app-ink)] focus:border-violet/40 focus:outline-none focus:ring-2 focus:ring-violet/15"
+          >
+            {CITIES.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+
+        <button
+          onClick={() => setOnlyRising((v) => !v)}
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
+            onlyRising
+              ? "bg-coral/15 text-coral"
+              : "border border-[color:var(--app-line)] text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]"
+          }`}
+        >
+          <Flame className="h-3.5 w-3.5" />
+          Yeni yükselen
+        </button>
+
+        {activeFilters.length > 0 && (
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-wider text-[color:var(--app-ink-mute)]">
+              Filtre:
+            </span>
+            {activeFilters.map((f) => (
+              <span key={f} className="chip chip-violet">
+                {f}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
