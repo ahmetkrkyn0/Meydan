@@ -34,7 +34,7 @@ export function Features() {
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-violet/5 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-[30rem]">
         {/* Header */}
         <div className="grid items-end gap-8 lg:grid-cols-2">
           <motion.div

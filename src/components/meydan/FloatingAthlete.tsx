@@ -56,7 +56,7 @@ export function FloatingAthlete({ src, alt, side, mirror = false, scale: scalePr
       className={`pointer-events-none absolute inset-y-0 z-10 hidden lg:flex items-center ${
         side === "right" ? "right-0" : "left-0"
       }`}
-      style={{ width: "clamp(240px, 20vw, 340px)" }}
+      style={{ width: "clamp(320px, 28vw, 460px)" }}
     >
       <motion.div
         style={{ y, x, scale, rotate, opacity }}
@@ -77,7 +77,7 @@ export function FloatingAthlete({ src, alt, side, mirror = false, scale: scalePr
           draggable={false}
           className={`relative block w-full h-auto select-none ${((side === "left") !== mirror) ? "-scale-x-100" : ""}`}
           style={{
-            maxHeight: "clamp(380px, 52vh, 580px)",
+            maxHeight: "clamp(500px, 72vh, 780px)",
             objectFit: "contain",
             objectPosition: "bottom",
             filter: "drop-shadow(0 20px 40px rgba(10,20,80,0.30))",
