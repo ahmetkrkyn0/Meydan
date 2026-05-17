@@ -1,280 +1,190 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, Mail, Lock, User, Sparkles, ShieldCheck, Trophy } from "lucide-react";
-import { Navbar } from "@/components/meydan/Navbar";
-import { Logo } from "@/components/meydan/Logo";
+import { ArrowRight, Mail, Lock, Eye, EyeOff, Sparkles, Trophy, ShieldCheck, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/giris")({
-  component: AuthPage,
+  component: LoginPage,
   head: () => ({
     meta: [
-      { title: "Giriş & Kayıt — Meydan" },
-      {
-        name: "description",
-        content:
-          "Meydan'a katıl: sporcuları keşfet, sessiz tezahüratla destekle, yeteneklerini bağışla. Futbol dışı sporun yeni meydanı.",
-      },
-      { property: "og:title", content: "Giriş & Kayıt — Meydan" },
-      {
-        property: "og:description",
-        content: "Sporcuyu, taraftarı ve markayı buluşturan ekosisteme adım at.",
-      },
+      { title: "Giriş — Meydan" },
+      { name: "description", content: "Meydan'a giriş yap." },
     ],
   }),
 });
 
-type Mode = "login" | "signup";
-type Role = "fan" | "athlete" | "brand";
+const quickDemos = [
+  { role: "fan",     label: "Taraftar",  desc: "Keşfet & destekle",   icon: Heart,        to: "/dashboard",     iconBg: "bg-violet/12 text-violet" },
+  { role: "athlete", label: "Sporcu",    desc: "Kartın & teklifler",  icon: Trophy,       to: "/sporcu-panel",  iconBg: "bg-coral/12 text-coral"   },
+  { role: "brand",   label: "Marka",     desc: "AI eşleştirme",       icon: ShieldCheck,  to: "/marka-panel",   iconBg: "bg-sky/12 text-sky"       },
+] as const;
 
-const roles: { id: Role; label: string; desc: string; icon: typeof Trophy }[] = [
-  { id: "fan", label: "Taraftar", desc: "Keşfet, destekle, sessiz tezahürat yap.", icon: Sparkles },
-  { id: "athlete", label: "Sporcu", desc: "Kartını oluştur, hikâyeni paylaş.", icon: Trophy },
-  { id: "brand", label: "Marka", desc: "AI eşleştirmeyle sporcu bul.", icon: ShieldCheck },
-];
-
-function AuthPage() {
-  const [mode, setMode] = useState<Mode>("login");
-  const [role, setRole] = useState<Role>("fan");
+function LoginPage() {
+  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Mock UI — gerçek auth sonradan bağlanacak
-    setTimeout(() => {
-      setLoading(false);
-      // Rol bazlı yönlendirme — marka paneli & sporcu dashboard sıraya gelecek
-      const dest =
-        mode === "signup" && role === "athlete"
-          ? "/sporcu"
-          : mode === "signup" && role === "brand"
-            ? "/dashboard"
-            : "/dashboard";
-      navigate({ to: dest });
-    }, 900);
+    setTimeout(() => navigate({ to: "/dashboard" }), 700);
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-aurora">
-      <Navbar />
+    <div className="app-surface app-ambient relative min-h-screen w-full">
+      {/* warm patches */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 grid-dots-warm opacity-60" />
 
-      {/* Atmosfer */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-x-0 bottom-0 h-[60%] light-rays opacity-50" />
-        <div className="absolute inset-0 grid-dots opacity-[0.08]" />
-      </div>
+      {/* Top bar */}
+      <header className="flex items-center justify-between px-6 py-5 sm:px-10">
+        <Link to="/" className="inline-flex items-center gap-2.5">
+          <span className="relative inline-flex h-9 w-9 items-center justify-center">
+            <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet via-indigo to-sky" />
+            <span className="relative font-display text-base font-bold text-white">M</span>
+          </span>
+          <span className="font-display text-xl font-bold tracking-tight text-[color:var(--app-ink)]">Meydan</span>
+        </Link>
+        <Link
+          to="/kayit"
+          className="text-sm font-medium text-[color:var(--app-ink-soft)] underline-offset-4 hover:text-[color:var(--app-ink)] hover:underline"
+        >
+          Henüz üye değil misin? <span className="font-semibold text-[color:var(--app-ink)]">Kayıt ol</span>
+        </Link>
+      </header>
 
-      <main className="relative mx-auto flex min-h-screen max-w-7xl items-center justify-center px-4 pb-16 pt-28 sm:px-6">
-        <div className="grid w-full gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-          {/* Sol — manifesto */}
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden flex-col justify-center lg:flex"
+      <main className="mx-auto flex w-full max-w-md flex-col items-center px-6 pb-20 pt-10 sm:pt-16">
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center"
+        >
+          <h1 className="font-display text-3xl font-bold tracking-tight text-[color:var(--app-ink)] sm:text-4xl">
+            Tekrar hoş geldin.
+          </h1>
+          <p className="mt-2 text-sm text-[color:var(--app-ink-soft)]">
+            Sporcunu, kulübünü, markanı kaldığın yerden takip et.
+          </p>
+        </motion.div>
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          onSubmit={handleSubmit}
+          className="mt-8 w-full space-y-3"
+        >
+          <Field icon={Mail} type="email" placeholder="E-posta adresin" required />
+          <Field
+            icon={Lock}
+            type={showPw ? "text" : "password"}
+            placeholder="Şifren"
+            required
+            suffix={
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                className="text-[color:var(--app-ink-mute)] hover:text-[color:var(--app-ink)]"
+                aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+              >
+                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            }
+          />
+
+          <div className="flex items-center justify-between pt-1 text-xs">
+            <label className="inline-flex items-center gap-2 text-[color:var(--app-ink-soft)]">
+              <input type="checkbox" className="h-3.5 w-3.5 rounded border-[color:var(--app-line)] accent-[color:var(--violet)]" />
+              Beni hatırla
+            </label>
+            <button type="button" className="text-[color:var(--app-ink-soft)] hover:text-[color:var(--app-ink)]">
+              Şifremi unuttum
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary-light mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
           >
-            <Link to="/" className="mb-10 inline-flex">
-              <Logo />
-            </Link>
-            <p className="mb-3 inline-flex w-fit items-center gap-2 rounded-full glass px-3 py-1 text-xs text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--violet)]" />
-              Her sporun bir meydanı
-            </p>
-            <h1 className="font-display text-4xl leading-[1.05] sm:text-5xl xl:text-6xl">
-              <span className="text-gradient">Sporcuyu görünür kıl.</span>
-              <br />
-              <span className="text-gradient-violet">Sessizce alkışla.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-base text-muted-foreground">
-              Meydan; futbol dışı sporcuları taraftarla, markayla ve yetenekle buluşturan
-              sürdürülebilir destek ekosistemidir.
-            </p>
+            {loading ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+                Yönlendiriliyor…
+              </span>
+            ) : (
+              <>
+                Giriş Yap
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </motion.form>
 
-            <ul className="mt-10 space-y-4">
-              {[
-                { k: "01", t: "Sporcu Kartı", d: "AI destekli dijital kimlik." },
-                { k: "02", t: "Sessiz Tezahürat", d: "Maç anında yazılı destek." },
-                { k: "03", t: "Marka Eşleştirme", d: "Değer uyumuna göre öneri." },
-              ].map((row, i) => (
-                <motion.li
-                  key={row.k}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + i * 0.12, duration: 0.6 }}
-                  className="flex items-start gap-4"
-                >
-                  <span className="font-display text-xs text-[var(--violet)]">{row.k}</span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{row.t}</p>
-                    <p className="text-sm text-muted-foreground">{row.d}</p>
-                  </div>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.section>
-
-          {/* Sağ — form */}
-          <motion.section
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
-          >
-            <div className="glass-strong ring-glow relative overflow-hidden rounded-3xl p-6 sm:p-8">
-              {/* iç parıltı */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -top-24 right-0 h-56 w-56 rounded-full opacity-50 blur-3xl"
-                style={{ background: "radial-gradient(circle, var(--violet), transparent 70%)" }}
-              />
-
-              {/* Mode switch */}
-              <div className="relative mb-6 flex w-full rounded-full border border-border bg-[color-mix(in_oklab,var(--foreground)_4%,transparent)] p-1 text-sm">
-                {(["login", "signup"] as Mode[]).map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setMode(m)}
-                    className="relative z-10 flex-1 rounded-full px-4 py-2 font-medium text-muted-foreground transition-colors data-[active=true]:text-[var(--primary-foreground)]"
-                    data-active={mode === m}
-                  >
-                    {mode === m && (
-                      <motion.span
-                        layoutId="auth-pill"
-                        className="absolute inset-0 -z-10 rounded-full bg-foreground"
-                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      />
-                    )}
-                    {m === "login" ? "Giriş Yap" : "Kayıt Ol"}
-                  </button>
-                ))}
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={mode}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  <h2 className="font-display text-2xl sm:text-3xl">
-                    {mode === "login" ? "Tekrar hoş geldin." : "Meydan'a katıl."}
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {mode === "login"
-                      ? "Sporcunu, kulübünü, markanı kaldığın yerden takip et."
-                      : "Bir hesap, üç farklı meydan. Önce rolünü seç."}
-                  </p>
-
-                  {mode === "signup" && (
-                    <div className="mt-5 grid grid-cols-3 gap-2">
-                      {roles.map((r) => {
-                        const Icon = r.icon;
-                        const active = role === r.id;
-                        return (
-                          <button
-                            key={r.id}
-                            type="button"
-                            onClick={() => setRole(r.id)}
-                            className={`group relative flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition-all ${
-                              active
-                                ? "border-[var(--violet)] bg-[color-mix(in_oklab,var(--violet)_14%,transparent)]"
-                                : "border-border hover:border-foreground/30 hover:bg-foreground/5"
-                            }`}
-                          >
-                            <Icon className="h-4 w-4 text-[var(--violet)]" />
-                            <span className="text-xs font-semibold">{r.label}</span>
-                            <span className="text-[10px] leading-tight text-muted-foreground">
-                              {r.desc}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-                    {mode === "signup" && (
-                      <Field icon={User} type="text" placeholder="Ad Soyad" required />
-                    )}
-                    <Field icon={Mail} type="email" placeholder="E-posta" required />
-                    <Field icon={Lock} type="password" placeholder="Şifre" required />
-
-                    {mode === "login" && (
-                      <div className="flex items-center justify-between pt-1 text-xs">
-                        <label className="inline-flex items-center gap-2 text-muted-foreground">
-                          <input
-                            type="checkbox"
-                            className="h-3.5 w-3.5 rounded border-border bg-transparent accent-[var(--violet)]"
-                          />
-                          Beni hatırla
-                        </label>
-                        <button type="button" className="text-muted-foreground hover:text-foreground">
-                          Şifremi unuttum
-                        </button>
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-[var(--primary-foreground)] shadow-[0_10px_40px_-10px_color-mix(in_oklab,var(--violet)_60%,transparent)] transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
-                    >
-                      {loading ? (
-                        <span className="inline-flex items-center gap-2">
-                          <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--violet)]" />
-                          Yönlendiriliyor…
-                        </span>
-                      ) : (
-                        <>
-                          {mode === "login" ? "Giriş Yap" : "Hesap Oluştur"}
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                  <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                    <span className="h-px flex-1 bg-border" />
-                    veya
-                    <span className="h-px flex-1 bg-border" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <SocialButton label="Google" />
-                    <SocialButton label="Apple" />
-                  </div>
-
-                  <p className="mt-6 text-center text-xs text-muted-foreground">
-                    {mode === "login" ? "Henüz hesabın yok mu? " : "Zaten üye misin? "}
-                    <button
-                      type="button"
-                      onClick={() => setMode(mode === "login" ? "signup" : "login")}
-                      className="font-medium text-foreground underline-offset-4 hover:underline"
-                    >
-                      {mode === "login" ? "Kayıt ol" : "Giriş yap"}
-                    </button>
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            <p className="mt-4 text-center text-[11px] text-muted-foreground">
-              Devam ederek Meydan{" "}
-              <a className="underline-offset-4 hover:underline" href="#">
-                Kullanım Şartları
-              </a>{" "}
-              ve{" "}
-              <a className="underline-offset-4 hover:underline" href="#">
-                Gizlilik Politikası
-              </a>
-              nı kabul etmiş olursun.
-            </p>
-          </motion.section>
+        {/* Social */}
+        <div className="my-6 flex w-full items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
+          <span className="h-px flex-1 bg-[color:var(--app-line)]" />
+          veya
+          <span className="h-px flex-1 bg-[color:var(--app-line)]" />
         </div>
+        <button
+          type="button"
+          className="btn-ghost-light inline-flex w-full items-center justify-center gap-2.5 rounded-full px-4 py-3 text-sm font-medium transition-colors"
+        >
+          <span className="h-4 w-4 rounded-full bg-gradient-to-br from-[var(--sky)] via-[var(--violet)] to-[var(--coral)]" />
+          Google ile devam et
+        </button>
+
+        {/* ── QUICK DEMO ACCESS ── */}
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="mt-12 w-full"
+        >
+          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[color:var(--app-ink-mute)]">
+            <Sparkles className="h-3 w-3 text-[color:var(--violet)]" />
+            Quick Demo Access
+            <span className="h-px flex-1 bg-[color:var(--app-line)]" />
+          </div>
+          <p className="mt-2 text-xs text-[color:var(--app-ink-soft)]">
+            Şifre yok — bir rol seç, Meydan'ı keşfet.
+          </p>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {quickDemos.map((d, i) => (
+              <motion.div
+                key={d.role}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 + i * 0.06 }}
+              >
+                <Link
+                  to={d.to}
+                  className="group relative flex flex-col items-start gap-2 rounded-2xl border border-[color:var(--app-line)] bg-white p-3.5 transition-all hover:border-[color:oklch(0.60_0.22_252/0.35)] hover:bg-[color:oklch(0.60_0.22_252/0.04)]"
+                >
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${d.iconBg}`}>
+                    <d.icon className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-[color:var(--app-ink)]">{d.label}</p>
+                    <p className="mt-0.5 text-[11px] text-[color:var(--app-ink-mute)]">{d.desc}</p>
+                  </div>
+                  <ArrowRight className="absolute right-3 top-3 h-3.5 w-3.5 text-[color:var(--app-ink-mute)] transition-all group-hover:right-2.5 group-hover:text-[color:var(--violet)]" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        <p className="mt-10 text-center text-[11px] text-[color:var(--app-ink-mute)]">
+          Devam ederek Meydan{" "}
+          <a className="underline-offset-4 hover:underline" href="#">Kullanım Şartları</a>{" "}
+          ve{" "}
+          <a className="underline-offset-4 hover:underline" href="#">Gizlilik Politikası</a>'nı kabul etmiş olursun.
+        </p>
       </main>
     </div>
   );
@@ -282,27 +192,19 @@ function AuthPage() {
 
 function Field({
   icon: Icon,
+  suffix,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & { icon: typeof Mail }) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { icon: typeof Mail; suffix?: React.ReactNode }) {
   return (
     <label className="group relative block">
-      <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-[var(--violet)]" />
+      <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--app-ink-mute)] transition-colors group-focus-within:text-[color:var(--violet)]" />
       <input
         {...props}
-        className="h-12 w-full rounded-2xl border border-border bg-[color-mix(in_oklab,var(--foreground)_4%,transparent)] pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/70 transition-colors focus:border-[var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_oklab,var(--violet)_30%,transparent)]"
+        className="h-12 w-full rounded-2xl border border-[color:var(--app-line)] bg-white pl-11 pr-12 text-sm text-[color:var(--app-ink)] placeholder:text-[color:var(--app-ink-mute)] transition-colors focus:border-[color:var(--violet)] focus:outline-none focus:ring-2 focus:ring-[color:oklch(0.60_0.22_252/0.20)]"
       />
+      {suffix && (
+        <span className="absolute right-4 top-1/2 -translate-y-1/2">{suffix}</span>
+      )}
     </label>
-  );
-}
-
-function SocialButton({ label }: { label: string }) {
-  return (
-    <button
-      type="button"
-      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-[color-mix(in_oklab,var(--foreground)_4%,transparent)] px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/10"
-    >
-      <span className="h-4 w-4 rounded-full bg-gradient-to-br from-[var(--sky)] via-[var(--violet)] to-[var(--coral)]" />
-      {label}
-    </button>
   );
 }

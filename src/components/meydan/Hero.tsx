@@ -17,7 +17,7 @@ export function Hero() {
         initial={{ opacity: 0, scale: 1.04 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0 -z-20 h-full w-full"
+        className="absolute inset-x-0 bottom-0 top-16 -z-20 w-full"
       >
         <source type="image/avif" srcSet={heroAvifSet} sizes="100vw" />
         <source type="image/webp" srcSet={heroWebpSet} sizes="100vw" />
@@ -28,7 +28,7 @@ export function Hero() {
           decoding="async"
           fetchPriority="high"
           sizes="100vw"
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-cover object-top"
         />
       </motion.picture>
 

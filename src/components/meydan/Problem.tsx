@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { FloatingAthlete } from "./FloatingAthlete";
-import archeryImg from "@/assets/sport-archery-nobg.png";
+import meteGazozImg from "@/assets/metegazoz.png";
 
 const problems = [
   {
@@ -37,14 +37,21 @@ export function Problem() {
 
   return (
     <section id="problem" ref={ref} className="relative isolate overflow-hidden py-28 sm:py-36">
-      <FloatingAthlete src={archeryImg} alt="Okçuluk sporcusu" side="right" />
+      <FloatingAthlete
+        src={meteGazozImg}
+        alt="Mete Gazoz"
+        side="right"
+        mirror
+        scale={1.25}
+        offsetX={-40}
+      />
       {/* Dot grid */}
       <div className="pointer-events-none absolute inset-0 -z-10 grid-dots" />
       {/* Subtle color blooms */}
       <div className="pointer-events-none absolute -left-48 -top-48 -z-10 h-[500px] w-[500px] rounded-full bg-violet/8 blur-[140px]" />
       <div className="pointer-events-none absolute -bottom-48 -right-48 -z-10 h-[400px] w-[400px] rounded-full bg-sky/10 blur-[120px]" />
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-80">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:pr-[30rem]">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-foreground/8 pb-10">
           <motion.div
