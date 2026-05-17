@@ -1,5 +1,5 @@
-import type { Athlete, DiaryEntry, Event, Need } from "@/lib/mock-data";
-import { athletes, events, getSportImage, needs } from "@/lib/mock-data";
+import type { Athlete, DiaryEntry, Event, Match, Need } from "@/lib/mock-data";
+import { athletes, events, getSportImage, liveMatches, needs } from "@/lib/mock-data";
 import type { BackendEvent, BackendJournal, BackendNeed, BackendProfile } from "@/lib/api";
 
 const SPORT_EMOJI: Record<string, string> = {
@@ -230,4 +230,39 @@ export function backendJournalToDiary(entry: BackendJournal): DiaryEntry {
 
 export function backendJournalsToDiary(entries?: BackendJournal[]) {
   return entries?.map(backendJournalToDiary) ?? [];
+}
+
+/**
+ * Mock liveMatches listesindeki her satırı, DB'deki sporcu profilleriyle eşler.
+ * - Önce mock slug (örn. "defne-arslan") DB profilinde varsa onunla override edilir.
+ * - Yoksa DB profilleri sırayla mock satırlara atanır (round-robin) — böylece DB'de
+ *   olmayan mock sporcular yerine gerçek sporcular gösterilir.
+ * - DB profili yoksa mock liveMatches olduğu gibi döner.
+ */
+export function liveMatchesWithProfiles(profiles?: BackendProfile[]): Match[] {
+  if (!profiles?.length) return liveMatches;
+
+  const sporcular = profiles.filter((p) => p.role === "sporcu");
+  if (!sporcular.length) return liveMatches;
+
+  const bySlug = new Map<string, BackendProfile>();
+  sporcular.forEach((p) => bySlug.set(slugifyProfile(p), p));
+
+  let cursor = 0;
+  return liveMatches.map((match) => {
+    let profile = bySlug.get(match.athleteSlug);
+    if (!profile) {
+      profile = sporcular[cursor % sporcular.length];
+      cursor += 1;
+    }
+    const branch = profile.branch || match.sport;
+    return {
+      ...match,
+      athleteSlug: slugifyProfile(profile),
+      athleteName: profile.full_name,
+      athleteImg: profile.avatar_url || match.athleteImg,
+      sport: branch,
+      emoji: sportEmoji(branch),
+    };
+  });
 }
