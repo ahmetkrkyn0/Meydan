@@ -176,12 +176,48 @@ export function fetchCurrentProfile() {
   return apiRequest<{ profile: BackendProfile }>("/auth/me");
 }
 
-export function demoLogin(role: ProfileRole) {
-  return apiRequest<AuthResponse>("/auth/demo-login", {
-    method: "POST",
-    query: { role },
-    skipAuth: true,
-  });
+const DEMO_PROFILES: Record<ProfileRole, BackendProfile> = {
+  taraftar: {
+    id: "demo-taraftar",
+    role: "taraftar",
+    full_name: "Demo Taraftar",
+    city: "İstanbul",
+    bio: "Sporcu destekçisi",
+  },
+  sporcu: {
+    id: "demo-sporcu",
+    role: "sporcu",
+    full_name: "Demo Sporcu",
+    city: "Ankara",
+    branch: "Okçuluk",
+    bio: "Milli takım sporcusu",
+    ranking: "Türkiye 3.",
+  },
+  marka: {
+    id: "demo-marka",
+    role: "marka",
+    full_name: "Demo Marka",
+    city: "İzmir",
+    bio: "Sporu destekleyen marka",
+    brand_values: "Performans, Sürdürülebilirlik",
+    brand_budget: 50000,
+  },
+};
+
+export async function demoLogin(role: ProfileRole): Promise<AuthResponse> {
+  // Backend'e bağlanmaya çalış, çalışmıyorsa offline mock döndür
+  try {
+    return await apiRequest<AuthResponse>("/auth/demo-login", {
+      method: "POST",
+      query: { role },
+      skipAuth: true,
+    });
+  } catch {
+    // Backend çalışmıyor — client-side mock session
+    const profile = DEMO_PROFILES[role];
+    const mockToken = `demo-token-${role}-${Date.now()}`;
+    return { token: mockToken, profile };
+  }
 }
 
 // --- Profiles ---

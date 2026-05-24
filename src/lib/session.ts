@@ -14,6 +14,32 @@ import {
   type ProfileRole,
 } from "@/lib/api";
 
+const DEMO_PROFILE_KEY = "meydan.demoProfile";
+
+function readDemoProfile(): BackendProfile | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(DEMO_PROFILE_KEY);
+    return raw ? (JSON.parse(raw) as BackendProfile) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeDemoProfile(profile: BackendProfile | null) {
+  if (typeof window === "undefined") return;
+  try {
+    if (profile) window.localStorage.setItem(DEMO_PROFILE_KEY, JSON.stringify(profile));
+    else window.localStorage.removeItem(DEMO_PROFILE_KEY);
+  } catch {
+    // sessiz
+  }
+}
+
+function isDemoToken(token: string | null): boolean {
+  return Boolean(token?.startsWith("demo-token-"));
+}
+
 const SESSION_QUERY_KEY = ["session", "me"] as const;
 
 export type SessionState = {
@@ -43,11 +69,18 @@ export function useSession(): SessionState {
     setHydrated(true);
   }, []);
 
+  const isDemo = isDemoToken(token);
+
   const query = useQuery({
     queryKey: SESSION_QUERY_KEY,
-    queryFn: () => fetchCurrentProfile().then((r) => r.profile),
-    // Hydration tamamlanmadan istek atma — SSR'da fetch çalışmaz, sadece
-    // ilk client render'da çalışsın.
+    queryFn: () => {
+      // Demo token ise backend'e gitme — localStorage'dan profile oku
+      if (isDemo) {
+        const p = readDemoProfile();
+        if (p) return Promise.resolve(p);
+      }
+      return fetchCurrentProfile().then((r) => r.profile);
+    },
     enabled: hydrated && Boolean(token),
     retry: false,
   });
@@ -57,7 +90,6 @@ export function useSession(): SessionState {
   return {
     profile,
     role: (profile?.role as ProfileRole | undefined) ?? null,
-    // Hydration olana kadar yükleniyor say; sonra query loading'i izle.
     isLoading: !hydrated || (Boolean(token) && query.isLoading),
     isAuthenticated: Boolean(profile),
     isError: query.isError && !(query.error instanceof UnauthorizedError),
@@ -102,6 +134,7 @@ export function useLogout() {
       // Network hatasında bile lokal temizliği yap.
     }
     writeAuthToken(null);
+    writeDemoProfile(null);
     queryClient.setQueryData(SESSION_QUERY_KEY, null);
     queryClient.removeQueries();
   };
@@ -112,6 +145,10 @@ export function useDemoLogin() {
   return async (role: ProfileRole): Promise<AuthResponse> => {
     const result = await demoLogin(role);
     writeAuthToken(result.token);
+    // Mock token ise profile'ı localStorage'a da yaz
+    if (isDemoToken(result.token)) {
+      writeDemoProfile(result.profile);
+    }
     queryClient.setQueryData(SESSION_QUERY_KEY, result.profile);
     return result;
   };
