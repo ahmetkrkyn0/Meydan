@@ -435,10 +435,11 @@ function LeafletMap({
       });
       L.control.zoom({ position: "bottomright" }).addTo(map);
       L.control.attribution({ position: "bottomleft", prefix: false }).addTo(map);
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        attribution: "© OpenStreetMap, © CARTO",
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> katkıda bulunanlar',
         maxZoom: 19,
-        subdomains: "abcd",
+        className: "meydan-tiles",
       }).addTo(map);
       markersLayerRef.current = L.layerGroup().addTo(map);
       mapRef.current = map;
@@ -534,6 +535,9 @@ function LeafletMap({
     <>
       <div ref={containerRef} className="absolute inset-0 h-full w-full" />
       <style>{`
+        /* OSM zemini: renkleri bastırılmış sade görünüm, pin'ler öne çıksın */
+        .meydan-tiles { filter: grayscale(0.7) contrast(0.9) brightness(1.05); }
+
         .meydan-pin { background: transparent !important; border: 0 !important; }
         .meydan-pin-shell {
           position: relative;
